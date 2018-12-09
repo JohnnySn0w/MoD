@@ -1,3 +1,7 @@
 # exclude logs
 *.log
 *.log.*
+# exclude vagrant folder
+.vagrant/
+# exclude node_modules
+node_modules/
