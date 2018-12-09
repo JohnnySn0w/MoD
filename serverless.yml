@@ -1,0 +1,85 @@
+service: serverless-dynamo-basic-operations
+
+plugins:
+  - serverless-dynamodb-local
+
+custom:
+  myStage: ${opt:stage, self:provider.stage}
+  settings:
+    dev:
+      ITEMS_DYNAMODB_TABLE: sls-basic-operations-items-dev
+    prod:
+      ITEMS_DYNAMODB_TABLE: sls-basic-operations-items-prod
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  profile: default
+  region: eu-west-1
+  environment: ${self:custom.settings.${self:custom.myStage}}
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:GetItem"
+        - "dynamodb:PutItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:DeleteItem"
+        - "dynamodb:ListStreams"
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.ITEMS_DYNAMODB_TABLE}"
+
+functions:
+  saveItem:
+    handler: handler.saveItem
+    events:
+      - http:
+          path: item
+          method: post
+  getItem:
+    handler: handler.getItem
+    events:
+      - http:
+          path: item/{itemId}
+          method: get
+  deleteItem:
+    handler: handler.deleteItem
+    events:
+        - http:
+            path: item/{itemId}
+            method: delete
+  updateItem:
+    handler: handler.updateItem
+    events:
+      - http:
+          path: item/{itemId}
+          method: put
+  triggerStream:
+    handler: handler.triggerStream
+    events:
+       - stream:
+          type: dynamodb
+          batchSize: 1
+          startingPosition: LATEST
+          arn:
+            Fn::GetAtt:
+              - ImagesTable
+              - StreamArn
+
+resources:
+  Resources:
+    ImagesTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+        - AttributeName: "itemId"
+          AttributeType: "S"
+        KeySchema:
+        - AttributeName: "itemId"
+          KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.settings.${self:custom.myStage}.ITEMS_DYNAMODB_TABLE}
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE

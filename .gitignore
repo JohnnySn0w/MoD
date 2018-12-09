@@ -2,6 +2,8 @@
 *.log
 *.log.*
 # exclude vagrant folder
-.vagrant/
+**/.vagrant
 # exclude node_modules
-node_modules/
+**/node_modules
+# excluding dynamo folder
+**/.dynamodb

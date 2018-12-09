@@ -1,15 +1,15 @@
-#!/usr/bin/env bash
+SHELL = /bin/bash
+USER = vagrant
+SLS = /vagrant/node_modules/serverless/bin/serverless
+
 .PHONY: dependencies
 dependencies:
-	yarn install;
+	mkdir ~/.config;
+	sudo chown -R $(USER) ~/.npm; sudo chown -R $(USER) ~/.config;
+	yarn;
 
-#clean up docker volumes/containers
-.PHONY: clean
-clean:
-	@docker volume list -q | xargs docker volume rm; \
-	docker ps -aq | xargs docker rm -f;
-
-#clean up docker images (last resort, involves redownload of images)
-.PHONY: cleanImages
-cleanImages		
-	docker images -aq | xargs docker rmi -f;
+.PHONY: setDynamo
+setDynamo:
+	$(SLS) dynamodb install;
+	$(SLS) dynamodb start --migrate
+	
