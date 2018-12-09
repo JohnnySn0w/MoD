@@ -41,8 +41,6 @@ echo "Installing Yarn"
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 sudo apt-get -qq update && sudo apt-get -qq install yarn
-sudo chown -R $USER:$GROUP ~/.npm
-sudo chown -R $USER:$GROUP ~/.config
 echo "Installing Updates"
 sudo apt-get -qq update && apt-get -qq upgrade
 echo "Done"
