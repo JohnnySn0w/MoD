@@ -7,7 +7,8 @@
     "chai": "^4.2.0",
     "discord.js": "^11.4.2",
     "jest": "^23.6.0",
-    "yarn": "^1.12.3"
+    "yarn": "^1.12.3",
+    "discord.js-commando": "^0.10.0"
   },
   "devDependencies": {
     "aws-sdk": "^2.373.0",
