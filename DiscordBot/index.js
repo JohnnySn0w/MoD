@@ -23,6 +23,8 @@ client.on('message', (message) => {
 	if (message.content == 'ping') {
 		message.channel.send('pong');
 	}
+
+	let roleID = "530096793422266428";
 });
 
 client.on('message', (message) => {
