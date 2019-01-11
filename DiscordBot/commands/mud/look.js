@@ -15,7 +15,7 @@ class LookCommand extends commando.Command {
             message.reply("It's an absolute warzone out here. Completely lawless and no rooms in sight.");
         }
         else {
-            message.reply("There's nothing to look at in here. Preeeetty empty.");
+            message.reply("There's nothing to look at in here. *Preeeetty empty.*");
         }
         // message.channel.send("I'm sorry. I don't have any legs yet.");
     }
