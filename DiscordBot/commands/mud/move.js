@@ -23,7 +23,7 @@ class MoveCommand extends commando.Command {
     }
 
     async run(message, { room }) {
-        this.createRoomRoles(message);
+        this.initializeRoomRoles(message);
 
         /*
         let membersWithRole = role.members;
@@ -34,7 +34,7 @@ class MoveCommand extends commando.Command {
 
         if (message.channel.name === "entry-room") {
             if (room === "room-0") {
-                message.reply("Go to this channel <#530099456645791748>");
+                message.reply("moved to \<#530099456645791748>");
                 member.setRoles([room0Role]).catch(console.error);
             }
             else {
@@ -43,9 +43,11 @@ class MoveCommand extends commando.Command {
         }
         else if (message.channel.name === "room-0") {
             if (room === "entry-room") {
+                message.reply("moved to \<#530099209614000159>");
                 member.setRoles([entryRoomRole]).catch(console.error);
             }
             else if (room === "room-1") {
+                message.reply("moved to \<#530099492091985921>");
                 member.setRoles([room1Role]).catch(console.error);
             }
             else {
@@ -54,9 +56,11 @@ class MoveCommand extends commando.Command {
         }
         else if (message.channel.name === "room-1") {
             if (room === "room-0") {
+                message.reply("moved to \<#530099456645791748>");
                 member.setRoles([room0Role]).catch(console.error);
             }
             else if (room === "room-2") {
+                message.reply("moved to \<#530099522940960799>");
                 member.setRoles([room2Role]).catch(console.error);
             }
             else {
@@ -65,6 +69,7 @@ class MoveCommand extends commando.Command {
         }
         else if (message.channel.name === "room-2") {
             if (room === "room-1") {
+                message.reply("moved to \<#530099492091985921>");
                 member.setRoles([room1Role]).catch(console.error);
             }
             else {
@@ -78,7 +83,7 @@ class MoveCommand extends commando.Command {
         // message.channel.send("I'm sorry. I don't have any legs yet.");
     }
 
-    createRoomRoles(message) {
+    initializeRoomRoles(message) {
         entryRoomRole = message.guild.roles.find(role => role.name === "entry-room");
         room0Role = message.guild.roles.find(role => role.name === "room-0");
         room1Role = message.guild.roles.find(role => role.name === "room-1");

@@ -6,7 +6,14 @@ class LookCommand extends commando.Command {
             name: 'look',
             group: 'mud',
             memberName: 'look',
-            description: 'Gives a description of an item in the same room as the user'
+            description: 'Gives a description of an item in the same room as the user',
+            args: [
+                {
+                    key: 'object',
+                    prompt: 'what are you trying to look at?',
+                    type: 'string'
+                }
+            ]
         });
     }
 
@@ -15,7 +22,7 @@ class LookCommand extends commando.Command {
             message.reply("It's an absolute warzone out here. Completely lawless and no rooms in sight.");
         }
         else {
-            message.reply("There's nothing to look at in here. *Preeeetty empty.*");
+            message.reply("That thing you're trying to look at? Yeah, I'm not sure it exists.");
         }
         // message.channel.send("I'm sorry. I don't have any legs yet.");
     }
