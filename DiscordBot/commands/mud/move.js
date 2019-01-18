@@ -23,10 +23,7 @@ class MoveCommand extends commando.Command {
     }
 
     async run(message, { room }) {
-        entryRoomRole = message.guild.roles.find(role => role.name === "entry-room");
-        room0Role = message.guild.roles.find(role => role.name === "room-0");
-        room1Role = message.guild.roles.find(role => role.name === "room-1");
-        room2Role = message.guild.roles.find(role => role.name === "room-2");
+        this.createRoomRoles(message);
 
         /*
         let membersWithRole = role.members;
@@ -37,6 +34,7 @@ class MoveCommand extends commando.Command {
 
         if (message.channel.name === "entry-room") {
             if (room === "room-0") {
+                message.reply("Go to this channel <#530099456645791748>");
                 member.setRoles([room0Role]).catch(console.error);
             }
             else {
@@ -78,6 +76,13 @@ class MoveCommand extends commando.Command {
         }
         
         // message.channel.send("I'm sorry. I don't have any legs yet.");
+    }
+
+    createRoomRoles(message) {
+        entryRoomRole = message.guild.roles.find(role => role.name === "entry-room");
+        room0Role = message.guild.roles.find(role => role.name === "room-0");
+        room1Role = message.guild.roles.find(role => role.name === "room-1");
+        room2Role = message.guild.roles.find(role => role.name === "room-2");
     }
 }
 
