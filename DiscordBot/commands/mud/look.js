@@ -24,7 +24,6 @@ class LookCommand extends commando.Command {
         else {
             message.reply("That thing you're trying to look at? Yeah, I'm not sure it exists.");
         }
-        // message.channel.send("I'm sorry. I don't have any legs yet.");
     }
 }
 

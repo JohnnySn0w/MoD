@@ -7,7 +7,6 @@ const client = new commando.Client({
 
 client.registry
 .registerGroups([
-    ['random', 'Random'],
     ['mud', 'MUD']
 ])
 .registerDefaults()
@@ -17,24 +16,10 @@ client.login(login.key);
 
 console.log("Bot is running");
 
-// below this line are the pre-existing methods that the bot used to parse
-// messages
-client.on('message', (message) => {
-	if (message.content == 'ping') {
-		message.channel.send('pong');
-	}
-
-	let roleID = "530096793422266428";
-});
-
+/*
+// keeping this commented for reference for emojis later (in case we end up using them again)
 client.on('message', (message) => {
 	if (message.content == '👀' || message.content == '/look') {
 		message.channel.send('Look what?');
 	}
-});
-
-client.on('message', (message) => {
-	if (message.content == '/look room') {
-		message.channel.send("you're uhhh, in a room ig \n This room is the Room of Entry");
-	}
-});
+}); */
