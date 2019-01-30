@@ -5,6 +5,8 @@ const client = new commando.Client({
     commandPrefix: '?'
 });
 
+let player_array = []; // array for players and stats
+
 client.registry
 .registerGroups([
     ['mud', 'MUD']

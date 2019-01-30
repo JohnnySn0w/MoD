@@ -15,17 +15,18 @@ class StartCommand extends commando.Command {
     async run(message, args) {
         entryRoomRole = message.guild.roles.find(role => role.name === "entry-room");
 
-        if (message.channel.name == 'test-zone') {
+        if (message.channel.name == 'landing-zone') {
             if (message.member.roles.some(r=>["entry-room", "room-0", "room-1", "room-2"].includes(r.name)) ) {
                 message.reply("Well. It seems like you've already started!");
-            }
+        }
             else {
                 message.reply("Welcome to the MUD! Your journey starts in the above text channels. Good luck!");
                 message.member.setRoles([entryRoomRole]).catch(console.error);
+
             }
         }
         else {
-            message.reply("Sorry, you can't start playing the MUD unless you're in the <#525378260192854027>.");
+            message.reply("Sorry, you can't start playing the MUD unless you're in the <#534828813142589442>.");
         }
     }
 }

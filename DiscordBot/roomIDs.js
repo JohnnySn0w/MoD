@@ -1,6 +1,7 @@
 module.exports = {
-    entryroom: '530099209614000159',
-    room0: '530099456645791748',
-    room1: '530099492091985921',
-    room2: '530099522940960799',
+    entryroom: '535555511953653803',
+    room0: '535555687535738920',
+    room1: '535555816124710937',
+    room2: '535555986493276172',
+    // these are for the test zone. put this in gitignore
 }
