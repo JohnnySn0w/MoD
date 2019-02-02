@@ -1,11 +1,10 @@
 const Discord = require('discord.js');
 const commando = require('discord.js-commando');
 const login = require('./loginCode');
+const player_stats = require('./player-stats');
 const client = new commando.Client({
     commandPrefix: '?'
 });
-
-let player_array = []; // array for players and stats
 
 client.registry
 .registerGroups([
@@ -25,3 +24,7 @@ client.on('message', (message) => {
 		message.channel.send('Look what?');
 	}
 }); */
+
+// var player_stats = [];
+// exports.player_stats = player_stats;
+

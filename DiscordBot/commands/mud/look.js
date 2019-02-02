@@ -18,7 +18,7 @@ class LookCommand extends commando.Command {
     }
 
     async run(message, args) {
-        if (message.channel.name == 'test-zone') {
+        if (message.channel.name == 'entry-room') {
             message.reply("It's an absolute warzone out here. Completely lawless and no rooms in sight.");
         }
         else {
