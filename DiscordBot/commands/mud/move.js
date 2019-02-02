@@ -1,10 +1,5 @@
 const commando = require('discord.js-commando');
-const ids = require('../../roomIDs');
-
-var entryRoomRole;
-var room0Role;
-var room1Role;
-var room2Role;
+const rooms = require('../../rooms.js');
 
 class MoveCommand extends commando.Command {
     constructor(client) {
@@ -15,80 +10,60 @@ class MoveCommand extends commando.Command {
             description: 'Moves the user to a different room (i.e. text channel)',
             args: [
                 {
-                    key: 'room',
-                    prompt: 'which room do you wish to move to?',
+                    key: 'direction',
+                    prompt: 'which direction do you wish to move in?',
                     type: 'string'
                 }
             ]
         });
     }
 
-    async run(message, { room }) {
-        this.initializeRoomRoles(message);
+    async run(message, {direction}) {
+        direction = this.cleanArguments(direction);
+        var room = this.determineRoom(message.channel.name);
 
-        /*
-        let membersWithRole = role.members;
-        console.log(`Got ${membersWithRole.size} members with that role.`);
-        */
-
-        let member = message.member;
-
-        if (message.channel.name === "entry-room") {
-            if (room === "room-0") {
-                message.reply("moved to \<#" + ids.room0 + ">");
-                member.setRoles([room0Role]).catch(console.error);
-            }
-            else {
-                message.reply("Sorry, I don't see a room like that.");
-            }
-        }
-        else if (message.channel.name === "room-0") {
-            if (room === "entry-room") {
-                message.reply("moved to \<#" + ids.entryroom + ">");
-                member.setRoles([entryRoomRole]).catch(console.error);
-            }
-            else if (room === "room-1") {
-                message.reply("moved to \<#" + ids.room1 + ">");
-                member.setRoles([room1Role]).catch(console.error);
-            }
-            else {
-                message.reply("Sorry, I don't see a room like that.");
-            }
-        }
-        else if (message.channel.name === "room-1") {
-            if (room === "room-0") {
-                message.reply("moved to \<#" + ids.room0 + ">");
-                member.setRoles([room0Role]).catch(console.error);
-            }
-            else if (room === "room-2") {
-                message.reply("moved to \<#" + ids.room2 + ">");
-                member.setRoles([room2Role]).catch(console.error);
-            }
-            else {
-                message.reply("Sorry, I don't see a room like that.");
-            }
-        }
-        else if (message.channel.name === "room-2") {
-            if (room === "room-1") {
-                message.reply("moved to \<#" + ids.room1 + ">");
-                member.setRoles([room1Role]).catch(console.error);
-            }
-            else {
-                message.reply("Sorry, I don't see a room like that.");
-            }
+        if (!(room === undefined)) {
+            this.movePlayer(message, direction, room);
         }
         else {
-            message.reply("You're not inside of the MUD-sanctioned rooms.");
+            message.reply("You're not inside of the MUD-related rooms.");
         }
         
         // message.channel.send("I'm sorry. I don't have any legs yet.");
+        // let membersWithRole = role.members;
+        // console.log(`Got ${membersWithRole.size} members with that role.`);
     }
 
-    initializeRoomRoles(message) {
-        entryRoomRole = message.guild.roles.find(role => role.name === "entry-room");
-        room0Role = message.guild.roles.find(role => role.name === "room-0");
-        room1Role = message.guild.roles.find(role => role.name === "room-1");
-        room2Role = message.guild.roles.find(role => role.name === "room-2");
+    cleanArguments(direction) {
+        direction = direction.toLowerCase();
+        return direction;
+    }
+
+    determineRoom(searchName) {
+        var roomObject;
+        var i;
+        for (i = 0; i < rooms.length; i++) {
+            var roomName = rooms[i].name;
+
+            if (searchName === roomName) {
+                roomObject = rooms[i];
+                break;
+            }
+        }
+
+        return roomObject;
+    }
+
+    movePlayer(message, direction, room) {
+        if (direction in room.exits) {
+            console.log("In the " + direction + " direction, the room is " + room.exits[direction]);
+            var nextRoom = this.determineRoom(room.exits[direction]);
+            message.reply("moved to \<#" + nextRoom.id + ">");
+            message.member.setRoles([message.guild.roles.get(nextRoom.roleid)]).catch(console.error);
+        }
+        else {
+            message.reply("There are no exits in the " + direction + " direction");
+        }
     }
 }
 
