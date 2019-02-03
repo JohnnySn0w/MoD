@@ -1,4 +1,5 @@
 const commando = require('discord.js-commando');
+// todo replace rooms with dynamo
 const rooms = require('../../rooms.js');
 
 class MoveCommand extends commando.Command {
@@ -45,6 +46,7 @@ class MoveCommand extends commando.Command {
     determineRoom(searchName) {
         var roomObject;
         var i;
+        // todo replace rooms with dynamo
         for (i = 0; i < rooms.length; i++) {
             var roomName = rooms[i].name;
 
