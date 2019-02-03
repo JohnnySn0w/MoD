@@ -1,10 +1,6 @@
 const commando = require('discord.js-commando');
 const rooms = require('../../rooms.js');
 
-const ROOM = 0;
-const ITEM = 1;
-const DEFAULT = -1;
-
 class LookCommand extends commando.Command {
     constructor(client) {
         super(client, {
