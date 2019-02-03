@@ -2,6 +2,7 @@ const commando = require('discord.js-commando');
 const rooms = require('../../rooms.js');
 
 const ROOM = 0;
+const ITEM = 1;
 const DEFAULT = -1;
 
 class LookCommand extends commando.Command {
@@ -24,8 +25,15 @@ class LookCommand extends commando.Command {
     // this is essentially the main method of the command
     async run(message, args) {
         args = this.cleanArguments(args);
-        var object = this.tokenizeArguments(args);
         var room = this.determineRoom(message.channel.name);
+
+        var object;
+        if (args.object === "room" || args.object === "here") {
+            object = room;
+        }
+        else {
+            object = this.determineItem(args.object, room);
+        }
         
         this.replyToPlayer(message, object, room);
     }
@@ -34,16 +42,6 @@ class LookCommand extends commando.Command {
     cleanArguments(args) {
         args.object = args.object.toLowerCase();
         return args;
-    }
-
-    // determine what object the player is looking at
-    tokenizeArguments(args) {
-        if (args.object === "room" || args.object === "here") {
-            return ROOM;
-        }
-        else {
-            return DEFAULT;
-        }
     }
 
     // determine what room the player is in
@@ -62,18 +60,30 @@ class LookCommand extends commando.Command {
         return roomObject;
     }
 
+    // determine what item the player is looking at
+    determineItem(searchName, room) {
+        var itemObject;
+        var i;
+        for (i = 0; i < room.items.length; i++) {
+            var itemName = room.items[i].name;
+
+            if (searchName === itemName) {
+                itemObject = room.items[i];
+                break;
+            }
+        }
+
+        return itemObject;
+    }
+
     // respond to the player based on their current room and the object's description
     replyToPlayer(message, object, room) {
         if (!(room === undefined)) {
-            console.log("Room Name - " + room.name);
-
-            switch(object) {
-                case ROOM:
-                    message.reply(room.description);
-                    break;
-                default:
-                    message.reply("I'm not sure what you're trying to look at.");
-                    break;
+            if (!(object === undefined)) {
+                message.reply(object.description);
+            }
+            else {
+                message.reply("I'm not sure what you're trying to look at.");
             }
         }
         else {

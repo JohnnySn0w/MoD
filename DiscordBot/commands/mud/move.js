@@ -18,6 +18,7 @@ class MoveCommand extends commando.Command {
         });
     }
 
+    // this is essentially the main method of the command
     async run(message, {direction}) {
         direction = this.cleanArguments(direction);
         var room = this.determineRoom(message.channel.name);
@@ -34,11 +35,13 @@ class MoveCommand extends commando.Command {
         // console.log(`Got ${membersWithRole.size} members with that role.`);
     }
 
+    // sanitize the arguments passed for the object
     cleanArguments(direction) {
         direction = direction.toLowerCase();
         return direction;
     }
 
+    // determine what room the player is in
     determineRoom(searchName) {
         var roomObject;
         var i;
@@ -54,9 +57,9 @@ class MoveCommand extends commando.Command {
         return roomObject;
     }
 
+    // move the player to the next room if it exists
     movePlayer(message, direction, room) {
         if (direction in room.exits) {
-            console.log("In the " + direction + " direction, the room is " + room.exits[direction]);
             var nextRoom = this.determineRoom(room.exits[direction]);
             message.reply("moved to \<#" + nextRoom.id + ">");
             message.member.setRoles([message.guild.roles.get(nextRoom.roleid)]).catch(console.error);
