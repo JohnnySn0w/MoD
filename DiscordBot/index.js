@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const commando = require('discord.js-commando');
 const login = require('./loginCode');
-const player_stats = require('./player-stats');
 const client = new commando.Client({
     commandPrefix: '?'
 });
@@ -25,6 +24,4 @@ client.on('message', (message) => {
 	}
 }); */
 
-// var player_stats = [];
-// exports.player_stats = player_stats;
 

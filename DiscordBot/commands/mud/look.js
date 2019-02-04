@@ -20,6 +20,7 @@ class LookCommand extends commando.Command {
     async run(message, args) {
         if (message.channel.name == 'entry-room') {
             message.reply("It's an absolute warzone out here. Completely lawless and no rooms in sight.");
+            
         }
         else {
             message.reply("That thing you're trying to look at? Yeah, I'm not sure it exists.");
