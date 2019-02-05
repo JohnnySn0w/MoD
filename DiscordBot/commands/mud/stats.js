@@ -14,11 +14,6 @@ class StatsCommand extends commando.Command {
                     prompt: 'how much damage to inflict?',
                     type: 'integer',
                     default: "0"
-                },
-                {
-                    key: 'roll',
-                    prompt: 'leave the damage up to the roll of a die?',
-                    type: 'integer'
                 }
             ]
         
@@ -57,6 +52,12 @@ class StatsCommand extends commando.Command {
                 else {
                 message.reply("no damage dealt");
             }
+
+            if (index.players[i].health <= 0) {
+                index.players[i].health = 100;
+                message.reply("Resetting health. Now back at 100.");
+            }
+            
         } 
         
     }
@@ -64,4 +65,3 @@ class StatsCommand extends commando.Command {
 
 
 module.exports = StatsCommand;
-module.exports.index = index;
