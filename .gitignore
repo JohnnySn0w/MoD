@@ -11,3 +11,5 @@
 DiscordBot/loginCode.js
 # exclude room IDs
 DiscordBot/roomIDs.js
+#exclude this
+**/."[i] == D\357\200\272"

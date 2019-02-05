@@ -1,0 +1,187 @@
+[33mcommit 3b8dcb2e3a26a14257e945b9cb3deffef2a308e2[m[33m ([m[1;36mHEAD -> [m[1;32msam-stats[m[33m, [m[1;31morigin/sam-stats[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m, [m[1;32mhelp[m[33m)[m
+Merge: 934e386 d8b9a64
+Author: Eric Ortiz <32352582+ThatSkyGuy@users.noreply.github.com>
+Date:   Sat Jan 19 12:09:26 2019 -0600
+
+    Merge pull request #20 from JohnnySn0w/AddingCommando
+    
+    Adding commando
+
+[33mcommit d8b9a64896e4a110f53462f34b9001124e495cc5[m
+Author: Eric Ortiz <e.ortiz.programmer@gmail.com>
+Date:   Sat Jan 19 10:32:20 2019 -0600
+
+    Moved the room IDs into a separate file to add a level of abstraction. Also removed some defunct code or commented it out to be referenced later in case we need it. Finally, removed the dice roll command entirely.
+
+[33mcommit 1a5b8351c3d3e94a561cd251f4125af5e35adc22[m
+Author: Eric Ortiz <e.ortiz.programmer@gmail.com>
+Date:   Fri Jan 18 00:27:31 2019 -0600
+
+    Added some more functionality to the move command so that it will point the user in the direction of the next room. Added a new command called 'start' so that users in the main chat can join the MUD. Also changed the look command response.
+
+[33mcommit c8fa6d400442664c28683cd45eda08e124eb3627[m
+Author: eortiz <eric.ortiz@pioneerrx.com>
+Date:   Thu Jan 17 23:49:49 2019 -0600
+
+    Trying to clean up the move command by adding in some clean up methods
+
+[33mcommit 902a5b5ba498bec45205bbd577fe5d1726534afc[m
+Author: eortiz <eric.ortiz@pioneerrx.com>
+Date:   Fri Jan 11 13:17:21 2019 -0600
+
+    Finally got moving working, but it only works in my server.
+
+[33mcommit b18fc893241271ec0325aed2181b110e58f366e1[m
+Author: Eric Ortiz <e.ortiz.programmer@gmail.com>
+Date:   Fri Jan 11 09:13:44 2019 -0600
+
+    Started adding role permission changes, however they're all commented out. I'm going to work on them more from my laptop in between classes.
+
+[33mcommit 8b8a0226786f949a22105c28eab7ae37b03831c1[m
+Author: eortiz <eric.ortiz@pioneerrx.com>
+Date:   Thu Jan 10 21:24:17 2019 -0600
+
+    Fixed the old code since it was trying to access a variable with a changed name.
+
+[33mcommit 9b77fe74e29d41a6cf47e36fe249c04a9a3884c0[m
+Author: Eric Ortiz <e.ortiz.programmer@gmail.com>
+Date:   Thu Jan 10 01:06:25 2019 -0600
+
+    Re-added some of the code from the original index.js since it included handling emojis (which may or may not be incorporated fully later)
+
+[33mcommit 708233f1246fddcb21c3c9829582cc7fad8b2dbb[m
+Author: Eric Ortiz <e.ortiz.programmer@gmail.com>
+Date:   Thu Jan 10 01:03:47 2019 -0600
+
+    Moved all of my Commando code into the original file. We can go over what to keep from the original file when we fill out the PR for this branch
+
+[33mcommit 934e3869d1ef2f7eff24f08d3500e7f6ed857bc6[m
+Merge: cd08124 36af302
+Author: Samantha Santiago <26655231+DJSanti@users.noreply.github.com>
+Date:   Tue Jan 1 21:19:41 2019 -0600
+
+    Merge pull request #15 from JohnnySn0w/cleanupPt1
+    
+    Cleanup pt1
+
+[33mcommit 36af30229b245887c36cead78d77d03373b110c9[m[33m ([m[1;31morigin/cleanupPt1[m[33m)[m
+Author: JohnnySn0w <michael.mahan43@gmail.com>
+Date:   Sun Dec 30 11:11:25 2018 -0600
+
+    update gitignore
+
+[33mcommit 169954f56a9b278786585fbcb6bd88755c73022e[m
+Author: JohnnySn0w <michael.mahan43@gmail.com>
+Date:   Sun Dec 30 11:11:08 2018 -0600
+
+    remove package-lock, remove loginCode
+
+[33mcommit cd081247a7da2df4c1a814b93e56c1e3df69cf13[m
+Merge: 2072615 cc57267
+Author: Michael <33181572+JohnnySn0w@users.noreply.github.com>
+Date:   Sat Dec 29 23:23:19 2018 -0600
+
+    Merge pull request #14 from JohnnySn0w/YarnFix
+    
+    Changed the makefile to let yarn run correctly??
+
+[33mcommit cc572673026983e72b7212ef8cf4178473e14f7f[m
+Author: JohnnySn0w <michael.mahan43@gmail.com>
+Date:   Sat Dec 29 23:22:28 2018 -0600
+
+    fixy wixy
+
+[33mcommit a9877aa824d79e5f8f78a663d28aadd12bde6d2c[m
+Author: Olivia Spears <ors003@latech.edu>
+Date:   Sat Dec 29 18:32:01 2018 -0600
+
+    Changed the makefile to let yarn run correctly??
+
+[33mcommit 20726151de0d310b64d0f9eeaa28dc8db50eb267[m
+Merge: f646a0d 217c424
+Author: Samantha Santiago <26655231+DJSanti@users.noreply.github.com>
+Date:   Sat Dec 29 08:48:34 2018 -0600
+
+    Merge pull request #13 from JohnnySn0w/AddingBot
+    
+    Adding bot
+
+[33mcommit f646a0de046af25840bdd70d50d82c4408e84ed7[m
+Author: Michael <33181572+JohnnySn0w@users.noreply.github.com>
+Date:   Sun Dec 23 22:21:10 2018 -0600
+
+    Update README.md
+
+[33mcommit 217c424e49b316011d3ef9a460c9bb8fda3fd30e[m
+Author: JohnnySn0w <michael.mahan43@gmail.com>
+Date:   Sun Dec 23 21:32:52 2018 -0600
+
+    made bot code more modular
+
+[33mcommit 912f2ad3970c0bac5f67cc48ef3e51752a16874f[m
+Merge: 04d39be 2ca425b
+Author: Eric Ortiz <e.ortiz.programmer@gmail.com>
+Date:   Sun Dec 23 13:10:06 2018 -0600
+
+    Merge branch 'master' of https://github.com/JohnnySn0w/MoD
+
+[33mcommit 04d39be64ea6cd167df6d2cd15560babcdd54ad5[m
+Author: Eric Ortiz <e.ortiz.programmer@gmail.com>
+Date:   Sun Dec 23 13:09:53 2018 -0600
+
+    Added a new folder workspace for the Discord Bot (labely similarly). Currently it can only respond to ping
+
+[33mcommit 2ca425ba58c475cfbc15fe6ac183d9b7f39dd687[m
+Author: JohnnySn0w <michael.mahan43@gmail.com>
+Date:   Thu Dec 20 21:04:22 2018 -0600
+
+    modified make targets
+
+[33mcommit 73c8f71e1a006a63a066c54348779039ace94824[m
+Merge: cbae08d 7ce5e85
+Author: JohnnySn0w <michael.mahan43@gmail.com>
+Date:   Sat Dec 8 23:29:59 2018 -0600
+
+    Merge branch 'master' of github.com:JohnnySn0w/MoD
+
+[33mcommit cbae08de6d5f3e9ec4c22b6edd6091699306f139[m
+Author: JohnnySn0w <michael.mahan43@gmail.com>
+Date:   Sat Dec 8 23:29:20 2018 -0600
+
+    Streamlined automation, added dynamo make target
+
+[33mcommit 7ce5e8507adc396c54c50be15b9b188c7e039749[m
+Author: Michael <33181572+JohnnySn0w@users.noreply.github.com>
+Date:   Sat Dec 8 21:32:33 2018 -0600
+
+    Update envConfig.sh
+
+[33mcommit 06d4323f53b97f15a32c830c75f712be44e51c1c[m
+Author: JohnnySn0w <michael.mahan43@gmail.com>
+Date:   Sat Dec 8 20:08:33 2018 -0600
+
+    remove .vagrant
+
+[33mcommit e67df916ce8d70329d100c6259c5ca0428eac62b[m
+Author: JohnnySn0w <michael.mahan43@gmail.com>
+Date:   Sat Dec 8 20:01:48 2018 -0600
+
+    Removed .vagrant, added docker and fleshed out install setup
+
+[33mcommit da626301751b954a36a8f749fbdfd0b391580c9c[m
+Author: JohnnySn0w <michael.mahan43@gmail.com>
+Date:   Sat Dec 8 15:34:06 2018 -0600
+
+    Added vagrant setup
+
+[33mcommit 26e2d5173b23d1f9a9be252efe04b95c4a2fa0ae[m
+Author: Michael <33181572+JohnnySn0w@users.noreply.github.com>
+Date:   Thu Dec 6 22:12:34 2018 -0600
+
+    Update README.md
+
+[33mcommit d24a6015cb1e73420fd72292cab4ec761d27c8cc[m
+Author: Michael <33181572+JohnnySn0w@users.noreply.github.com>
+Date:   Thu Dec 6 21:38:49 2018 -0600
+
+    Initial commit

@@ -53,16 +53,15 @@ class StatsCommand extends commando.Command {
                 var dam = new Number(index.players[i].health) - damage;
                 index.players[i].health = dam;
                 message.reply(index.players[i].health);
-
-                if (rolled)
-
-            } else {
+            }
+                else {
                 message.reply("no damage dealt");
             }
         } 
         
     }
 }
+
 
 module.exports = StatsCommand;
 module.exports.index = index;
