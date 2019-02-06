@@ -14,7 +14,12 @@ AWS.config.update({
 
 let dynamo = new AWS.DynamoDB.DocumentClient();
 
-const TABLE_NAME = process.env.ENTITIES_DYNAMODB_TABLE;
+/* 
+  commented out previous entry as it wasn't working, also 
+  we likely don't need a prod vs a dev
+*/
+// const TABLE_NAME = process.env.ENTITIES_DYNAMODB_TABLE;
+const TABLE_NAME = 'MoD-entities-dev';
 
 module.exports.initializateDynamoClient = newDynamo => {
   dynamo = newDynamo;
