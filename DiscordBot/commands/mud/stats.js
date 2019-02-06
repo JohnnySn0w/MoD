@@ -1,5 +1,5 @@
 const commando = require('discord.js-commando');
-const index = require('../../player-stats');
+const index = require('../../player-stats'); // place to hold our stats for all players (will replace with database soon)
 
 class StatsCommand extends commando.Command {
     constructor(client) {
@@ -8,6 +8,7 @@ class StatsCommand extends commando.Command {
             group: 'mud',
             memberName: 'stats',
             description: 'Shows player stats for the player who calls for them',
+            // args lets us type in a number to test that we can decrease our health
             args: [
                 {
                     key: 'value',
@@ -21,17 +22,17 @@ class StatsCommand extends commando.Command {
     }
 
     async run(message, args) {
-        var value = args.value;
-        var die = args.roll;
-        var player = message.member;
-        var play_id = message.member.id;
-        var health = 100;
+        var value = args.value; // lets us use our args above
+        var player = message.member; // gets player name
+        var play_id = message.member.id; // gets player id
+        var health = 100; // starting health value for all
         console.log(value);
-        var damage = Number(value);
-        var rolled = Number(die);
+        var damage = Number(value); // makes our args a number we can use
 
+        // checks through our index of players to see what to do next
         for (let i = 0; i < index.players.length; i++)
         {
+            // this places a new player into our index
             if (play_id != index.players[i].play_id)
             {
                 message.reply("you have no stats yet.");
@@ -39,10 +40,11 @@ class StatsCommand extends commando.Command {
                 message.reply("you now have stats");
                 message.reply(index.players[i].health);
             }
+            // player already exists in the index
             else {
                 message.reply("you exist!");
             }
-
+            // damage handling
             if (damage != 0) {
                 message.reply("a hit!");
                 var dam = new Number(index.players[i].health) - damage;
@@ -52,10 +54,14 @@ class StatsCommand extends commando.Command {
                 else {
                 message.reply("no damage dealt");
             }
-
+            // warning if your health is low
+            if (index.players[i].health > 0 && index.players[i].health < 11) {
+                message.reply("You're actually about to die, my dude.");
+            }
+            // resets health if you "die"
             if (index.players[i].health <= 0) {
                 index.players[i].health = 100;
-                message.reply("Resetting health. Now back at 100.");
+                message.reply("Dead. Resetting health. Now back at 100.");
             }
             
         } 
