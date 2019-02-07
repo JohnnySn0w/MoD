@@ -2,17 +2,17 @@ const commando = require('discord.js-commando');
 // todo replace rooms with dynamo
 const rooms = require('../../rooms.js');
 
-class LookCommand extends commando.Command {
+class TalkCommand extends commando.Command {
     constructor(client) {
         super(client, {
-            name: 'look',
+            name: 'talk',
             group: 'mud',
-            memberName: 'look',
-            description: 'Gives a description of an item in the same room as the user',
+            memberName: 'talk',
+            description: 'Allows users to interact with NPCs',
             args: [
                 {
                     key: 'object',
-                    prompt: 'what are you trying to look at?',
+                    prompt: 'who are you talking to?',
                     type: 'string'
                 }
             ]
@@ -23,16 +23,17 @@ class LookCommand extends commando.Command {
     async run(message, args) {
         args = this.cleanArguments(args);
         var room = this.determineRoom(message.channel.name);
+		var npc;
 
-        var object;
-        if (args.object === "room" || args.object === "here") {
+        var person = this.determineNPC(args.object, room);
+        /*if (args.object === "room" || args.object === "here") {
             object = room;
         }
         else {
             object = this.determineItem(args.object, room);
-        }
+        }*/
         
-        this.replyToPlayer(message, object, room);
+        this.replyToPlayer(message, person, room);
     }
 
     // sanitize the arguments passed for the object
@@ -59,40 +60,29 @@ class LookCommand extends commando.Command {
     }
 
     // determine what item the player is looking at
-    determineItem(searchName, room) {
-        var itemObject;
+    determineNPC(searchName, room) {
+        var npcObject;
         var i;
-        for (i = 0; i < room.items.length; i++) {
-            var itemName = room.items[i].name;
+        for (i = 0; i < room.npcs.length; i++) {
+            var npcName = room.npcs[i].name;
 
-            if (searchName === itemName) {
-                itemObject = room.items[i];
+            if (searchName === npcName) {
+                npcObject = room.npcs[i];
                 break;
             }
         }
-		// its not an item... check if its an npc
-		if (itemObject === undefined) {
-			for (i = 0; i < room.npcs.length; i++) {
-				var npcName = room.npcs[i].name;
 
-				if (searchName === npcName) {
-					itemObject = room.npcs[i];
-					break;
-				}
-			}
-		}
-
-        return itemObject;
+        return npcObject;
     }
 
-    // respond to the player based on their current room and the object's description
-    replyToPlayer(message, object, room) {
+    // respond to the player based on their current room and the npc's response
+    replyToPlayer(message, person, room) {
         if (!(room === undefined)) {
-            if (!(object === undefined)) {
-                message.reply(object.description);
+            if (!(person === undefined)) {
+                message.reply(person.formattedName + ": " + person.greeting);
             }
             else {
-                message.reply("I'm not sure what you're trying to look at.");
+                message.reply("I'm not sure who you're talking to...");
             }
         }
         else {
@@ -101,4 +91,4 @@ class LookCommand extends commando.Command {
     }
 }
 
-module.exports = LookCommand;
+module.exports = TalkCommand;
