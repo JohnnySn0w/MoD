@@ -8,7 +8,7 @@ class StartCommand extends commando.Command {
             name: 'start',
             group: 'mud',
             memberName: 'start',
-            description: 'Sets the user on his or her journey into the MUD'
+            description: 'sets the player on his or her journey into the MUD'
         });
     }
 
