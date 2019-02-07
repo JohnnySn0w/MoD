@@ -20,7 +20,7 @@ module.exports = [
         "name": "entry-room",
         "id": "530099209614000159",
         "roleid": "530096793422266428",
-        "description": "You're in a large, cavernous room. Your footsteps echo into the darkness. Your journey begins to the north.",
+        "description": "You're in a large, cavernous room. Your footsteps echo into the darkness. Your journey begins to the north... \nThere's also an old-man and a little-boy in the room with you.",
         "exits": {
             "north": "room-0"
         },
@@ -28,7 +28,26 @@ module.exports = [
 
         ],
         "npcs": [
-
+            {
+                "name": "old-man",
+                "formattedName": "Old Man",
+                "greeting": "I'm so old!!!!",
+                "responses": {
+                    "How are you?": "My back hurts because I am O L D !!!!",
+                    "Where are we?": "I don't know!! My back hurts so bad. I'm so old!"
+                },
+                "description": "He's bent over and seems to be upset about something..."
+            }, 
+            {
+                "name": "little-boy",
+                "formattedName": "Little Boy",
+                "greeting": "I'm a little boy!!!!!!",
+                "responses": {
+                    "How are you?": "I'm so great! I'm a little boy!",
+                    "Where are we?": "How would I know? I'm a little boy!"
+                },
+                "description": "It seems like he's a little boy."
+            }
         ],
         "enemies": [
 
