@@ -11,7 +11,7 @@ class TalkCommand extends commando.Command {
             description: 'Allows users to interact with NPCs',
             args: [
                 {
-                    key: 'object',
+                    key: 'person',
                     prompt: 'who are you talking to?',
                     type: 'string'
                 }
@@ -23,22 +23,14 @@ class TalkCommand extends commando.Command {
     async run(message, args) {
         args = this.cleanArguments(args);
         var room = this.determineRoom(message.channel.name);
-		var npc;
-
-        var person = this.determineNPC(args.object, room);
-        /*if (args.object === "room" || args.object === "here") {
-            object = room;
-        }
-        else {
-            object = this.determineItem(args.object, room);
-        }*/
+        var person = this.determineNPC(args.person, room);
         
         this.replyToPlayer(message, person, room);
     }
 
     // sanitize the arguments passed for the object
     cleanArguments(args) {
-        args.object = args.object.toLowerCase();
+        args.person = args.person.toLowerCase();
         return args;
     }
 

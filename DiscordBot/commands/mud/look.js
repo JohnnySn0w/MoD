@@ -70,7 +70,8 @@ class LookCommand extends commando.Command {
                 break;
             }
         }
-		// its not an item... check if its an npc
+
+		// it's not an item, check if it's an npc
 		if (itemObject === undefined) {
 			for (i = 0; i < room.npcs.length; i++) {
 				var npcName = room.npcs[i].name;
