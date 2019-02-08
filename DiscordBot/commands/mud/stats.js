@@ -1,6 +1,7 @@
 const commando = require('discord.js-commando');
 const index = require('../../player-stats'); // place to hold our stats for all players (will replace with database soon)
 
+
 class StatsCommand extends commando.Command {
     constructor(client) {
         super(client, {
@@ -22,10 +23,14 @@ class StatsCommand extends commando.Command {
     }
 
     async run(message, args) {
+
         var value = args.value; // lets us use our args above
         var player = message.member; // gets player name
         var play_id = message.member.id; // gets player id
         var health = 100; // starting health value for all
+        var level = 1;
+        var strength = 7;
+        var defense = 5;
         console.log(value);
         var damage = Number(value); // makes our args a number we can use
 
@@ -36,9 +41,13 @@ class StatsCommand extends commando.Command {
             if (play_id != index.players[i].play_id)
             {
                 message.reply("you have no stats yet.");
-                index.players[i] = {player, play_id, health};
+                index.players[i] = {player, play_id, health, level, strength, defense};
                 message.reply("you now have stats");
-                message.reply(index.players[i].health);
+                message.reply("Health: " + index.players[i].health);
+                message.reply("Level: " + index.players[i].level);
+                message.reply("Strength: " + index.players[i].strength);
+                message.reply("Defense: " + index.players[i].defense);
+                
             }
             // player already exists in the index
             else {
@@ -64,10 +73,10 @@ class StatsCommand extends commando.Command {
                 message.reply("Dead. Resetting health. Now back at 100.");
             }
             
-        } 
+        }
         
     }
+    
 }
-
 
 module.exports = StatsCommand;
