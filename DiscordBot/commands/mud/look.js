@@ -1,4 +1,6 @@
 const commando = require('discord.js-commando');
+// todo replace rooms with dynamo
+const rooms = require('../../rooms.js');
 
 class LookCommand extends commando.Command {
     constructor(client) {
@@ -17,12 +19,85 @@ class LookCommand extends commando.Command {
         });
     }
 
+    // this is essentially the main method of the command
     async run(message, args) {
-        if (message.channel.name == 'test-zone') {
-            message.reply("It's an absolute warzone out here. Completely lawless and no rooms in sight.");
+        args = this.cleanArguments(args);
+        var room = this.determineRoom(message.channel.name);
+
+        var object;
+        if (args.object === "room" || args.object === "here") {
+            object = room;
         }
         else {
-            message.reply("That thing you're trying to look at? Yeah, I'm not sure it exists.");
+            object = this.determineItem(args.object, room);
+        }
+        
+        this.replyToPlayer(message, object, room);
+    }
+
+    // sanitize the arguments passed for the object
+    cleanArguments(args) {
+        args.object = args.object.toLowerCase();
+        return args;
+    }
+
+    // determine what room the player is in
+    determineRoom(searchName) {
+        var roomObject;
+        var i;
+        // todo replace rooms with dynamo
+        for (i = 0; i < rooms.length; i++) {
+            var roomName = rooms[i].name;
+
+            if (searchName === roomName) {
+                roomObject = rooms[i];
+                break;
+            }
+        }
+
+        return roomObject;
+    }
+
+    // determine what item the player is looking at
+    determineItem(searchName, room) {
+        var itemObject;
+        var i;
+        for (i = 0; i < room.items.length; i++) {
+            var itemName = room.items[i].name;
+
+            if (searchName === itemName) {
+                itemObject = room.items[i];
+                break;
+            }
+        }
+
+		// it's not an item, check if it's an npc
+		if (itemObject === undefined) {
+			for (i = 0; i < room.npcs.length; i++) {
+				var npcName = room.npcs[i].name;
+
+				if (searchName === npcName) {
+					itemObject = room.npcs[i];
+					break;
+				}
+			}
+		}
+
+        return itemObject;
+    }
+
+    // respond to the player based on their current room and the object's description
+    replyToPlayer(message, object, room) {
+        if (!(room === undefined)) {
+            if (!(object === undefined)) {
+                message.reply(object.description);
+            }
+            else {
+                message.reply("I'm not sure what you're trying to look at.");
+            }
+        }
+        else {
+            message.reply("You are not in a MUD-related room");
         }
     }
 }

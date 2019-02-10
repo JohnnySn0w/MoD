@@ -1,4 +1,3 @@
-const Discord = require('discord.js');
 const commando = require('discord.js-commando');
 const login = require('./loginCode');
 const client = new commando.Client({

@@ -9,3 +9,4 @@
 **/.dynamodb
 # exclude bot key
 DiscordBot/loginCode.js
+DiscordBot/rooms.js
