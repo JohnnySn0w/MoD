@@ -1,5 +1,5 @@
 const commando = require('discord.js-commando');
-const index = require('../../player-stats');
+const players = require('../../schemas/players');
 
 class StatsCommand extends commando.Command {
     constructor(client) {
@@ -30,14 +30,14 @@ class StatsCommand extends commando.Command {
         var damage = Number(value);
         var rolled = Number(die);
 
-        for (let i = 0; i < index.players.length; i++)
+        for (let i = 0; i < players.length; i++)
         {
-            if (play_id != index.players[i].play_id)
+            if (play_id != players[i].play_id)
             {
                 message.reply("you have no stats yet.");
-                index.players[i] = {player, play_id, health};
+                players[i] = {player, play_id, health};
                 message.reply("you now have stats");
-                message.reply(index.players[i].health);
+                message.reply(players[i].health);
             }
             else {
                 message.reply("you exist!");
@@ -45,16 +45,16 @@ class StatsCommand extends commando.Command {
 
             if (damage != 0) {
                 message.reply("a hit!");
-                var dam = new Number(index.players[i].health) - damage;
-                index.players[i].health = dam;
-                message.reply(index.players[i].health);
+                var dam = new Number(players[i].health) - damage;
+                players[i].health = dam;
+                message.reply(players[i].health);
             }
                 else {
                 message.reply("no damage dealt");
             }
 
-            if (index.players[i].health <= 0) {
-                index.players[i].health = 100;
+            if (players[i].health <= 0) {
+                players[i].health = 100;
                 message.reply("Resetting health. Now back at 100.");
             }
             
