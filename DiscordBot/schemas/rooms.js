@@ -6,9 +6,9 @@ module.exports = [
         "exits": {
             
         },
-        "items": [
-
-        ],
+        "items": {
+            
+        },
         "npcs": [
 
         ],
