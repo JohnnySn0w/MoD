@@ -1,7 +1,6 @@
 'use strict';
 
 const databaseManager = require('./databaseManager');
-// const uuidv1 = require('uuid/v1');
 
 function createResponse(statusCode, message) {
   return {
@@ -12,7 +11,6 @@ function createResponse(statusCode, message) {
 
 module.exports.saveItem = (item, callback) => {
   console.log(item);
-  // item.itemId = uuidv1();
 
   databaseManager.saveItem(item).then(response => {
     console.log(response);
@@ -27,18 +25,16 @@ module.exports.getItem = (itemId, callback) => {
   });
 };
 
-module.exports.deleteItem = (event, context, callback) => {
-  const itemId = event.pathParameters.itemId;
-
+module.exports.deleteItem = (itemId, callback) => {
   databaseManager.deleteItem(itemId).then(response => {
+    console.log(response);
     callback(createResponse(200, 'Item was deleted'));
   });
 };
 
-module.exports.updateItem = (event, context, callback) => {
-  const itemId = event.pathParameters.itemId;
-
-  const body = JSON.parse(event.body);
+module.exports.updateItem = (itemInfo, callback) => {
+  const itemId = itemInfo.pathParameters.itemId;
+  const body = JSON.parse(itemInfo.body);
   const paramName = body.paramName;
   const paramValue = body.paramValue;
 
@@ -47,13 +43,3 @@ module.exports.updateItem = (event, context, callback) => {
     callback(createResponse(200, response));
   });
 };
-
-// module.exports.triggerStream = (event, context, callback) => {
-//   console.log('trigger stream was called');
-
-//   const eventData = event.Records[0];
-//   //console.log(eventData);
-
-//   console.log(eventData.dynamodb.NewImage);
-//   callback(null, null);
-// };

@@ -20,24 +20,27 @@ class DB extends commando.Command {
 
   // this currently only outputs in the terminal the bot is running in
   itemSaved(response) {
-    console.log(`Code: ${response.statusCode} \nItem: ${response.body}`);
+    console.log(`${response}\nCode: ${response.statusCode} \nItem: ${response.body}`);
   }
 
   // sanitize the arguments passed for the object
   cleanArguments(args) {
     args.object = args.object.toLowerCase();
-    return args;
+    const stringArray = args.object.split(/\s+/);
+    return stringArray;
   }
   
   // added save and get 
   async run(message, args) {
     args = this.cleanArguments(args);
     if (message.channel.name == 'room-of-entry') {
-      if(args.object === 'save') {
-        db.saveItem(dumbDynamoRoom, this.itemSaved);
+      if(args[0] === 'save') {
+        console.log(JSON.stringify(args[1]));
+        db.saveItem(JSON.parse(args[1]), this.itemSaved);
+        console.log('item saved');
         message.reply('loaded');
-      } else if (args.object === 'get') {
-        db.getItem('1', this.itemSaved);
+      } else if (args[0] === 'get') {
+        db.getItem(args[1], this.itemSaved);
         message.reply('item got');
       }
     }
@@ -45,22 +48,6 @@ class DB extends commando.Command {
 }
 
 //placeholder dummy data from eric's scheme
-const dumbDynamoRoom = {
-  'name': 'entry',
-  'itemId': '1',
-  'description': 'asdf',
-  'exits': {
-          
-  },
-  'items': [
-  
-  ],
-  'npcs': [
-  
-  ],
-  'enemies': [
-  
-  ]
-};
+const dumbDynamoRoom = {'name':'entry','itemId':'1','description':'asdf','exits':{},'items':[],'npcs':[],'enemies':[]};
 
 module.exports = DB;

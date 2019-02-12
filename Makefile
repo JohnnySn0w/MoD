@@ -19,7 +19,6 @@ dependencies: deleteDir
 .PHONY: setDynamo
 setDynamo:
 	sudo $(SLS) dynamodb install;
-	sudo $(SLS) dynamodb start --migrate
 
 .PHONY: startBot
 startBot:
