@@ -1,3 +1,9 @@
+/*
+  kind of an example command
+*/
+
+
+
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -24,6 +30,7 @@ class DB extends commando.Command {
   }
 
   // sanitize the arguments passed for the object
+  // take more than one argument
   cleanArguments(args) {
     args.object = args.object.toLowerCase();
     const stringArray = args.object.split(/\s+/);
@@ -35,6 +42,7 @@ class DB extends commando.Command {
     args = this.cleanArguments(args);
     if (message.channel.name == 'room-of-entry') {
       if(args[0] === 'save') {
+        //not currently functional
         console.log(JSON.stringify(args[1]));
         db.saveItem(JSON.parse(args[1]), this.itemSaved);
         console.log('item saved');
