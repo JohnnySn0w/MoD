@@ -10,24 +10,22 @@ function createResponse(statusCode, message) {
 }
 
 module.exports.saveItem = (item, callback) => {
-  console.log(item);
-
+  console.log('handler received: \n', item);
   databaseManager.saveItem(item).then(response => {
-    console.log(response);
     callback(createResponse(200, response));
   });
 };
 
 module.exports.getItem = (itemId, callback) => {
-  databaseManager.getItem(itemId).then(response => {
-    console.log(response);
+  console.log('handler got: \n', item);
+  return databaseManager.getItem(itemId).then(response => {
     callback(createResponse(200, response));
   });
 };
 
 module.exports.deleteItem = (itemId, callback) => {
   databaseManager.deleteItem(itemId).then(response => {
-    console.log(response);
+    console.log('handler deleted: \n', response);
     callback(createResponse(200, 'Item was deleted'));
   });
 };
@@ -39,7 +37,7 @@ module.exports.updateItem = (itemInfo, callback) => {
   const paramValue = body.paramValue;
 
   databaseManager.updateItem(itemId, paramName, paramValue).then(response => {
-    console.log(response);
+    console.log('handler updated: \n', item);
     callback(createResponse(200, response));
   });
 };
