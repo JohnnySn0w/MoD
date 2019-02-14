@@ -33,7 +33,12 @@ module.exports.saveItem = item => {
 
   return dynamo.put(params).promise().then(() => {
     return item.itemId;
-  });
+  })
+    .catch((oof) => 
+    {
+      console.error(oof);
+      return oof.statusCode;
+    });
 };
 
 module.exports.getItem = itemId => {
@@ -45,8 +50,13 @@ module.exports.getItem = itemId => {
   };
 
   return dynamo.get(params).promise().then(result => {
-    return result.Item;
-  });
+    return result;
+  })
+    .catch((oof) => 
+    {
+      console.error('ERROR:', oof);
+      return oof.statusCode;
+    });
 };
 
 module.exports.deleteItem = itemId => {
@@ -76,5 +86,10 @@ module.exports.updateItem = (itemId, paramsName, paramsValue) => {
 
   return dynamo.update(params).promise().then(response => {
     return response.Attributes;
-  });
+  })
+    .catch((oof) => 
+    {
+      console.error(oof);
+      return oof.statusCode;
+    });
 };
