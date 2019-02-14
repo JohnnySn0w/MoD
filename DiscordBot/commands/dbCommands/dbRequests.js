@@ -1,3 +1,7 @@
+/*
+  kind of an example command
+*/
+
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -38,6 +42,7 @@ class DB extends commando.Command {
   }
 
   // sanitize the arguments passed for the object
+  // takes more than one argument
   cleanArguments(args) {
     // args.object = args.object.toLowerCase();
     const stringArray = args.object.split(/\s+/);
