@@ -6,7 +6,7 @@ DIRECTORY = ~/.config
 .PHONY: deleteDir
 deleteDir:
 	if test -d $(DIRECTORY); \
-		then rm -rf $(DIRECTORY); \
+		then sudo rm -rf $(DIRECTORY); \
 	fi
 
 .PHONY: dependencies
@@ -14,10 +14,14 @@ dependencies: deleteDir
 	mkdir $(DIRECTORY);
 	sudo chown -R $(USER) ~/.npm; sudo chown -R $(USER) $(DIRECTORY);
 	sudo yarn global add nodemon;
-	sudo yarn install --no-bin-links;
+	sudo yarn install;
 
 .PHONY: setDynamo
 setDynamo:
-	$(SLS) dynamodb install;
-	$(SLS) dynamodb start --migrate
+	sudo $(SLS) dynamodb install;
+
+.PHONY: startBot
+startBot:
+	sudo $(SLS) dynamodb start --migrate
+	yarn start
 	

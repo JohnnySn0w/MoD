@@ -7,15 +7,15 @@ custom:
   myStage: ${opt:stage, self:provider.stage}
   settings:
     dev:
-      ITEMS_DYNAMODB_TABLE: sls-basic-operations-items-dev
+      ENTITIES_DYNAMODB_TABLE: MoD-entities-dev
     prod:
-      ITEMS_DYNAMODB_TABLE: sls-basic-operations-items-prod
+      ENTITIES_DYNAMODB_TABLE: MoD-entities-prod
 
 provider:
   name: aws
   runtime: nodejs6.10
   profile: default
-  region: eu-west-1
+  region: us-east-1
   environment: ${self:custom.settings.${self:custom.myStage}}
 
   iamRoleStatements:
@@ -27,7 +27,7 @@ provider:
         - "dynamodb:DeleteItem"
         - "dynamodb:ListStreams"
       Resource:
-        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.ITEMS_DYNAMODB_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.ENTITIES_DYNAMODB_TABLE}"
 
 functions:
   saveItem:
@@ -80,6 +80,6 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: ${self:custom.settings.${self:custom.myStage}.ITEMS_DYNAMODB_TABLE}
+        TableName: ${self:custom.settings.${self:custom.myStage}.ENTITIES_DYNAMODB_TABLE}
         StreamSpecification:
           StreamViewType: NEW_IMAGE
