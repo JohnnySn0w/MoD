@@ -14,7 +14,7 @@ dependencies: deleteDir
 	mkdir $(DIRECTORY);
 	sudo chown -R $(USER) ~/.npm; sudo chown -R $(USER) $(DIRECTORY);
 	sudo yarn global add nodemon;
-	sudo yarn install;
+	sudo yarn install --no-bin-links;
 
 .PHONY: setDynamo
 setDynamo:
