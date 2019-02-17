@@ -20,7 +20,8 @@ sudo apt-get -qq update \
         curl \
         npm \
         nodejs \
-        ntp
+        ntp \
+        openjdk-11-jdk
 echo "Updating Node"
 sudo npm i -g n
 sudo n latest

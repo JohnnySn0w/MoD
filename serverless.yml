@@ -7,15 +7,15 @@ custom:
   myStage: ${opt:stage, self:provider.stage}
   settings:
     dev:
-      ITEMS_DYNAMODB_TABLE: sls-basic-operations-items-dev
+      ENTITIES_DYNAMODB_TABLE: MoD-entities-dev
     prod:
-      ITEMS_DYNAMODB_TABLE: sls-basic-operations-items-prod
+      ENTITIES_DYNAMODB_TABLE: MoD-entities-prod
 
 provider:
   name: aws
   runtime: nodejs6.10
   profile: default
-  region: eu-west-1
+  region: us-east-1
   environment: ${self:custom.settings.${self:custom.myStage}}
 
   iamRoleStatements:
@@ -25,9 +25,8 @@ provider:
         - "dynamodb:PutItem"
         - "dynamodb:UpdateItem"
         - "dynamodb:DeleteItem"
-        - "dynamodb:ListStreams"
       Resource:
-        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.ITEMS_DYNAMODB_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.ENTITIES_DYNAMODB_TABLE}"
 
 functions:
   saveItem:
@@ -54,21 +53,10 @@ functions:
       - http:
           path: item/{itemId}
           method: put
-  triggerStream:
-    handler: handler.triggerStream
-    events:
-       - stream:
-          type: dynamodb
-          batchSize: 1
-          startingPosition: LATEST
-          arn:
-            Fn::GetAtt:
-              - ImagesTable
-              - StreamArn
 
 resources:
   Resources:
-    ImagesTable:
+    MudTable:
       Type: "AWS::DynamoDB::Table"
       Properties:
         AttributeDefinitions:
@@ -80,6 +68,6 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: ${self:custom.settings.${self:custom.myStage}.ITEMS_DYNAMODB_TABLE}
-        StreamSpecification:
-          StreamViewType: NEW_IMAGE
+        TableName: ${self:custom.settings.${self:custom.myStage}.ENTITIES_DYNAMODB_TABLE}
+        # StreamSpecification:
+        #   StreamViewType: NEW_IMAGE
