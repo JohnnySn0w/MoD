@@ -1,6 +1,7 @@
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 var players = require('../../schemas/players'); // place to hold our stats for all players (will replace with database soon)
+const entities = require('../../schemas/entities');
 
 var entryRoomRole;
 
@@ -27,7 +28,7 @@ class StartCommand extends commando.Command {
         var strength = 7;
         var defense = 5; 
         var inventory = [];
-        var progress = [];
+        var progress = this.makeProgress();
 
         if (message.channel.name == 'test-zone') {
             // check to make sure player doesn't exist yet via player id
@@ -56,6 +57,19 @@ class StartCommand extends commando.Command {
         else {
             message.reply("Sorry, you can't start playing the MUD unless you're in the <#525378260192854027>.");
         }
+    }
+
+    makeProgress() {
+        var progress = {};
+        var npc = {};
+
+        for (var i = 0; i < entities.length; i++) {
+            npc[entities[i].id] = "0";
+        }
+
+        progress.npc = npc;
+
+        return progress;
     }
 }
 

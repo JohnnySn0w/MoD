@@ -1,7 +1,7 @@
 module.exports = [
     {
         "name": "Goblin",
-        "id": 0,
+        "id": "0",
         "level": 0,
         "health": 20,
         "strength": 3,
@@ -17,7 +17,7 @@ module.exports = [
     },
     {
         "name": "Old Man",
-        "id": 1,
+        "id": "1",
         "level": 0,
         "health": 10,
         "strength": 1,
@@ -25,18 +25,26 @@ module.exports = [
         "description": "He's bent over and seems to be upset about something...",
         "responses": {
             "0": {
-                "0": "I'm so old!\n[0] Ask what's wrong\n[1] Ask where you are"
+                "reply": "I'm so old!",
+                "responses": [
+                    {
+                        "[0] Ask what's wrong": "1"
+                    },
+                    {
+                        "[1] Ask where you are": "2"
+                    }
+                ]
             },
             "1": {
-                "0": "My back hurts because I'm so OLD!",
-                "1": "I don't know! My back hurts so bad.",
+                "reply": "My back hurts because I'm so OLD!",
+                "responses": [
+                ]
+            },
+            "2": {
+                "reply": "I don't know! My back hurts so bad.",
+                "responses": [
+                ]
             }
-        },
-        "options": {
-            "0": [
-                "[0] Ask what's wrong.",
-                "[1] Ask where you are"
-            ]
         },
         "hostile": false,
         "loot": [
@@ -44,7 +52,7 @@ module.exports = [
     }, 
     {
         "name": "Little Boy",
-        "id": 1,
+        "id": "2",
         "level": 0,
         "health": 10,
         "strength": 3,
@@ -52,18 +60,26 @@ module.exports = [
         "description": "It seems like he's a little boy.",
         "responses": {
             "0": {
-                "0": "I'm a little boy!"
+                "reply": "I'm a little boy!",
+                "responses": [
+                    {
+                        "[0] Ask how is he": "1"
+                    },
+                    {
+                        "[1] Ask where you are": "2"
+                    }
+                ]
             },
             "1": {
-                "0": "I'm so great! I'm a little boy!",
-                "1": "How would I know? I'm a little boy!",
+                "reply": "I'm so great! I'm a little boy!",
+                "responses": [
+                ]
+            },
+            "2": {
+                "reply": "How would I know? I'm a little boy!",
+                "responses": [
+                ]
             }
-        },
-        "options": {
-            "0": [
-                "[0] Ask how is he",
-                "[1] Ask where you are"
-            ]
         },
         "hostile": false,
         "loot": [

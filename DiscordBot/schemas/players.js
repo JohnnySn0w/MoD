@@ -1,7 +1,7 @@
 module.exports = [
     {
         "name": "John",
-        "id": 1,
+        "id": "0",
         "level": 0,
         "health": 100,
         "strength": 7,
@@ -9,8 +9,12 @@ module.exports = [
         "inventory": [
 
         ],
-        "progress": [
-
-        ]
+        "progress": {
+            "npc": {
+                "0": "0",
+                "1": "0",
+                "2": "0"
+            }
+        }
     }
 ]
