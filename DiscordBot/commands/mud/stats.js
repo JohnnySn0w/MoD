@@ -1,5 +1,5 @@
 const commando = require('discord.js-commando');
-const index = require('../../player-stats');
+var players = require('../../player-stats');
 
 class StatsCommand extends commando.Command {
     constructor(client) {
@@ -7,61 +7,41 @@ class StatsCommand extends commando.Command {
             name: 'stats',
             group: 'mud',
             memberName: 'stats',
-            description: 'Shows player stats for the player who calls for them',
-            args: [
-                {
-                    key: 'value',
-                    prompt: 'how much damage to inflict?',
-                    type: 'integer',
-                    default: "0"
-                }
-            ]
-        
+            description: 'Shows player stats for the player who calls for them'      
         });
     }
 
     async run(message, args) {
-        var value = args.value;
-        var die = args.roll;
-        var player = message.member;
-        var play_id = message.member.id;
-        var health = 100;
-        console.log(value);
-        var damage = Number(value);
-        var rolled = Number(die);
+        var play_id = message.member.id; 
+        console.log(players.length);
 
-        for (let i = 0; i < index.players.length; i++)
+        // delete stat command after saying it!
+        message.delete();
+
+        // checks through our players of players to see what to do next
+        for (var i = 0; i < players.length; i++)
         {
-            if (play_id != index.players[i].play_id)
-            {
-                message.reply("you have no stats yet.");
-                index.players[i] = {player, play_id, health};
-                message.reply("you now have stats");
-                message.reply(index.players[i].health);
-            }
-            else {
-                message.reply("you exist!");
-            }
-
-            if (damage != 0) {
-                message.reply("a hit!");
-                var dam = new Number(index.players[i].health) - damage;
-                index.players[i].health = dam;
-                message.reply(index.players[i].health);
-            }
-                else {
-                message.reply("no damage dealt");
-            }
-
-            if (index.players[i].health <= 0) {
-                index.players[i].health = 100;
-                message.reply("Resetting health. Now back at 100.");
-            }
+            let user = players[i].player;  
             
-        } 
+            // this places a new player into our players
+            if (play_id == players[i].play_id)
+            {                 
+                // how to DM users anything - these two commands right here                     
+                user.send("Health: " + players[i].health + "\n" + "Level: " + players[i].level + "\n" + "Strength: " + players[i].strength + "\n" + "Defense: " + players[i].defense);  
+                
+                // warning if your health is low
+                if (players[i].health > 0 && players[i].health < 11) {
+                    user.send("You're on death's door, my friend.");
+                }            
+            } else {
+                message.reply("you need to start your adventure first! Please enter the start command to get situated.")
+            }       
+            
+        }
+            
+        }
         
     }
-}
-
+    
 
 module.exports = StatsCommand;
