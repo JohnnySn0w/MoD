@@ -1,4 +1,5 @@
 const commando = require('discord.js-commando');
+const db = require('../../../dbhandler');
 var players = require('../../player-stats'); // place to hold our stats for all players (will replace with database soon)
 
 var entryRoomRole;
@@ -19,7 +20,7 @@ class StartCommand extends commando.Command {
 
         // moved the initialization of player stats from stats to start - Santiago
 
-        var player = message.member; // gets player name
+        var player = message.member.user.username; // gets player name
         var play_id = message.member.id; // gets player id
         var health = 100; // starting health value for all
         var level = 1;
@@ -46,9 +47,11 @@ class StartCommand extends commando.Command {
                 message.reply("it seems like you've already started!");
             } 
             else {              
-                players.push({player, play_id, health, level, strength, defense}); 
+                players.push({player, play_id, health, level, strength, defense, inventory, progress}); 
+                //console.log(db.saveItem({player, play_id, health, level, strength, defense, inventory, progress}));
                 message.reply("Welcome to the MUD! Your journey starts in the above text channels. Good luck!");
                 message.member.setRoles([entryRoomRole]).catch(console.error);
+                console.log(players);
             }
         }
         else {

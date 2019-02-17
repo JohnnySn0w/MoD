@@ -51,16 +51,14 @@ class DB extends commando.Command {
   
   // added save and get 
   async run(message, args) {
-    args = this.cleanArguments(args);
-    if (message.channel.name == 'room-of-entry') {
-      if(args[0] === 'save') {
-        args[1] = JSON.stringify(args[1]);
-        db.saveItem(dumbDynamoRoom, (data) => this.replies(message, data, 'save'));
-      } else if (args[0] === 'get') {
-        db.getItem(args[1], (data) => this.replies(message, data, 'get'));
-      }
+    args = this.cleanArguments(args);    
+    if(args[0] === 'save') {
+      args[1] = JSON.stringify(args[1]);
+      db.saveItem(dumbDynamoRoom, (data) => this.replies(message, data, 'save'));
+    } else if (args[0] === 'get') {
+      db.getItem(args[1], (data) => this.replies(message, data, 'get'));
     }
-  }
+  }  
 }
 
 //placeholder dummy data from eric's scheme
