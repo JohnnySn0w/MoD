@@ -21,23 +21,22 @@ class StatsCommand extends commando.Command {
         // checks through our players of players to see what to do next
         for (var i = 0; i < players.length; i++)
         {
+            let user = players[i].player;  
+            
             // this places a new player into our players
             if (play_id == players[i].play_id)
-            { 
-                // how to DM users anything - these two commands right here
-                let user = players[i].player;       
-                return user.send("Health: " + players[i].health + "\n" + "Level: " + players[i].level + "\n" + "Strength: " + players[i].strength + "\n" + "Defense: " + players[i].defense);              
-            }
-        
-            // warning if your health is low
-            if (players[i].health > 0 && players[i].health < 11) {
-                message.reply("A fellow player is on death's door.");
-            }
-            // resets health if you "die"
-            if (players[i].health <= 0) {
-                players[i].health = 100;
-                message.reply("A player has died!");
-            }
+            {                 
+                // how to DM users anything - these two commands right here                     
+                user.send("Health: " + players[i].health + "\n" + "Level: " + players[i].level + "\n" + "Strength: " + players[i].strength + "\n" + "Defense: " + players[i].defense);  
+                
+                // warning if your health is low
+                if (players[i].health > 0 && players[i].health < 11) {
+                    user.send("You're on death's door, my friend.");
+                }            
+            } else {
+                message.reply("you need to start your adventure first! Please enter the start command to get situated.")
+            }       
+            
         }
             
         }
