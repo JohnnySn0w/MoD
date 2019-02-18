@@ -9,7 +9,8 @@ fi
 if ! grep -q "alias dock='docker ps -a'" $HOME/.bashrc ; then 
     echo "alias dock='docker ps -a'" >> $HOME/.bashrc
     echo "alias sls='/vagrant/node_modules/serverless/bin/serverless'" >> $HOME/.bashrc
-    echo "alias nodemon='/vagrant/node_modules/nodemon/bin/nodemon'" >> $HOME/.bashrc
+    # echo "alias nodemon='/vagrant/node_modules/nodemon/bin/nodemon'" >> $HOME/.bashrc
+    # echo "alias jest='node_modules/jest/bin/jest.js'" >> $HOME/.bashrc
 fi 
 echo "Landing..."
 
