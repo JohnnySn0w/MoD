@@ -1,5 +1,6 @@
 const commando = require('discord.js-commando');
-var players = require('../../player-stats');
+const players = require('../../schemas/players'); // place to hold our stats for all players (will replace with database soon)
+
 
 class StatsCommand extends commando.Command {
     constructor(client) {
@@ -12,7 +13,7 @@ class StatsCommand extends commando.Command {
     }
 
     async run(message, args) {
-        var play_id = message.member.id; 
+        var id = message.member.id; 
         console.log(players.length);
 
         // delete stat command after saying it!
@@ -21,7 +22,7 @@ class StatsCommand extends commando.Command {
         var player;
         for (var i = 0; i < players.length; i++)
         {
-            if (play_id == players[i].play_id)
+            if (id == players[i].id)
             {
                 player = players[i];    
                 break;                                         

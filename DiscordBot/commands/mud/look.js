@@ -1,6 +1,7 @@
 const commando = require('discord.js-commando');
 // todo replace rooms with dynamo
-const rooms = require('../../rooms.js');
+const rooms = require('../../schemas/rooms.js');
+const items = require('../../schemas/items.js');
 
 class LookCommand extends commando.Command {
     constructor(client) {
@@ -61,19 +62,25 @@ class LookCommand extends commando.Command {
     // determine what item the player is looking at
     determineItem(searchName, room) {
         var itemObject;
+        var searchID;
         var i;
-        for (i = 0; i < room.items.length; i++) {
-            var itemName = room.items[i].name;
+        // check if the item is in the room
+        if (searchName in room.items) {
+            searchID = room.items[searchName];
 
-            if (searchName === itemName) {
-                itemObject = room.items[i];
-                break;
+            // if the item is in the room, find its object in items.js
+            for (i = 0; i < items.length; i++) {
+                var itemID = items[i].id;
+    
+                if (searchID === itemID) {
+                    itemObject = items[i];
+                    break;
+                }
             }
         }
-
-		// it's not an item, check if it's an npc
-		if (itemObject === undefined) {
-			for (i = 0; i < room.npcs.length; i++) {
+        // it's not an item, check if it's an npc
+        else {
+            for (i = 0; i < room.npcs.length; i++) {
 				var npcName = room.npcs[i].name;
 
 				if (searchName === npcName) {
@@ -81,7 +88,7 @@ class LookCommand extends commando.Command {
 					break;
 				}
 			}
-		}
+        }
 
         return itemObject;
     }

@@ -1,6 +1,6 @@
 const commando = require('discord.js-commando');
 // todo replace rooms with dynamo
-const rooms = require('../../rooms.js');
+const rooms = require('../../schemas/rooms.js');
 
 class MoveCommand extends commando.Command {
     constructor(client) {

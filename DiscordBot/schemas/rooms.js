@@ -6,9 +6,9 @@ module.exports = [
         "exits": {
             
         },
-        "items": [
-
-        ],
+        "items": {
+            
+        },
         "npcs": [
 
         ],
@@ -62,12 +62,10 @@ module.exports = [
             "west": "room-1",
             "south": "entry-room"
         },
-        "items": [
-            {
-                "name": "boulders",
-                "description": "A large pile of imposing boulders block your path westward. It's no use trying to move them."
-            }
-        ],
+        "items": {
+            "boulders": 2,
+            "rocks": 2,
+        },
         "npcs": [
 
         ],
@@ -84,12 +82,9 @@ module.exports = [
             "up": "room-2",
             "east": "room-0"
         },
-        "items": [
-            {
-                "name": "ladder",
-                "description": "It's a wooden ladder with rungs perfectly spaced. The ladder itself is afixed to the wall and seems to lead upwards."
-            }
-        ],
+        "items": {
+            "ladder": 1,
+        },
         "npcs": [
 
         ],
@@ -105,12 +100,9 @@ module.exports = [
         "exits": {
             "down": "room-1"
         },
-        "items": [
-            {
-                "name": "ladder",
-                "description": "It's a wooden ladder that rises up from a perfectly square hole. It seems to lead downward."
-            }
-        ],
+        "items": {
+            "ladder": 0,
+        },
         "npcs": [
 
         ],
