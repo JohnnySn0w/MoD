@@ -24,22 +24,28 @@ class TalkCommand extends commando.Command {
     // this is essentially the main method of the command
     async run(message, args) {
 		var playerID = message.member.id;
-		var player;
-        for (var i = 0; i < players.length; i++)
-        {
-            if (playerID == players[i].id)
-            {
+        var player;
+
+        // determine the player that's issuing the command
+        for (var i = 0; i < players.length; i++) {
+            if (playerID == players[i].id) {
                 player = players[i];    
                 break;                                         
             }
         }
 
-        args = this.cleanArguments(args);
-        var room = this.determineRoom(message.channel.name);
-        var person = this.determineNPC(args.person, room);
-		var response = (person === undefined) ? "" : this.determineResponse(person, player);
-
-        this.replyToPlayer(player, message, person, response, room);
+        // if we couldn't find the player, they haven't started yet
+        if (player === undefined) {
+            message.reply("it seems that you're not a part of the MUD yet! \nUse \"?start\" in test-zone to get started!");
+        }
+        else {
+            args = this.cleanArguments(args);
+            var room = this.determineRoom(message.channel.name);
+            var person = this.determineNPC(args.person, room);
+            var response = (person === undefined) ? "" : this.determineResponse(person, player);
+    
+            this.replyToPlayer(player, message, person, response, room);
+        }
     }
 
     // sanitize the arguments passed for the object
@@ -52,6 +58,7 @@ class TalkCommand extends commando.Command {
     determineRoom(searchName) {
         var roomObject;
         var i;
+
         // todo replace rooms with dynamo
         for (i = 0; i < rooms.length; i++) {
             var roomName = rooms[i].name;
@@ -62,7 +69,6 @@ class TalkCommand extends commando.Command {
             }
         }
 		
-		//console.log(roomObject);
         return roomObject;
     }
 
@@ -70,8 +76,10 @@ class TalkCommand extends commando.Command {
     determineNPC(searchName, room) {
         var npcObject;
         var i;
+
 		if (searchName in room.npcs) {
-			var searchID = room.npcs[searchName];
+            var searchID = room.npcs[searchName];
+            
 			// find in the npc schema if the npc is in the room!!!
 			for (i = 0; i < npcs.length; i++) {
 				var npcID = npcs[i].id;
@@ -85,26 +93,23 @@ class TalkCommand extends commando.Command {
         return npcObject;
     }
 
-	// Creates the npcs response and prompts based on players progress
+	// creates the npcs response and prompts based on players progress
 	determineResponse(npc, player) {
-		var response;
-		if (!(npc === undefined)) { // There is an npc to respond to you!!
-			// Find player's progress with this npc
-			if (!(player === undefined)) {
-				if (npc.id in player.progress.npc) { // check if talked to this npc before
-					var progress = player.progress.npc[npc.id];
-					if (progress in npc.responses) {
-						response = npc.responses[progress].reply;
-						for (var i = 0; i < npc.responses[progress].prompts.length; i++) {
-							response = response + "\n" + npc.responses[progress].prompts[i].prompt;
-						}
-					}
-				}
-			} else {
-				// Just to make sure the user is someone who has actually started the game and there is progress for
-				response = "Who are you? Have you even started your adventure yet? How did you get here?";
-			}
-		}
+        var response;
+        
+		if (!(npc === undefined)) {
+			// find player's progress with this npc
+            if (npc.id in player.progress.npc) { // check if talked to this npc before
+                var progress = player.progress.npc[npc.id];
+                if (progress in npc.responses) {
+                    response = npc.responses[progress].reply;
+                    for (var i = 0; i < npc.responses[progress].prompts.length; i++) {
+                        response = response + "\n" + npc.responses[progress].prompts[i].prompt;
+                    }
+                }
+            }
+        }
+        
 		return response;
 	}
 
@@ -126,31 +131,37 @@ class TalkCommand extends commando.Command {
     // respond to the npc's response
     replyToPlayer(player, message, person, response, room) {
 		var responded = false;
-		var progress = player.progress.npc[person.id];
+        var progress = player.progress.npc[person.id];
+        
         if (!(room === undefined)) {
-            if (!(person === undefined)) {
-                message.reply(person.name + ": " + response);
+            if (!(progress === undefined)) {
+                if (!(progress === undefined)) {
+                    message.reply(person.name + ": " + response);
 
-				// responses change to using length
-				const filter = m => (m.content < person.responses[progress].prompts.length) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
-				const collector = message.channel.createMessageCollector(filter, {time: 15000});
-
-				collector.on('collect', m => {
-					responded = true;
-					// stops collector
-					collector.stop();
-
-					this.makeProgress(player, person, m.content);
-					var newResponse = this.determineResponse(person, player);
-					
-					this.replyToPlayer(player, message, person, newResponse, room);
-				});
-
-				collector.on('end', m => {
-					if (!responded) {
-						message.reply(person.name + " walked away...")
-					}
-				});
+                    // responses change to using length
+                    const filter = m => (m.content < person.responses[progress].prompts.length) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
+                    const collector = message.channel.createMessageCollector(filter, {time: 15000});
+    
+                    collector.on('collect', m => {
+                        responded = true;
+                        // stops collector
+                        collector.stop();
+    
+                        this.makeProgress(player, person, m.content);
+                        var newResponse = this.determineResponse(person, player);
+                        
+                        this.replyToPlayer(player, message, person, newResponse, room);
+                    });
+    
+                    collector.on('end', m => {
+                        if (!responded) {
+                            message.reply(person.name + " walked away...")
+                        }
+                    });
+                }
+                else {
+                    message.reply("There was no response...");
+                }
             }
             else {
                 message.reply("I'm not sure who you're talking to...");
