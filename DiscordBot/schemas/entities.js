@@ -25,26 +25,104 @@ module.exports = [
         "description": "He's bent over and seems to be upset about something...",
         "responses": {
             "0": {
-                "reply": "I'm so old!",
-                "responses": [
-                    {
-                        "[0] Ask what's wrong": "1"
-                    },
-                    {
-                        "[1] Ask where you are": "2"
-                    }
+                "reply": "Hello! I'm so old!",
+                "prompts": [
+					{
+						"prompt":  "[0] Ask how he is",
+						"progression": "1"
+					}, 
+					{
+						"prompt":"[1] Ask where you are",
+						"progression": "2"
+					}
                 ]
             },
             "1": {
                 "reply": "My back hurts because I'm so OLD!",
-                "responses": [
+                "prompts": [
+					{
+						"prompt": "[0] Say hello again",
+						"progression": "0" 
+					},
+					{
+						"prompt": "[1] Ask where you are",
+						"progression": "2"
+					},
+					{
+						"prompt": "[2] Offer him some ALEVE",
+						"progression": "3"
+					}
                 ]
             },
             "2": {
-                "reply": "I don't know! My back hurts so bad.",
-                "responses": [
+                "reply": "I don't know! I'm old.",
+                "prompts": [
+					{
+						"prompt": "[0] Say hello again", 
+						"progression": "0"
+					},
+					{
+						"prompt": "[1] Ask how he is", 
+						"progression": "1"
+					}
                 ]
-            }
+            },
+			"3": {
+				"reply": "Oh wow!!! Thank you so much!!\n\nThe old man puts the ALEVE in his pocket...",
+				"prompts": [
+					{
+						"prompt": "[0] Say hello again",
+						"progression": "4"
+					}, 
+					{
+						"prompt": "[1] Ask how he is",
+						"progression": "5"
+					},
+					{
+						"prompt": "[2] Ask where you are",
+						"progression": "6"
+					}
+				]
+			},
+			"4" : {
+				"reply": "Hi there!!! I hope I feel better soon!!",
+				"prompts": [
+					{
+						"prompt": "[0] Ask how he is",
+						"progression": "5"
+					},
+					{
+						"prompt": "[1] Ask where you are",
+						"progression": "6"
+					}
+				]
+			},
+			"5" : {
+				"reply": "My back feels better already!!!\n\n...You don't mention that the ALEVE is still in his pocket...",
+				"prompts": [
+					{
+						"prompt": "[0] Say hello again",
+						"progression": "4" 
+					},
+					{
+						"prompt": "[1] Ask where you are",
+						"progression": "6"
+					}
+				]
+			},
+			"6" : {
+				"reply": "We're in a cave you silly goose!!!",
+				"prompts": [
+					{
+						"prompt": "[0] Say hello again", 
+						"progression": "4"
+					},
+					{
+						"prompt": "[1] Ask how he is", 
+						"progression": "5"
+					}
+				]
+			}
         },
         "hostile": false,
         "loot": [
@@ -60,24 +138,42 @@ module.exports = [
         "description": "It seems like he's a little boy.",
         "responses": {
             "0": {
-                "reply": "I'm a little boy!",
-                "responses": [
+                "reply": "Hello!!! I'm a little boy!",
+                "prompts": [
                     {
-                        "[0] Ask how is he": "1"
+                        "prompt": "[0] Ask how is he",
+						"progression": "1"
                     },
                     {
-                        "[1] Ask where you are": "2"
+                        "prompt": "[1] Ask where you are",
+						"progression": "2"
                     }
                 ]
             },
             "1": {
                 "reply": "I'm so great! I'm a little boy!",
-                "responses": [
+                "prompts": [
+					{
+                        "prompt": "[0] Say hello again",
+						"progression": "0"
+                    },
+                    {
+                        "prompt": "[1] Ask where you are",
+						"progression": "2"
+                    }
                 ]
             },
             "2": {
                 "reply": "How would I know? I'm a little boy!",
-                "responses": [
+                "prompts": [
+					{
+                        "prompt": "[0] Say hello again",
+						"progression": "0"
+                    },
+                    {
+                        "prompt": "[1] Ask how he is",
+						"progression": "1"
+                    }
                 ]
             }
         },
