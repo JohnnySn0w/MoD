@@ -18,7 +18,7 @@ module.exports = [
     },
     {
         "name": "entry-room",
-        "id": "542123382800515072",
+        "id": "530099209614000159",
         "roleid": "530096793422266428",
         "description": "You're in a large, cavernous room. Your footsteps echo into the darkness. Your journey begins to the north... \nThere's also an old-man and a little-boy in the room with you.",
         "exits": {
@@ -37,7 +37,7 @@ module.exports = [
     },
     {
         "name": "room-0",
-        "id": "542123610865664000",
+        "id": "530099456645791748",
         "roleid": "530097563748139028",
         "description": "The cave walls narrow in and create a hallway of sorts. The hallways comes to a split where the west path leads to light while the east path leads to a pile of rocks. To the south is a large room.",
         "exits": {
