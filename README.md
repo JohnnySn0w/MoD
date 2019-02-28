@@ -1,6 +1,5 @@
 # MoD: MUD on Discord
 ![Image of the MUD DM](http://www.mahan.io/static/media/DMspriteV2LG.png)
-> The Bot's DM
 ### A wot?
 For the uninitiated, a MUD is a Multi-User Dungeon. Think text-based adventure game, but as an online multiplayer game
 ### And you want to stick that on Discord?
