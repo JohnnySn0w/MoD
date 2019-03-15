@@ -30,7 +30,7 @@ class StartCommand extends commando.Command {
         var inventory = [];
         var progress = this.makeProgress();
 
-        if (message.channel.name == 'test-zone') {
+        if (message.channel.name == 'landing-zone') {
             // check to make sure player doesn't exist yet via player id
             var check = false;
             for (var i = 0; i < players.length; i++)
