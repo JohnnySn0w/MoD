@@ -1,5 +1,6 @@
 const commando = require('discord.js-commando');
 const players = require('../../schemas/players'); // place to hold our stats for all players (will replace with database soon)
+//var dbplayer = require('../dbhandler');
 
 
 class StatsCommand extends commando.Command {

@@ -1,7 +1,9 @@
 const commando = require('discord.js-commando');
-const db = require('../../../dbhandler');
+//var dbplayer = require('../dbhandler');
 var players = require('../../schemas/players'); // place to hold our stats for all players (will replace with database soon)
 const entities = require('../../schemas/entities');
+
+const db = require('../../../dbhandler');
 
 var entryRoomRole;
 
@@ -43,15 +45,29 @@ class StartCommand extends commando.Command {
                 
             }
 
+            for (var i = 0; i < db.getItem(players.length); i++)
+            {
+                // if (id == db.getItem(players[i].id))
+                // {
+                //     check = true; 
+                //     console.log("HUP")             
+                //     break;                                         
+                // }
+                console.log("HUP");
+                
+            }
+
             // if not there, push the player stats
             if (check) {
                 message.reply("it seems like you've already started!");
             } 
             else {              
                 players.push({name, id, health, level, strength, defense, inventory, progress}); 
+                //db.updateItem(players);
                 message.reply("Welcome to the MUD! Your journey starts in the above text channels. Good luck!");
                 message.member.setRoles([entryRoomRole]).catch(console.error);
-                console.log(players);
+                //console.log(players);
+                console.log(db.getItem(players.length));
             }
         }
         else {
