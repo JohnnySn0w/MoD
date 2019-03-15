@@ -23,6 +23,6 @@ setDynamo:
 
 .PHONY: startBot
 startBot:
-	sudo $(SLS) dynamodb start --migrate
+	sudo $(SLS) dynamodb start
 	yarn start
 	

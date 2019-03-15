@@ -19,15 +19,15 @@ let dynamo = new AWS.DynamoDB.DocumentClient();
   we likely don't need a prod vs a dev
 */
 // const TABLE_NAME = process.env.ENTITIES_DYNAMODB_TABLE;
-const TABLE_NAME = 'MoD-entities-dev';
+// const TABLE_NAME = 'MoD-entities-dev';
 
 module.exports.initializateDynamoClient = newDynamo => {
   dynamo = newDynamo;
 };
 
-module.exports.saveItem = item => {
+module.exports.saveItem = (item, table) => {
   const params = {
-    TableName: TABLE_NAME,
+    TableName: table,
     Item: item
   };
 
@@ -41,12 +41,12 @@ module.exports.saveItem = item => {
     });
 };
 
-module.exports.getItem = itemId => {
+module.exports.getItem = (itemId, table) => {
   const params = {
     Key: {
-      itemId: itemId
+      id: itemId
     },
-    TableName: TABLE_NAME
+    TableName: table
   };
 
   return dynamo.get(params).promise().then(result => {
@@ -59,20 +59,21 @@ module.exports.getItem = itemId => {
     });
 };
 
-module.exports.deleteItem = itemId => {
+//this shouldn't need to be used, if you're updating an entry, use updateItem
+module.exports.deleteItem = (itemId, table) => {
   const params = {
     Key: {
       itemId: itemId
     },
-    TableName: TABLE_NAME
+    TableName: table
   };
 
   return dynamo.delete(params).promise();
 };
 
-module.exports.updateItem = (itemId, paramsName, paramsValue) => {
+module.exports.updateItem = (itemId, paramsName, paramsValue, table) => {
   const params = {
-    TableName: TABLE_NAME,
+    TableName: table,
     Key: {
       itemId
     },

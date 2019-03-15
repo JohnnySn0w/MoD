@@ -19,7 +19,7 @@ class DB extends commando.Command {
       name: 'db',
       group: 'mud',
       memberName: 'db',
-      description: 'loads a given object into the db',
+      description: 'loads/retrieves a given object from the db',
       args: [
         {
           key: 'object',
@@ -45,14 +45,14 @@ class DB extends commando.Command {
   replies(message, data, type) {
     this.logger(data);
     if (type === 'get') {
-      message.reply('got');
+      message.reply('got:', data);
     }
     if (type === 'save') {
       message.reply('saved');
     }
   }
 
-  // sanitize the arguments passed for the object
+  // separate the arguments passed for the object
   // takes more than one argument
   cleanArguments(args) {
     // args.object = args.object.toLowerCase();
@@ -70,12 +70,12 @@ class DB extends commando.Command {
       // call the saveItem function from dbHandler.js,
       // sending it the dumbDynamoRoom JSON object, and an anonymous function 
       // which is later exectued as a callback
-      db.saveItem(dumbDynamoRoom, (data) => this.replies(message, data, 'save'));
+      db.saveItem(dumbDynamoRoom, 'rooms', (data) => this.replies(message, data, 'save'));
     } else if (args[0] === 'get') {
       // call the getItem function from dbHandler.js,
       // sending it the itemId of the item we want to get
       // is also sent a callback for logging purposes
-      db.getItem(args[1], (data) => this.replies(message, data, 'get'));
+      db.getItem(args[1], 'entities', (data) => this.replies(message, data, 'get'));
     }
   }  
 }
@@ -83,7 +83,25 @@ class DB extends commando.Command {
 //placeholder dummy data from eric's scheme
 // is in the format of a JSON object, which is slightly different from a regular
 // js object
-const dumbDynamoRoom = {'name':'entry','itemId':'1','description':'asdf','exits':{},'items':[],'npcs':[],'enemies':[]};
+const dumbDynamoRoom = {
+  'name': 'room',
+  'id': '69',
+  'roleid': '3456',
+  'description': 'You\'re in a large, cavernous room. Your footsteps echo into the darkness. Your journey begins to the north... \nThere\'s also an old-man and a little-boy in the room with you.',
+  'exits': {
+    'north': 'room-0'
+  },
+  'items': [
+
+  ],
+  'npcs': {
+    'old-man': '1',
+    'little-boy': '2'
+  },
+  'enemies': [
+
+  ]
+};
 
 // export the class to any 'require' calls in other files
 module.exports = DB;
