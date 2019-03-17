@@ -16,13 +16,15 @@ dependencies: deleteDir
 	sudo yarn global add nodemon;
 	sudo yarn global add jest;
 	sudo yarn install --no-bin-links;
+	sudo chown -R $USER:$(id -gn $USER) /home/vagrant/.config;
 
-.PHONY: setDynamo
-setDynamo:
+.PHONY: dynamoSetup
+dynamoSetup:
 	sudo $(SLS) dynamodb install;
+	sudo $(SLS) dynamodb start --migrate --seed;
 
 .PHONY: startBot
 startBot:
-	sudo $(SLS) dynamodb start
-	yarn start
+	sudo $(SLS) dynamodb start;
+	yarn start;
 	

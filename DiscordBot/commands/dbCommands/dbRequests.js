@@ -73,9 +73,10 @@ class DB extends commando.Command {
       db.saveItem(dumbDynamoRoom, 'rooms', (data) => this.replies(message, data, 'save'));
     } else if (args[0] === 'get') {
       // call the getItem function from dbHandler.js,
-      // sending it the itemId of the item we want to get
+      // sending it the ID of the item we want to get
+      // 2nd param is the table
       // is also sent a callback for logging purposes
-      db.getItem(args[1], 'entities', (data) => this.replies(message, data, 'get'));
+      db.getItem(args[1], args[2], (data) => this.replies(message, data, 'get'));
     }
   }  
 }

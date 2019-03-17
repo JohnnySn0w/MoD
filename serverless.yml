@@ -10,8 +10,8 @@ custom:
       ENTITIES_DYNAMODB_TABLE: MoD-entities-dev
     start:
       sharedDb: true
-      # migrate: true
-      # seed: true
+      inMemory: false
+      dbPath: ./dbData
     seed:
       mainTables:
         sources:
@@ -39,8 +39,6 @@ provider:
         - "dynamodb:PutItem"
         - "dynamodb:UpdateItem"
         - "dynamodb:DeleteItem"
-      Resource:
-        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.${self:custom.myStage}.ENTITIES_DYNAMODB_TABLE}"
 
 functions:
   saveItem:
@@ -71,14 +69,14 @@ functions:
 resources:
   Resources:
     MudTestTable:
-      Type: "AWS::DynamoDB::Table"
+      Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-        - AttributeName: "itemId"
-          AttributeType: "S"
+        - AttributeName: id
+          AttributeType: S
         KeySchema:
-        - AttributeName: "itemId"
-          KeyType: "HASH"
+        - AttributeName: id
+          KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
