@@ -16,7 +16,6 @@ dependencies: deleteDir
 	sudo yarn global add nodemon;
 	sudo yarn global add jest;
 	sudo yarn install --no-bin-links;
-	sudo chown -R $USER:$(id -gn $USER) /home/vagrant/.config;
 
 .PHONY: dynamoSetup
 dynamoSetup:
