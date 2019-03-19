@@ -2,12 +2,13 @@ SHELL = /bin/bash
 USER = vagrant
 SLS = /vagrant/node_modules/serverless/bin/serverless
 DIRECTORY = ~/.config
+SERVERDIR = /vagrant/dbData
 
 .PHONY: deleteDir
 deleteDir:
 	if test -d $(DIRECTORY); \
-		then sudo rm -rf $(DIRECTORY); \
-	fi
+		then sudo rm -rf $(DIRECTORY);
+	endif
 
 .PHONY: dependencies
 dependencies: deleteDir 
@@ -20,7 +21,13 @@ dependencies: deleteDir
 .PHONY: dynamoSetup
 dynamoSetup:
 	sudo $(SLS) dynamodb install;
-	sudo $(SLS) dynamodb start --migrate --seed;
+	if test -d $(SERVERDIR); \
+		then sudo $(SLS) dynamodb start --migrate --seed; \
+	else \
+		mkdir $(SERVERDIR); \
+		sudo $(SLS) dynamodb start --migrate --seed; \
+	fi
+
 
 .PHONY: startBot
 startBot:
