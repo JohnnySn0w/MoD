@@ -1,21 +1,4 @@
-module.exports = [
-    {
-        "name": "",
-        "id": "",
-        "description": "",
-        "exits": {
-            
-        },
-        "items": {
-            
-        },
-        "npcs": [
-
-        ],
-        "enemies": [
-
-        ]
-    },
+[
     {
         "name": "entry-room",
         "id": "530099209614000159",
@@ -46,7 +29,7 @@ module.exports = [
         },
         "items": {
             "boulders": 2,
-            "rocks": 2,
+            "rocks": 2
         },
         "npcs": [
 
@@ -65,7 +48,7 @@ module.exports = [
             "east": "room-0"
         },
         "items": {
-            "ladder": 1,
+            "ladder": 1
         },
         "npcs": [
 
@@ -83,7 +66,7 @@ module.exports = [
             "down": "room-1"
         },
         "items": {
-            "ladder": 0,
+            "ladder": 0
         },
         "npcs": [
 
@@ -91,5 +74,5 @@ module.exports = [
         "enemies": [
 
         ]
-    },
+    }
 ]

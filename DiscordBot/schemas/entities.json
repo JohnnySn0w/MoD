@@ -1,4 +1,4 @@
-module.exports = [
+[
     {
         "name": "Goblin",
         "id": "0",

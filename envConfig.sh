@@ -9,7 +9,8 @@ fi
 if ! grep -q "alias dock='docker ps -a'" $HOME/.bashrc ; then 
     echo "alias dock='docker ps -a'" >> $HOME/.bashrc
     echo "alias sls='/vagrant/node_modules/serverless/bin/serverless'" >> $HOME/.bashrc
-    echo "alias nodemon='/vagrant/node_modules/nodemon/bin/nodemon'" >> $HOME/.bashrc
+    # echo "alias nodemon='/vagrant/node_modules/nodemon/bin/nodemon'" >> $HOME/.bashrc
+    # echo "alias jest='node_modules/jest/bin/jest.js'" >> $HOME/.bashrc
 fi 
 echo "Landing..."
 
@@ -24,7 +25,7 @@ sudo apt-get -qq update \
         openjdk-11-jdk
 echo "Updating Node"
 sudo npm i -g n
-sudo n latest
+sudo n lts
 echo "Installing Yarn"
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
