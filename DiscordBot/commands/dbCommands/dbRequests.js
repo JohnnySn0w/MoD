@@ -38,14 +38,18 @@ class DB extends commando.Command {
   // logs the data returned by a db function
   logger(data) {
     console.log(`${data}\nCode: ${data.statusCode} \nItem: `);
-    console.log(data);
+    console.log(data.body);
   }
 
+  /*
   // sends data received to logger, replies with status
+  data structure is that data.body is the response returned from dynamo,
+  which is either an http error code or a json object.
+  */
   replies(message, data, type) {
     this.logger(data);
     if (type === 'get') {
-      message.reply('got:', data);
+      message.reply(`got: ${data.body}`);
     }
     if (type === 'save') {
       message.reply('saved');
