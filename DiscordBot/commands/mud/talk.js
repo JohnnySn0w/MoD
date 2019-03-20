@@ -26,6 +26,9 @@ class TalkCommand extends commando.Command {
 		var playerID = message.member.id;
         var player;
 
+        // delete command after saying it!
+        message.delete();
+
         // determine the player that's issuing the command
         for (var i = 0; i < players.length; i++) {
             if (playerID == players[i].id) {

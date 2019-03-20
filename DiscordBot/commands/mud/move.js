@@ -24,6 +24,9 @@ class MoveCommand extends commando.Command {
         direction = this.cleanArguments(direction);
         var room = this.determineRoom(message.channel.name);
 
+        // delete command after saying it!
+        message.delete();
+
         if (!(room === undefined)) {
             this.movePlayer(message, direction, room);
         }

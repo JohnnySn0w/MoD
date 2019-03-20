@@ -25,6 +25,9 @@ class LookCommand extends commando.Command {
         args = this.cleanArguments(args);
         var room = this.determineRoom(message.channel.name);
 
+        // delete command after saying it!
+        message.delete();
+
         var object;
         if (args.object === "room" || args.object === "here") {
             object = room;

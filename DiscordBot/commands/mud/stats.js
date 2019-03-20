@@ -17,7 +17,7 @@ class StatsCommand extends commando.Command {
         var id = message.member.id; 
         console.log(players.length);
 
-        // delete stat command after saying it!
+        // delete command after saying it!
         message.delete();
 
         var player;

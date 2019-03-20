@@ -71,7 +71,7 @@ class StartCommand extends commando.Command {
             }
         }
         else {
-            message.reply("Sorry, you can't start playing the MUD unless you're in the <#525378260192854027>.");
+            message.reply("Sorry, you can't start playing the MUD unless you're in the <#535555511953653803>.");
         }
     }
 
