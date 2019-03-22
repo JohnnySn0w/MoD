@@ -1,3 +1,4 @@
+const {DEBUG} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const npcs = require('../../schemas/entities');
 const db = require('../../../dbhandler');
