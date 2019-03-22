@@ -10,3 +10,4 @@
 # exclude bot key
 DiscordBot/loginCode.js
 DiscordBot/rooms.js
+shared-local-instance.db

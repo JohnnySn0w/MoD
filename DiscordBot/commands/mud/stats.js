@@ -1,6 +1,5 @@
 const commando = require('discord.js-commando');
-const players = require('../../schemas/players'); // place to hold our stats for all players (will replace with database soon)
-
+const db = require('../../../dbhandler');
 
 class StatsCommand extends commando.Command {
     constructor(client) {
@@ -13,38 +12,30 @@ class StatsCommand extends commando.Command {
     }
 
     async run(message, args) {
-        var id = message.member.id; 
-        console.log(players.length);
+        db.getItem(message.member.id, 'players', (data) => this.getPlayer(data, message));
 
-        // delete stat command after saying it!
+        // delete stat command after saying it
         message.delete();
+    }
 
-        var player;
-        for (var i = 0; i < players.length; i++)
-        {
-            if (id == players[i].id)
-            {
-                player = players[i];    
-                break;                                         
+    getPlayer(data, message) {
+        // grab the actual player object
+        var body = JSON.parse(data.body);
+        var player = body.Item;
+
+        if (player === undefined) {
+            // if the player isn't in the database already, send them a notice that they need to "?start" the game
+            message.member.send("You need to start your adventure first! Please go to the landing zone and enter the start command to proceed.");
+        }
+        else {
+            // otherwise, direct message the player with their health, strength, and defense            
+            message.member.send("Health: " + player.health + "\n" + "Level: " + player.level + "\n" + "Strength: " + player.strength + "\n" + "Defense: " + player.defense);
+
+            // also send a warning if the player's health is low
+            if (player.health > 0 && player.health < 11) {
+                message.member.send("You're on death's door, my friend.");
             }
         }
-
-        if (player === undefined) 
-        {
-            message.reply(" you need to start your adventure first! Please go to the landing zone and enter the start command to proceed.");
-        }
-        else 
-        {
-           // how to DM users anything - these two commands right here                     
-           message.member.send("Health: " + players[i].health + "\n" + "Level: " + players[i].level + "\n" + "Strength: " + players[i].strength + "\n" + "Defense: " + players[i].defense);  
-                
-           // warning if your health is low
-           if (players[i].health > 0 && players[i].health < 11) {
-               message.member.send("You're on death's door, my friend.");
-           }     
-           
-        }
-
     }
         
 }
