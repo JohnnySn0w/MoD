@@ -1,4 +1,4 @@
-var DEBUG = false;
+const DEBUG = false;
 const commando = require('discord.js-commando');
 const login = require('./loginCode');
 const client = new commando.Client({
@@ -24,5 +24,9 @@ client.on('message', (message) => {
 }); */
 
 module.exports = { 
-	DEBUG
+	DEBUG: true,
+	anything: "else",
+	nothing: [
+		
+	]
 };
