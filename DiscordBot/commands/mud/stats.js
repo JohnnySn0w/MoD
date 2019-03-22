@@ -14,8 +14,9 @@ class StatsCommand extends commando.Command {
     async run(message, args) {
         db.getItem(message.member.id, 'players', (data) => this.getPlayer(data, message));
 
-        // delete stat command after saying it
-        message.delete();
+        // delete the user's command if not debugging
+        if (!DEBUG)
+            message.delete();
     }
 
     getPlayer(data, message) {

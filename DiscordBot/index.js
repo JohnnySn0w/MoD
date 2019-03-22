@@ -1,3 +1,4 @@
+var DEBUG = false;
 const commando = require('discord.js-commando');
 const login = require('./loginCode');
 const client = new commando.Client({
@@ -14,7 +15,6 @@ client.registry
 client.login(login.key);
 
 console.log("Bot is running");
-
 /*
 // keeping this commented for reference for emojis later (in case we end up using them again)
 client.on('message', (message) => {
@@ -22,3 +22,7 @@ client.on('message', (message) => {
 		message.channel.send('Look what?');
 	}
 }); */
+
+module.exports = { 
+	DEBUG
+};

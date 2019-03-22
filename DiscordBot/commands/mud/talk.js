@@ -22,6 +22,10 @@ class TalkCommand extends commando.Command {
     async run(message, args) {
         // get the player object so that we know the player's progress with this NPC
         db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, args, data));
+
+        // delete the user's command if not debugging
+        if (!DEBUG)
+            message.delete();
     }
 
     getPlayer(message, args, data) {
