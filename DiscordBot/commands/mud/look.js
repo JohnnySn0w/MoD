@@ -1,7 +1,6 @@
 const commando = require('discord.js-commando');
-// todo replace rooms with dynamo
-const rooms = require('../../schemas/rooms.js');
 const items = require('../../schemas/items.js');
+const db = require('../../../dbhandler');
 
 class LookCommand extends commando.Command {
     constructor(client) {
@@ -20,50 +19,42 @@ class LookCommand extends commando.Command {
         });
     }
 
-    // this is essentially the main method of the command
     async run(message, args) {
-        args = this.cleanArguments(args);
-        var room = this.determineRoom(message.channel.name);
+        // get the room object that the player is in
+        db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data, args));
+    }
+
+    getRoom(message, data, args) {
+        // grab the actual room object
+        var body = JSON.parse(data.body);
+        var room = body.Item;
+
+        args = this.cleanArgs(args);
 
         var object;
         if (args.object === "room" || args.object === "here") {
+            // if the player is looking at the room, then set the object as the room
             object = room;
         }
         else {
+            // otherwise, the player is looking at an item, which we need to determine
             object = this.determineItem(args.object, room);
         }
-        
         this.replyToPlayer(message, object, room);
     }
 
-    // sanitize the arguments passed for the object
-    cleanArguments(args) {
+    cleanArgs(args) {
+        // ignore the argument's capitalization
         args.object = args.object.toLowerCase();
         return args;
     }
 
-    // determine what room the player is in
-    determineRoom(searchName) {
-        var roomObject;
-        var i;
-        // todo replace rooms with dynamo
-        for (i = 0; i < rooms.length; i++) {
-            var roomName = rooms[i].name;
-
-            if (searchName === roomName) {
-                roomObject = rooms[i];
-                break;
-            }
-        }
-
-        return roomObject;
-    }
-
-    // determine what item the player is looking at
     determineItem(searchName, room) {
+        // determine what item the player is looking at in the given room
         var itemObject;
         var searchID;
         var i;
+
         // check if the item is in the room
         if (searchName in room.items) {
             searchID = room.items[searchName];
@@ -93,8 +84,8 @@ class LookCommand extends commando.Command {
         return itemObject;
     }
 
-    // respond to the player based on their current room and the object's description
     replyToPlayer(message, object, room) {
+        // respond to the player based on their current room and the object's description
         if (!(room === undefined)) {
             if (!(object === undefined)) {
                 message.reply(object.description);
