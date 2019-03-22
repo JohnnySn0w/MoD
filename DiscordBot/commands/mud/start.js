@@ -1,9 +1,6 @@
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
-var players = require('../../schemas/players'); // place to hold our stats for all players (will replace with database soon)
 const entities = require('../../schemas/entities');
-
-var entryRoomRole;
 
 class StartCommand extends commando.Command {
     constructor(client) {
@@ -16,50 +13,47 @@ class StartCommand extends commando.Command {
     }
 
     async run(message, args) {
-        message.delete();
-        entryRoomRole = message.guild.roles.find(role => role.name === "entry-room");
-
-        // moved the initialization of player stats from stats to start - Santiago
-
-        var name = message.member.user.username; // gets player name
-        var id = message.member.id; // gets player id
-        var health = 100; // starting health value for all
-        var level = 1;
-        var strength = 7;
-        var defense = 5; 
-        var inventory = [];
-        var progress = this.makeProgress();
-
         if (message.channel.name == 'test-zone') {
-            // check to make sure player doesn't exist yet via player id
-            var check = false;
-            for (var i = 0; i < players.length; i++)
-            {
-                if (id == players[i].id)
-                {
-                    check = true;    
-                    break;                                         
-                }
-                
-            }
-
-            // if not there, push the player stats
-            if (check) {
-                message.reply("it seems like you've already started!");
-            } 
-            else {              
-                players.push({name, id, health, level, strength, defense, inventory, progress}); 
-                message.reply("Welcome to the MUD! Your journey starts in the above text channels. Good luck!");
-                message.member.setRoles([entryRoomRole]).catch(console.error);
-                console.log(players);
-            }
+            // if the user is in the correct chat, attempt to grab their player data from the server
+            db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data));
         }
         else {
+            // otherwise, direct the user to where they can start the game at
             message.reply("Sorry, you can't start playing the MUD unless you're in the <#525378260192854027>.");
+        }
+
+        // delete start command after saying it
+        message.delete();
+    }
+
+    getPlayer(message, data) {
+        // grab the actual player object
+        var body = JSON.parse(data.body);
+        var player = body.Item;
+
+        if (player === undefined) {
+            // if the player doesn't exist in the database, create a new player object to push to the db
+            var newPlayer = {
+                'name': message.member.user.username,
+                'id': message.member.id,
+                'health': 100,
+                'level': 1,
+                'strength': 7,
+                'defense': 5,
+                'inventory': [],
+                'progress': this.createProgress()
+            }
+
+            db.saveItem(newPlayer, 'players', (data) => this.setRoles(message));
+        }
+        else {
+            // otherwise, the player is already a part of the database
+            message.reply("it seems like you've already started!");
         }
     }
 
-    makeProgress() {
+    createProgress() {
+        // this method creates all of the variables needed for the player to interact properly with all of the NPCs in the game
         var progress = {};
         var npc = {};
 
@@ -70,6 +64,13 @@ class StartCommand extends commando.Command {
         progress.npc = npc;
 
         return progress;
+    }
+
+    setRoles(message) {
+        // once the player data is stored on the database, reassign the player's room permissions to the entry room
+        var entryRoomRole = message.guild.roles.find(role => role.name === "entry-room");
+        message.reply("Welcome to the MUD! Your journey starts in the above text channels. Good luck!");
+        message.member.setRoles([entryRoomRole]).catch(console.error);
     }
 }
 

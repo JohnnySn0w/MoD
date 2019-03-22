@@ -1,8 +1,6 @@
 const commando = require('discord.js-commando');
-// todo replace rooms, npcs, players with dynamo
-const rooms = require('../../schemas/rooms.js');
 const npcs = require('../../schemas/entities');
-const players = require('../../schemas/players');
+const db = require('../../../dbhandler');
 
 class TalkCommand extends commando.Command {
     constructor(client) {
@@ -21,55 +19,43 @@ class TalkCommand extends commando.Command {
         });
     }
 
-    // this is essentially the main method of the command
     async run(message, args) {
-		var playerID = message.member.id;
-        var player;
+        // get the player object so that we know the player's progress with this NPC
+        db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, args, data));
+    }
 
-        // determine the player that's issuing the command
-        for (var i = 0; i < players.length; i++) {
-            if (playerID == players[i].id) {
-                player = players[i];    
-                break;                                         
-            }
-        }
+    getPlayer(message, args, data) {
+        // grab the actual player object
+        var body = JSON.parse(data.body);
+        var player = body.Item;
 
-        // if we couldn't find the player, they haven't started yet
         if (player === undefined) {
+            // if we couldn't find the player, they haven't started yet
             message.reply("it seems that you're not a part of the MUD yet! \nUse \"?start\" in test-zone to get started!");
         }
         else {
-            args = this.cleanArguments(args);
-            var room = this.determineRoom(message.channel.name);
-            var person = this.determineNPC(args.person, room);
-            var response = (person === undefined) ? "" : this.determineResponse(person, player);
-    
-            this.replyToPlayer(player, message, person, response, room);
+            // otherwise, get the room object that the player is in
+            db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, args, player, data));
+            // var room = this.determineRoom(message.channel.name);
         }
     }
 
-    // sanitize the arguments passed for the object
-    cleanArguments(args) {
+    getRoom(message, args, player, data) {
+        // grab the actual player object
+        var body = JSON.parse(data.body);
+        var room = body.Item;
+
+        args = this.cleanArgs(args);
+        var person = this.determineNPC(args.person, room);
+        var response = (person === undefined) ? "" : this.determineResponse(person, player);
+
+        this.replyToPlayer(player, message, person, response, room);
+    }
+
+    cleanArgs(args) {
+        // ignore the argument's capitalization
         args.person = args.person.toLowerCase();
         return args;
-    }
-
-    // determine what room the player is in
-    determineRoom(searchName) {
-        var roomObject;
-        var i;
-
-        // todo replace rooms with dynamo
-        for (i = 0; i < rooms.length; i++) {
-            var roomName = rooms[i].name;
-
-            if (searchName === roomName) {
-                roomObject = rooms[i];
-                break;
-            }
-        }
-		
-        return roomObject;
     }
 
     // determine what item the player is looking at
@@ -111,21 +97,6 @@ class TalkCommand extends commando.Command {
         }
         
 		return response;
-	}
-
-	// Adjusts the players conversational progress with the npc
-	makeProgress(player, person, playerResponse) { 
-		var currentProgress = player.progress.npc[person.id];
-		var progression = currentProgress;
-
-		for (var i = 0; i < person.responses[currentProgress].prompts.length; i++) {			
-			if (i.toString() === playerResponse) {
-				progression = person.responses[currentProgress].prompts[i].progression;
-				break;
-			}
-		}
-
-		player.progress.npc[person.id] = progression;
 	}
 
     // respond to the npc's response
@@ -170,6 +141,27 @@ class TalkCommand extends commando.Command {
         else {
             message.reply("You are not in a MUD-related room");
         }
+    }
+
+    // Adjusts the players conversational progress with the npc
+	makeProgress(player, person, playerResponse) { 
+		var currentProgress = player.progress.npc[person.id];
+		var progression = currentProgress;
+
+		for (var i = 0; i < person.responses[currentProgress].prompts.length; i++) {			
+			if (i.toString() === playerResponse) {
+				progression = person.responses[currentProgress].prompts[i].progression;
+				break;
+			}
+		}
+
+        // push the progression to the database
+        player.progress.npc[person.id] = progression;
+        db.saveItem(player, 'players', (data) => this.idk());
+    }
+    
+    idk() {
+        console.log("Idk how to handle callbacks when I don't need one");
     }
 }
 
