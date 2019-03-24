@@ -1,3 +1,4 @@
+const {DEBUG} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const items = require('../../schemas/items.js');
 const db = require('../../../dbhandler');
@@ -22,6 +23,10 @@ class LookCommand extends commando.Command {
     async run(message, args) {
         // get the room object that the player is in
         db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data, args));
+
+        // delete the user's command if not debugging
+        if (!DEBUG)
+            message.delete();
     }
 
     getRoom(message, data, args) {
