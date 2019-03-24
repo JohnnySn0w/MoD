@@ -1,3 +1,4 @@
+const {DEBUG} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -21,8 +22,9 @@ class StartCommand extends commando.Command {
             message.reply("Sorry, you can't start playing the MUD unless you're in the <#525378260192854027>.");
         }
 
-        // delete start command after saying it
-        message.delete();
+        // delete the user's command if not debugging
+        if (!DEBUG)
+            message.delete();
     }
 
     getPlayer(message, data) {

@@ -14,7 +14,6 @@ client.registry
 client.login(login.key);
 
 console.log("Bot is running");
-
 /*
 // keeping this commented for reference for emojis later (in case we end up using them again)
 client.on('message', (message) => {

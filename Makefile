@@ -7,7 +7,7 @@ SERVERDIR = /vagrant/dbData
 .PHONY: deleteDir
 deleteDir:
 	if test -d $(DIRECTORY); \
-		then sudo rm -rf $(DIRECTORY);
+		then sudo rm -rf $(DIRECTORY); \
 	endif
 
 .PHONY: dependencies
