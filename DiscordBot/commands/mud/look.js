@@ -1,5 +1,4 @@
 const commando = require('discord.js-commando');
-const items = require('../../schemas/items.js');
 const db = require('../../../dbhandler');
 
 class LookCommand extends commando.Command {
@@ -33,14 +32,18 @@ class LookCommand extends commando.Command {
 
         var object;
         if (args.object === "room" || args.object === "here") {
-            // if the player is looking at the room, then set the object as the room
-            object = room;
+			this.replyToPlayer(message, "room", room);
         }
         else {
             // otherwise, the player is looking at an item, which we need to determine
             object = this.determineItem(args.object, room);
+			if (object === undefined) { // whups lookin at a dang PERSON!!!!!!
+				object = this.determineNPC(args.object, room);
+				db.getItem(object, 'entities', (data) => this.replyToPlayer(message, "not room", room, data));
+			} else {
+				db.getItem(object, 'items', (data) => this.replyToPlayer(message, "not room", room, data));
+			}
         }
-        this.replyToPlayer(message, object, room);
     }
 
     cleanArgs(args) {
@@ -57,35 +60,33 @@ class LookCommand extends commando.Command {
 
         // check if the item is in the room
         if (searchName in room.items) {
-            searchID = room.items[searchName];
-
-            // if the item is in the room, find its object in items.js
-            for (i = 0; i < items.length; i++) {
-                var itemID = items[i].id;
-    
-                if (searchID === itemID) {
-                    itemObject = items[i];
-                    break;
-                }
-            }
-        }
-        // it's not an item, check if it's an npc
-        else {
-            for (i = 0; i < room.npcs.length; i++) {
-				var npcName = room.npcs[i].name;
-
-				if (searchName === npcName) {
-					itemObject = room.npcs[i];
-					break;
-				}
-			}
+            itemObject = room.items[searchName];
         }
 
         return itemObject;
+	}
+        
+	// it's not an item, check if it's an npc
+	determineNPC(searchName, room) {
+		var npcObject;
+		if (searchName in room.npcs) {
+			npcObject = room.npcs[searchName];
+		}
+		
+		return npcObject;
     }
 
-    replyToPlayer(message, object, room) {
+    replyToPlayer(message, type, room, data) {
         // respond to the player based on their current room and the object's description
+		var object;
+		if (type === "room") {
+			object = room;
+		} else {
+			var body = JSON.parse(data.body);
+			var item = body.Item;
+
+			object = item;
+		}
         if (!(room === undefined)) {
             if (!(object === undefined)) {
                 message.reply(object.description);
