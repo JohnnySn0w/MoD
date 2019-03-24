@@ -1,4 +1,5 @@
 const commando = require('discord.js-commando');
+const npcs = require('../../schemas/entities');
 const db = require('../../../dbhandler');
 
 class TalkCommand extends commando.Command {
@@ -35,7 +36,8 @@ class TalkCommand extends commando.Command {
         else {
             // otherwise, get the room object that the player is in
             db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, args, player, data));
-		}
+            // var room = this.determineRoom(message.channel.name);
+        }
     }
 
     getRoom(message, args, player, data) {
@@ -43,28 +45,12 @@ class TalkCommand extends commando.Command {
         var body = JSON.parse(data.body);
         var room = body.Item;
 
-
         args = this.cleanArgs(args);
-
-		if (room === undefined) {
-			message.reply("You are not in a MUD related room!!!!!!!!!!!!!");
-		} else {
-			// Get the NPC id and data
-			var npcID = this.determineNPC(args.person, room);
-			db.getItem(npcID, 'entities', (data) => this.getProgress(message, args, player, room, data));
-
-		}
-	}
-
-	getProgress(message, args, player, room, data) {
-		var body = JSON.parse(data.body);
-		var person = body.Item;
-
+        var person = this.determineNPC(args.person, room);
         var response = (person === undefined) ? "" : this.determineResponse(person, player);
 
         this.replyToPlayer(player, message, person, response, room);
-	
-	}
+    }
 
     cleanArgs(args) {
         // ignore the argument's capitalization
@@ -72,16 +58,25 @@ class TalkCommand extends commando.Command {
         return args;
     }
 
-    // determine what npc the player is looking at
+    // determine what item the player is looking at
     determineNPC(searchName, room) {
-        var npcID;
+        var npcObject;
         var i;
 
 		if (searchName in room.npcs) {
-            npcID = room.npcs[searchName];
+            var searchID = room.npcs[searchName];
+            
+			// find in the npc schema if the npc is in the room!!!
+			for (i = 0; i < npcs.length; i++) {
+				var npcID = npcs[i].id;
+				if (npcID === searchID) {
+					npcObject = npcs[i];
+					break;
+				}
+			}
 		}
 
-		return npcID;
+        return npcObject;
     }
 
 	// creates the npcs response and prompts based on players progress
@@ -98,16 +93,7 @@ class TalkCommand extends commando.Command {
                         response = response + "\n" + npc.responses[progress].prompts[i].prompt;
                     }
                 }
-            } else { 
-				// haven't talked to this npc before? 
-				//NBD create npc progress in the player object and get chattin :)
-				player.progress.npc[npc.id] = "0";
-				response = npc.responses["0"].reply;
-				for (var i = 0; i < npc.responses["0"].prompts.length; i++) {
-                    response = response + "\n" + npc.responses["0"].prompts[i].prompt;
-                }
-				db.saveItem
-			}
+            }
         }
         
 		return response;
