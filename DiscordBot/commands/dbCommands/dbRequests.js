@@ -9,7 +9,7 @@ const commando = require('discord.js-commando');
 // import the dbhandler functions, accessible by using db.whateverFunction
 // technically we can use anything as a variable name as it's simply an alias
 const db = require('../../../dbhandler');
-
+const { DEBUG } = require('../../globals.js');
 
 class DB extends commando.Command {
   //constructor for the class
@@ -75,14 +75,20 @@ class DB extends commando.Command {
       // sending it the dumbDynamoRoom JSON object, and an anonymous function 
       // which is later exectued as a callback
       db.saveItem(dumbDynamoRoom, 'rooms', (data) => this.replies(message, data, 'save'));
+      if(!DEBUG) {
+        message.delete();
+      }
     } else if (args[0] === 'get') {
       // call the getItem function from dbHandler.js,
       // sending it the ID of the item we want to get
       // 2nd param is the table
       // is also sent a callback for logging purposes
       db.getItem(args[1], args[2], (data) => this.replies(message, data, 'get'));
+      if(!DEBUG) {
+        message.delete();
+      }
     }
-  }  
+  }
 }
 
 //placeholder dummy data from eric's scheme
