@@ -52,7 +52,7 @@ class TalkCommand extends commando.Command {
         args = this.cleanArgs(args);
 
 		if (room === undefined) {
-			message.reply("You are not in a MUD related room!!!!!!!!!!!!!");
+			message.reply("You are not in a MUD related room");
 		} else {
 			// Get the NPC id and data
 			var npcID = this.determineNPC(args.person, room);

@@ -37,16 +37,17 @@ class LookCommand extends commando.Command {
 
         var object;
         if (args.object === "room" || args.object === "here") {
-			this.replyToPlayer(message, "room", room);
+			this.replyToPlayer(message, true, room);
         }
         else {
             // otherwise, the player is looking at an item, which we need to determine
             object = this.determineItem(args.object, room);
-			if (object === undefined) { // whups lookin at a dang PERSON!!!!!!
+			if (object === undefined) {
+                // if the object doesn't exist, then the player is looking at an entity
 				object = this.determineNPC(args.object, room);
-				db.getItem(object, 'entities', (data) => this.replyToPlayer(message, "not room", room, data));
+				db.getItem(object, 'entities', (data) => this.replyToPlayer(message, false, room, data));
 			} else {
-				db.getItem(object, 'items', (data) => this.replyToPlayer(message, "not room", room, data));
+				db.getItem(object, 'items', (data) => this.replyToPlayer(message, false, room, data));
 			}
         }
     }
@@ -60,19 +61,15 @@ class LookCommand extends commando.Command {
     determineItem(searchName, room) {
         // determine what item the player is looking at in the given room
         var itemObject;
-        var searchID;
-        var i;
-
-        // check if the item is in the room
         if (searchName in room.items) {
             itemObject = room.items[searchName];
         }
 
         return itemObject;
 	}
-        
-	// it's not an item, check if it's an npc
+    
 	determineNPC(searchName, room) {
+        // determine what NPC the player is looking at in the given room
 		var npcObject;
 		if (searchName in room.npcs) {
 			npcObject = room.npcs[searchName];
@@ -81,27 +78,29 @@ class LookCommand extends commando.Command {
 		return npcObject;
     }
 
-    replyToPlayer(message, type, room, data) {
-        // respond to the player based on their current room and the object's description
+    replyToPlayer(message, objectIsRoom, room, data) {
+        // determine whether the object being looked at is the room itself
 		var object;
-		if (type === "room") {
+		if (objectIsRoom === true) {
 			object = room;
 		} else {
 			var body = JSON.parse(data.body);
 			var item = body.Item;
 
 			object = item;
-		}
-        if (!(room === undefined)) {
-            if (!(object === undefined)) {
-                message.reply(object.description);
-            }
-            else {
-                message.reply("I'm not sure what you're trying to look at.");
-            }
+        }
+        
+        // handle situations where either the room or the object may be undefined
+        if (room === undefined) {
+            message.reply("You are not in a MUD-related room");
         }
         else {
-            message.reply("You are not in a MUD-related room");
+            if (object === undefined) {
+                message.reply("I'm not sure what you're trying to look at.");
+            }
+            else {
+                message.reply(object.description);
+            }
         }
     }
 }
