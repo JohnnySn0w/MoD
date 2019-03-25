@@ -53,20 +53,6 @@ class StartCommand extends commando.Command {
         }
     }
 
-    /*createProgress() {
-        // this method creates all of the variables needed for the player to interact properly with all of the NPCs in the game
-        var progress = {};
-        var npc = {};
-
-        for (var i = 0; i < entities.length; i++) {
-            npc[entities[i].id] = "0";
-        }
-
-        progress.npc = npc;
-
-        return progress;
-    }*/
-
     setRoles(message) {
         // once the player data is stored on the database, reassign the player's room permissions to the entry room
         var entryRoomRole = message.guild.roles.find(role => role.name === "entry-room");
