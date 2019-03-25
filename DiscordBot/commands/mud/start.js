@@ -1,7 +1,6 @@
 const {DEBUG} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
-const entities = require('../../schemas/entities');
 
 class StartCommand extends commando.Command {
     constructor(client) {
@@ -43,7 +42,7 @@ class StartCommand extends commando.Command {
                 'strength': 7,
                 'defense': 5,
                 'inventory': [],
-                'progress': this.createProgress()
+                'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
             }
 
             db.saveItem(newPlayer, 'players', (data) => this.setRoles(message));
@@ -52,20 +51,6 @@ class StartCommand extends commando.Command {
             // otherwise, the player is already a part of the database
             message.reply("it seems like you've already started!");
         }
-    }
-
-    createProgress() {
-        // this method creates all of the variables needed for the player to interact properly with all of the NPCs in the game
-        var progress = {};
-        var npc = {};
-
-        for (var i = 0; i < entities.length; i++) {
-            npc[entities[i].id] = "0";
-        }
-
-        progress.npc = npc;
-
-        return progress;
     }
 
     setRoles(message) {

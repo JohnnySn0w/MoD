@@ -1,6 +1,5 @@
 const {DEBUG} = require('../../globals.js');
 const commando = require('discord.js-commando');
-const items = require('../../schemas/items.js');
 const db = require('../../../dbhandler');
 
 class LookCommand extends commando.Command {
@@ -38,14 +37,19 @@ class LookCommand extends commando.Command {
 
         var object;
         if (args.object === "room" || args.object === "here") {
-            // if the player is looking at the room, then set the object as the room
-            object = room;
+			this.replyToPlayer(message, true, room);
         }
         else {
             // otherwise, the player is looking at an item, which we need to determine
             object = this.determineItem(args.object, room);
+			if (object === undefined) {
+                // if the object doesn't exist, then the player is looking at an entity
+				object = this.determineNPC(args.object, room);
+				db.getItem(object, 'entities', (data) => this.replyToPlayer(message, false, room, data));
+			} else {
+				db.getItem(object, 'items', (data) => this.replyToPlayer(message, false, room, data));
+			}
         }
-        this.replyToPlayer(message, object, room);
     }
 
     cleanArgs(args) {
@@ -57,50 +61,46 @@ class LookCommand extends commando.Command {
     determineItem(searchName, room) {
         // determine what item the player is looking at in the given room
         var itemObject;
-        var searchID;
-        var i;
-
-        // check if the item is in the room
         if (searchName in room.items) {
-            searchID = room.items[searchName];
-
-            // if the item is in the room, find its object in items.js
-            for (i = 0; i < items.length; i++) {
-                var itemID = items[i].id;
-    
-                if (searchID === itemID) {
-                    itemObject = items[i];
-                    break;
-                }
-            }
-        }
-        // it's not an item, check if it's an npc
-        else {
-            for (i = 0; i < room.npcs.length; i++) {
-				var npcName = room.npcs[i].name;
-
-				if (searchName === npcName) {
-					itemObject = room.npcs[i];
-					break;
-				}
-			}
+            itemObject = room.items[searchName];
         }
 
         return itemObject;
+	}
+    
+	determineNPC(searchName, room) {
+        // determine what NPC the player is looking at in the given room
+		var npcObject;
+		if (searchName in room.npcs) {
+			npcObject = room.npcs[searchName];
+		}
+		
+		return npcObject;
     }
 
-    replyToPlayer(message, object, room) {
-        // respond to the player based on their current room and the object's description
-        if (!(room === undefined)) {
-            if (!(object === undefined)) {
-                message.reply(object.description);
-            }
-            else {
-                message.reply("I'm not sure what you're trying to look at.");
-            }
+    replyToPlayer(message, objectIsRoom, room, data) {
+        // determine whether the object being looked at is the room itself
+		var object;
+		if (objectIsRoom === true) {
+			object = room;
+		} else {
+			var body = JSON.parse(data.body);
+			var item = body.Item;
+
+			object = item;
+        }
+        
+        // handle situations where either the room or the object may be undefined
+        if (room === undefined) {
+            message.reply("You are not in a MUD-related room");
         }
         else {
-            message.reply("You are not in a MUD-related room");
+            if (object === undefined) {
+                message.reply("I'm not sure what you're trying to look at.");
+            }
+            else {
+                message.reply(object.description);
+            }
         }
     }
 }

@@ -45,8 +45,8 @@ module.exports = [
             "south": "530099209614000159"
         },
         "items": {
-            "boulders": 2,
-            "rocks": 2,
+            "boulders": "2",
+            "rocks": "2",
         },
         "npcs": [
 
@@ -65,7 +65,7 @@ module.exports = [
             "east": "530099456645791748"
         },
         "items": {
-            "ladder": 1,
+            "ladder": "1",
         },
         "npcs": [
 
@@ -83,7 +83,7 @@ module.exports = [
             "down": "530099492091985921"
         },
         "items": {
-            "ladder": 0,
+            "ladder": "0",
         },
         "npcs": [
 

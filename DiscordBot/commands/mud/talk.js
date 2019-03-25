@@ -1,6 +1,5 @@
 const {DEBUG} = require('../../globals.js');
 const commando = require('discord.js-commando');
-const npcs = require('../../schemas/entities');
 const db = require('../../../dbhandler');
 
 class TalkCommand extends commando.Command {
@@ -41,8 +40,7 @@ class TalkCommand extends commando.Command {
         else {
             // otherwise, get the room object that the player is in
             db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, args, player, data));
-            // var room = this.determineRoom(message.channel.name);
-        }
+		}
     }
 
     getRoom(message, args, player, data) {
@@ -50,12 +48,28 @@ class TalkCommand extends commando.Command {
         var body = JSON.parse(data.body);
         var room = body.Item;
 
+
         args = this.cleanArgs(args);
-        var person = this.determineNPC(args.person, room);
+
+		if (room === undefined) {
+			message.reply("You are not in a MUD related room");
+		} else {
+			// Get the NPC id and data
+			var npcID = this.determineNPC(args.person, room);
+			db.getItem(npcID, 'entities', (data) => this.getProgress(message, args, player, room, data));
+
+		}
+	}
+
+	getProgress(message, args, player, room, data) {
+		var body = JSON.parse(data.body);
+		var person = body.Item;
+
         var response = (person === undefined) ? "" : this.determineResponse(person, player);
 
-        this.replyToPlayer(player, message, person, response, room);
-    }
+        this.replyToPlayer(player, message, person, response, room, false);
+	
+	}
 
     cleanArgs(args) {
         // ignore the argument's capitalization
@@ -63,25 +77,16 @@ class TalkCommand extends commando.Command {
         return args;
     }
 
-    // determine what item the player is looking at
+    // determine what npc the player is looking at
     determineNPC(searchName, room) {
-        var npcObject;
+        var npcID;
         var i;
 
 		if (searchName in room.npcs) {
-            var searchID = room.npcs[searchName];
-            
-			// find in the npc schema if the npc is in the room!!!
-			for (i = 0; i < npcs.length; i++) {
-				var npcID = npcs[i].id;
-				if (npcID === searchID) {
-					npcObject = npcs[i];
-					break;
-				}
-			}
+            npcID = room.npcs[searchName];
 		}
 
-        return npcObject;
+		return npcID;
     }
 
 	// creates the npcs response and prompts based on players progress
@@ -98,14 +103,23 @@ class TalkCommand extends commando.Command {
                         response = response + "\n" + npc.responses[progress].prompts[i].prompt;
                     }
                 }
-            }
+            } else { 
+				// haven't talked to this npc before? 
+				//NBD create npc progress in the player object and get chattin :)
+				player.progress.npc[npc.id] = "0";
+				response = npc.responses["0"].reply;
+				for (var i = 0; i < npc.responses["0"].prompts.length; i++) {
+                    response = response + "\n" + npc.responses["0"].prompts[i].prompt;
+                }
+				db.saveItem
+			}
         }
         
 		return response;
 	}
 
     // respond to the npc's response
-    replyToPlayer(player, message, person, response, room) {
+    replyToPlayer(player, message, person, response, room, stop) {
 		var responded = false;
         var progress = player.progress.npc[person.id];
         
@@ -114,26 +128,31 @@ class TalkCommand extends commando.Command {
                 if (!(progress === undefined)) {
                     message.reply(person.name + ": " + response);
 
-                    // responses change to using length
-                    const filter = m => (m.content < person.responses[progress].prompts.length) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
-                    const collector = message.channel.createMessageCollector(filter, {time: 15000});
+					if (!stop) {
+						// responses change to using length
+						const filter = m => ((m.content < person.responses[progress].prompts.length) || (m.content.includes("?talk"))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
+						const collector = message.channel.createMessageCollector(filter, {time: 15000});
     
-                    collector.on('collect', m => {
-                        responded = true;
-                        // stops collector
-                        collector.stop();
+						collector.on('collect', m => {
+							responded = true;
+							// stops collector
+							collector.stop();
+							if (m.content.includes("?talk")) {
+								var newResponse = "Oh ok bye";
+								this.replyToPlayer(player, message, person, newResponse, room, true);
+							} else {    
+								this.makeProgress(player, person, m.content);
+								var newResponse = this.determineResponse(person, player);
+								this.replyToPlayer(player, message, person, newResponse, room, false);
+							}
+						});
     
-                        this.makeProgress(player, person, m.content);
-                        var newResponse = this.determineResponse(person, player);
-                        
-                        this.replyToPlayer(player, message, person, newResponse, room);
-                    });
-    
-                    collector.on('end', m => {
-                        if (!responded) {
-                            message.reply(person.name + " walked away...")
-                        }
-                    });
+						collector.on('end', m => {
+							if (!responded) {
+								message.reply(person.name + " walked away...")
+							}
+						});
+					}
                 }
                 else {
                     message.reply("There was no response...");
