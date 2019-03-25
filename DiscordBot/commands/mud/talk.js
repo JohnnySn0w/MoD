@@ -52,7 +52,7 @@ class TalkCommand extends commando.Command {
         args = this.cleanArgs(args);
 
 		if (room === undefined) {
-			message.reply("You are not in a MUD related room!!!!!!!!!!!!!");
+			message.reply("You are not in a MUD related room");
 		} else {
 			// Get the NPC id and data
 			var npcID = this.determineNPC(args.person, room);
@@ -67,7 +67,7 @@ class TalkCommand extends commando.Command {
 
         var response = (person === undefined) ? "" : this.determineResponse(person, player);
 
-        this.replyToPlayer(player, message, person, response, room);
+        this.replyToPlayer(player, message, person, response, room, false);
 	
 	}
 
@@ -119,7 +119,7 @@ class TalkCommand extends commando.Command {
 	}
 
     // respond to the npc's response
-    replyToPlayer(player, message, person, response, room) {
+    replyToPlayer(player, message, person, response, room, stop) {
 		var responded = false;
         var progress = player.progress.npc[person.id];
         
@@ -128,26 +128,31 @@ class TalkCommand extends commando.Command {
                 if (!(progress === undefined)) {
                     message.reply(person.name + ": " + response);
 
-                    // responses change to using length
-                    const filter = m => (m.content < person.responses[progress].prompts.length) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
-                    const collector = message.channel.createMessageCollector(filter, {time: 15000});
+					if (!stop) {
+						// responses change to using length
+						const filter = m => ((m.content < person.responses[progress].prompts.length) || (m.content.includes("?talk"))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
+						const collector = message.channel.createMessageCollector(filter, {time: 15000});
     
-                    collector.on('collect', m => {
-                        responded = true;
-                        // stops collector
-                        collector.stop();
+						collector.on('collect', m => {
+							responded = true;
+							// stops collector
+							collector.stop();
+							if (m.content.includes("?talk")) {
+								var newResponse = "Oh ok bye";
+								this.replyToPlayer(player, message, person, newResponse, room, true);
+							} else {    
+								this.makeProgress(player, person, m.content);
+								var newResponse = this.determineResponse(person, player);
+								this.replyToPlayer(player, message, person, newResponse, room, false);
+							}
+						});
     
-                        this.makeProgress(player, person, m.content);
-                        var newResponse = this.determineResponse(person, player);
-                        
-                        this.replyToPlayer(player, message, person, newResponse, room);
-                    });
-    
-                    collector.on('end', m => {
-                        if (!responded) {
-                            message.reply(person.name + " walked away...")
-                        }
-                    });
+						collector.on('end', m => {
+							if (!responded) {
+								message.reply(person.name + " walked away...")
+							}
+						});
+					}
                 }
                 else {
                     message.reply("There was no response...");
