@@ -63,7 +63,7 @@ module.exports.getItem = (itemId, table) => {
 module.exports.deleteItem = (itemId, table) => {
   const params = {
     Key: {
-      itemId: itemId
+      id: itemId
     },
     TableName: table
   };
