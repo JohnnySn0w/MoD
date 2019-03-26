@@ -54,6 +54,9 @@ class DB extends commando.Command {
     if (type === 'save') {
       message.reply('saved');
     }
+    if (type === 'delete') {
+      message.reply('deleted');
+    }
   }
 
   // separate the arguments passed for the object
@@ -84,6 +87,11 @@ class DB extends commando.Command {
       // 2nd param is the table
       // is also sent a callback for logging purposes
       db.getItem(args[1], args[2], (data) => this.replies(message, data, 'get'));
+      if(!DEBUG) {
+        message.delete();
+      }
+    } else if (args[0] === 'delete') {
+      db.deleteItem(args[1], args[2], (data) => this.replies(message, data, 'delete'));
       if(!DEBUG) {
         message.delete();
       }
