@@ -8,23 +8,16 @@ class StartCommand extends commando.Command {
             name: 'start',
             group: 'mud',
             memberName: 'start',
-            description: 'sets the player on his or her journey into the MUD'
+            description: 'Sets the player on his or her journey into the MUD'
         });
     }
 
     async run(message, args) {
-        if (message.channel.name == 'test-zone') {
-            // if the user is in the correct chat, attempt to grab their player data from the server
-            db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data));
-        }
-        else {
-            // otherwise, direct the user to where they can start the game at
-            message.reply("Sorry, you can't start playing the MUD unless you're in the <#525378260192854027>.");
-        }
-
         // delete the user's command if not debugging
         if (!DEBUG)
             message.delete();
+        
+        db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data));
     }
 
     getPlayer(message, data) {
@@ -33,7 +26,22 @@ class StartCommand extends commando.Command {
         var player = body.Item;
 
         if (player === undefined) {
-            // if the player doesn't exist in the database, create a new player object to push to the db
+            // if the player doesn't exist in the database, check which room they're in
+            db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data));
+        }
+        else {
+            // otherwise, the player is already a part of the database
+            message.reply("it seems like you've already started!");
+        }
+    }
+
+    getRoom(message, data) {
+        // grab the actual room object
+        var body = JSON.parse(data.body);
+        var room = body.Item;
+
+        if (room === undefined) {
+            // if the player is not in a MUD room, create a new player object to push to the db
             var newPlayer = {
                 'name': message.member.user.username,
                 'id': message.member.id,
@@ -48,8 +56,8 @@ class StartCommand extends commando.Command {
             db.saveItem(newPlayer, 'players', (data) => this.setRoles(message));
         }
         else {
-            // otherwise, the player is already a part of the database
-            message.reply("it seems like you've already started!");
+            // otherwise, direct the user to where they can start the game at
+            message.reply("Sorry, you can't start playing the MUD unless you start in a non-MUD room.");
         }
     }
 

@@ -23,7 +23,7 @@ class DB extends commando.Command {
       args: [
         {
           key: 'object',
-          prompt: 'handle db item entries',
+          prompt: 'Handles database item entries',
           type: 'string'
         }
       ]

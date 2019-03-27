@@ -1,3 +1,3 @@
 module.exports = { 
-	DEBUG: true
+	DEBUG: false
 };

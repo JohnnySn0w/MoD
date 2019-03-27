@@ -12,7 +12,7 @@ class MoveCommand extends commando.Command {
             args: [
                 {
                     key: 'direction',
-                    prompt: 'which direction do you wish to move in?',
+                    prompt: 'Which direction do you wish to move in?',
                     type: 'string'
                 }
             ]
@@ -20,12 +20,25 @@ class MoveCommand extends commando.Command {
     }
 
     async run(message, {direction}) {
-        // get the room object that the player is in
-        db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data, direction, true));
-
         // delete the user's command if not debugging
         if (!DEBUG)
             message.delete();
+
+        db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, direction));
+    }
+
+    getPlayer(message, data, direction) {
+        // grab the actual room object
+        var body = JSON.parse(data.body);
+        var player = body.Item;
+
+        if (player === undefined) {
+            message.reply("it seems that you're not a part of the MUD yet! \nUse \"?start\" in test-zone to get started!");
+        }
+        else {
+            // get the room object that the player is in
+            db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data, direction, true));
+        }
     }
 
     getRoom(message, data, direction, firstRetrieval) {
@@ -37,7 +50,7 @@ class MoveCommand extends commando.Command {
             // if we're grabbing the room that the player is currently in, then we need to make sure it's a MUD sanctioned room
             if (room === undefined) {
                 // if they're not in a MUD room, alert them of this
-                message.reply("You're not inside of the MUD-related rooms.");                
+                message.reply("You're not in of the MUD-related rooms.");                
             }
             else {
                 // otherwise, clean up the direction passed, and move the player into the next room
@@ -65,7 +78,7 @@ class MoveCommand extends commando.Command {
         }
         else {
             // otherwise, alert the player of the lack of exits
-            message.reply("There are no exits in the " + direction + " direction");
+            message.reply("There are no exits in that direction");
         }
     }
 }

@@ -12,7 +12,7 @@ class LookCommand extends commando.Command {
             args: [
                 {
                     key: 'object',
-                    prompt: 'what are you trying to look at?',
+                    prompt: 'What are you trying to look at?',
                     type: 'string'
                 }
             ]
@@ -20,12 +20,25 @@ class LookCommand extends commando.Command {
     }
 
     async run(message, args) {
-        // get the room object that the player is in
-        db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data, args));
-
         // delete the user's command if not debugging
         if (!DEBUG)
             message.delete();
+
+        db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, args));
+    }
+
+    getPlayer(message, data, args) {
+        // grab the actual room object
+        var body = JSON.parse(data.body);
+        var player = body.Item;
+
+        if (player === undefined) {
+            message.reply("it seems that you're not a part of the MUD yet! \nUse \"?start\" in test-zone to get started!");
+        }
+        else {
+            // get the room object that the player is in
+            db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data, args));
+        }
     }
 
     getRoom(message, data, args) {
@@ -92,7 +105,7 @@ class LookCommand extends commando.Command {
         
         // handle situations where either the room or the object may be undefined
         if (room === undefined) {
-            message.reply("You are not in a MUD-related room");
+            message.reply("You are not in a MUD-related room.");
         }
         else {
             if (object === undefined) {
