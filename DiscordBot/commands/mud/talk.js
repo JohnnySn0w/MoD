@@ -12,7 +12,7 @@ class TalkCommand extends commando.Command {
             args: [
                 {
                     key: 'person',
-                    prompt: 'who are you talking to?',
+                    prompt: 'Who are you talking to?',
                     type: 'string'
                 }
             ]
