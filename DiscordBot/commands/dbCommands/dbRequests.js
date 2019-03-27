@@ -20,6 +20,9 @@ class DB extends commando.Command {
       group: 'mud',
       memberName: 'db',
       description: 'loads/retrieves a given object from the db',
+      //for cleaning db requests
+      clientPermissions: ['ADMINISTRATOR'],
+      userPermissions: ['MANAGE_MESSAGES'],
       args: [
         {
           key: 'object',
