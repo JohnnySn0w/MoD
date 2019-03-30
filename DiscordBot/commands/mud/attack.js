@@ -1,4 +1,4 @@
-const {DEBUG} = require('../../globals.js');
+const { DEBUG } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -96,7 +96,7 @@ class AttackCommand extends commando.Command {
     }
     else {
       if (object === undefined) {
-        message.reply("I'm not sure what you're trying to look at.");
+        message.reply("I'm not sure what you're trying to attack.");
       }
       else {
         message.reply(object.description);
