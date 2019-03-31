@@ -5,9 +5,9 @@ const db = require('../../../dbhandler');
 class AttackCommand extends commando.Command {
   constructor(client) {
     super(client, {
-      name: 'look',
+      name: 'attack',
       group: 'mud',
-      memberName: 'look',
+      memberName: 'attack',
       description: 'Engages player in combat with ',
       args: [
         {
@@ -23,7 +23,6 @@ class AttackCommand extends commando.Command {
     // delete the user's command if not debugging
     if (!DEBUG)
       message.delete();
-
     db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, args));
   }
 
@@ -73,33 +72,35 @@ class AttackCommand extends commando.Command {
     
   determineEnemy(searchName, room) {
     // determine what NPC the player is looking at in the given room
-    if (searchName in room.enemies) {
-      return room.enemies[searchName];
+    if (searchName in room.npcs) {
+      //changed to only target hostile npcs
+      if(room.npcs.hostile)
+      {
+        return room.npcs[searchName];
+      }
+      else{
+        message.reply("Not an enemy");
+      }
     }
   }
 
-  replyToPlayer(message, objectIsRoom, room, data) {
-    // determine whether the object being looked at is the room itself
-    var object;
-    if (objectIsRoom === true) {
-      object = room;
-    } else {
-      var body = JSON.parse(data.body);
-      var item = body.Item;
-
-      object = item;
-    }
-        
-    // handle situations where either the room or the object may be undefined
-    if (room === undefined) {
-      message.reply("You are not in a MUD-related room.");
-    }
-    else {
-      if (object === undefined) {
-        message.reply("I'm not sure what you're trying to attack.");
+  combat(player, enemy){
+    while (player.health > 0 && enemy.health > 0){ //this should actually check all the enemies and players in the room
+      //calculate player damage on enemy and update value
+      var damage = player.strength - enemy.defense;
+      db.updateItem(enemy.id, "health", enemy.health - damage, "entities", ()=>{});
+      //kill enemy if damage was greater than enemy health
+      if(enemy.health <= 0)
+      {
+        db.deleteItem(enemy.id, "entities", ()=>{});
+        message.reply("Enemy killed");
+        break;
       }
-      else {
-        message.reply(object.description);
+      //calculate enemy damage on agro target and update value
+      damage = enemy.strength - player.defense; //for the following lines replace player with agro target
+      db.updateItem(player.id, "health", player.health - damage, "players", ()=>{});
+      if(player.health <= 0){
+        db.deleteItem(player.id, "players", ()=>{});
       }
     }
   }

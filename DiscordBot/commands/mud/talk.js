@@ -122,10 +122,9 @@ class TalkCommand extends commando.Command {
     replyToPlayer(player, message, person, response, room, stop) {
 		var responded = false;
         var progress = player.progress.npc[person.id];
-        
         if (!(room === undefined)) {
             if (!(progress === undefined)) {
-                if (!(progress === undefined)) {
+                if (!(progress === undefined) || !(npc.hostile)) {
                     message.reply(person.name + ": " + response);
 
 					if (!stop) {

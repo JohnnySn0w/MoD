@@ -30,12 +30,7 @@ module.exports.deleteItem = (itemId, table, callback) => {
   });
 };
 
-module.exports.updateItem = (itemInfo, table, callback) => {
-  const itemId = itemInfo.pathParameters.itemId;
-  const body = JSON.parse(itemInfo.body);
-  const paramName = body.paramName;
-  const paramValue = body.paramValue;
-
+module.exports.updateItem = (itemId, paramName, paramValue, table, callback) => {
   databaseManager.updateItem(itemId, paramName, paramValue, table).then(response => {
     // console.log('handler updated: \n', item);
     callback(createResponse(200, response));

@@ -13,7 +13,8 @@
         },
         "hostile": true,
         "loot": [
-        ]
+		],
+		"aggro": ""
     },
     {
         "name": "Old Man",
