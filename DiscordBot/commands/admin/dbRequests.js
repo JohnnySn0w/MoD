@@ -17,7 +17,7 @@ class DB extends commando.Command {
   constructor(client) {
     super(client, {
       name: 'db',
-      group: 'mud',
+      group: 'admin',
       memberName: 'db',
       description: 'loads/retrieves a given object from the db',
       //bot permissions

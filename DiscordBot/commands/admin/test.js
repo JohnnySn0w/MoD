@@ -5,9 +5,13 @@ class Test extends commando.Command {
     constructor(client) {
         super (client, {
             name: 'test',
-            group: 'mud',
+            group: 'admin',
             memberName: 'test',
-            description: 'perform regression testing on all existing commands'
+            description: 'perform regression testing on all existing commands',
+            //bot permissions
+            clientPermissions: ['ADMINISTRATOR'],
+            //user permissions
+            userPermissions: ['ADMINISTRATOR'],
         });
     }
 
