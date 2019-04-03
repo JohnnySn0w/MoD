@@ -24,13 +24,12 @@ class AttackCommand extends commando.Command {
     if (!DEBUG) {
       message.delete();
     }
-    db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, args));
+    db.getItem(message.member.id, 'players', (data) => this.checkPlayer(message, data, args));
   }
 
   checkPlayer(message, data, args) {
     // grab the actual room object
-    var body = JSON.parse(data.body);
-    var player = body.Item;
+    var player = JSON.parse(data.body).Item;
 
     if (player === undefined) {
       message.reply('it seems that you\'re not a part of the MUD yet! \nUse "?start" in test-zone to get started!');
@@ -42,18 +41,23 @@ class AttackCommand extends commando.Command {
   }
 
   checkRoom(message, data, args, player) {
-    var body = JSON.parse(data.body);
-    var room = body.Item;
-
-    args = this.cleanArgs(args);
-    const enemy = args.object;
-
+    const room = JSON.parse(data.body).Item;
+    const enemy = this.cleanArgs(args).object;
     //look for the npc
-    if(room.npcs.enemy) {
-      db.getItem(enemy, 'entities', (data) => this.combatLoop(message, player, data));
+    if(room.npcs[enemy]) {
+      db.getItem(room.npcs[enemy], 'entities', (data) => this.checkHostile(message, player, data));
     } else {
-      message.reply('glares with murderous intent towards' + args.object);
+      message.reply(' glares with murderous intent towards no one in particular');
     }
+  }
+
+  checkHostile(message, player, data) {
+    const enemy = JSON.parse(data.body).Item;
+    console.log(data.body);
+    if(enemy.hostile){
+      this.combatLoop(message, player, enemy);
+    }
+    message.reply(' glares with murderous intent towards ' + enemy.name);
   }
 
   cleanArgs(args) {
@@ -62,10 +66,10 @@ class AttackCommand extends commando.Command {
     return args;
   }
 
-  combatLoop(message, player, data) {
-    const enemy = JSON.parse(data.body).Item;
+  combatLoop(message, player, enemy) {
+    console.log('entering combat');
     db.updateItem(player.id, 'busy', true, 'players', ()=>{});
-    db.updateItem(enemy, 'aggro', player.id, 'entities', () => {});
+    db.updateItem(enemy.id, 'aggro', player.id, 'entities', () => {});
     while (player.health > 0 && enemy.health > 0) {
       //calculate player damage on enemy and update value
       let damage = player.strength - enemy.defense;

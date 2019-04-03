@@ -108,22 +108,20 @@ class DB extends commando.Command {
 // js object
 const dumbDynamoRoom = {
   'name': 'room',
-  'id': '69',
-  'roleid': '3456',
-  'description': 'You\'re in a large, cavernous room. Your footsteps echo into the darkness. Your journey begins to the north... \nThere\'s also an old-man and a little-boy in the room with you.',
+  'id': '532297083089321995',
+  'roleid': '525358056788328448',
+  'description': 'bluh bluh huge room',
   'exits': {
-    'north': 'room-0'
+    'north': 'room-of-entry'
   },
   'items': [
 
   ],
   'npcs': {
+    'goblin': '0',
     'old-man': '1',
     'little-boy': '2'
-  },
-  'enemies': [
-
-  ]
+  }
 };
 
 // export the class to any 'require' calls in other files

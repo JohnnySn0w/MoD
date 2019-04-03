@@ -14,7 +14,7 @@
         "hostile": true,
         "loot": [
 		],
-		"aggro": ""
+		"aggro": "0"
     },
     {
         "name": "Old Man",
