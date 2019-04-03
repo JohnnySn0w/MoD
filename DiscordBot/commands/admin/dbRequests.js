@@ -2,7 +2,6 @@
   kind of an example command
 */
 
-
 // importing from other files
 const commando = require('discord.js-commando');
 
