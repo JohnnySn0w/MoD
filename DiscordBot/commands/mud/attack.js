@@ -32,9 +32,14 @@ class AttackCommand extends commando.Command {
     var player = JSON.parse(data.body).Item;
 
     if (player === undefined) {
-      message.reply('it seems that you\'re not a part of the MUD yet! \nUse "?start" in test-zone to get started!');
+      message.member.send('it seems that you\'re not a part of the MUD yet! \nUse "?start" in test-zone to get started!');
     }
-    else {
+    //TODO: this should be it's own external function in globals or something
+    //so we can put it on all commands without code replication
+    else if (player.health <= 0) {
+      message.reply('continues to be a lifeless corpse');
+      message.member.send('pls respawn to continue playing');
+    } else {
       // get the room object that the player is in
       db.getItem(message.channel.id, 'rooms', (data) => this.checkRoom(message, data, args, player));
     }
@@ -47,20 +52,27 @@ class AttackCommand extends commando.Command {
     if(room.npcs[enemy]) {
       db.getItem(room.npcs[enemy], 'entities', (data) => this.checkHostile(message, player, data));
     } else {
-      message.reply(' glares with murderous intent towards no one in particular');
+      message.reply('glares with murderous intent towards no one in particular');
     }
   }
 
   checkHostile(message, player, data) {
     const enemy = JSON.parse(data.body).Item;
-    if(enemy.hostile){
-      if(enemy.aggro === 'nobody') {
-        this.combatLoop(message, player, enemy);
+    try {
+      //this is a fancy way of making sure enemy is defined
+      //otherwise trying to access a key of an unef object throws a big error
+      if(enemy && enemy.hostile) {
+        if(enemy.aggro === 'nobody' || player.id) {
+          this.combatLoop(message, player, enemy);
+        } else {
+          message.reply('attempts to encroach on existing combat, and fails.');
+        }
       } else {
-        message.reply(` ${enemy.aggro} else is already fighting that target!`);
+        message.reply(`glares with murderous intent towards ${enemy.name}.`);
       }
-    } else {
-      message.reply(`glares with murderous intent towards ${enemy.name}.`);
+    } catch (err) {
+      console.log(`${err}\nThis indicates an enemy not respawning correctly or quick enough`);
+      message.reply('tries to attack the air');
     }
   }
 
@@ -78,9 +90,9 @@ class AttackCommand extends commando.Command {
       let damage = player.strength - enemy.defense;
       if (damage > 0) {
         enemy.health = enemy.health - damage;
-        message.reply(` hit ${enemy.name} for ${damage.toString()} damage.`);
+        message.reply(`hit ${enemy.name} for ${damage.toString()} damage.`);
       } else {
-        message.reply(` swung at the ${enemy.name} and missed.`);
+        message.reply(`swung at the ${enemy.name} and missed.`);
       }
       //prevents enemy attacking if dead
       if(enemy.health <= 0) {
@@ -90,9 +102,9 @@ class AttackCommand extends commando.Command {
       damage = enemy.strength - player.defense; //for the following lines replace player with agro target
       if (damage > 0) {
         player.health = player.health - damage;
-        message.reply(` was hit by ${enemy.name} for ${damage.toString()} damage.`);
+        message.reply(`was hit by ${enemy.name} for ${damage.toString()} damage.`);
       } else {
-        message.reply(` ${enemy.name} swung at ${player.name} and missed.`);
+        message.reply(`${enemy.name} swung at ${player.name} and missed.`);
       }
     }
     db.updateItem(player.id, 'health', player.health, 'players', ()=>{});
@@ -104,10 +116,11 @@ class AttackCommand extends commando.Command {
       we don't delete the enemy before distributing their loot */
       db.deleteItem(enemy.id, 'entities', ()=>{});
     } else {
+      console.log('removing aggro');
       db.updateItem(enemy.id, 'aggro', 'nobody', 'entities', () => {});
     }
     if (player.health <= 0) {
-      message.reply('was defeated by a' + enemy.name);
+      message.reply(`was defeated by a ${enemy.name}.`);
       //TODO: revive player in starting room
     }
   }

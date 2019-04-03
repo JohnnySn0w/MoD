@@ -130,7 +130,7 @@ const dumbDynamoRoom = {
 };
 
 const gobbie = {
-  'strength':6,
+  'strength':3,
   'level':0,
   'defense':2,
   'hostile':true,
