@@ -8,7 +8,7 @@ class AttackCommand extends commando.Command {
       name: 'attack',
       group: 'mud',
       memberName: 'attack',
-      description: 'Engages player in combat with ',
+      description: 'Handles combat',
       args: [
         {
           key: 'object',
@@ -21,46 +21,38 @@ class AttackCommand extends commando.Command {
 
   async run(message, args) {
     // delete the user's command if not debugging
-    if (!DEBUG)
+    if (!DEBUG) {
       message.delete();
+    }
     db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, args));
   }
 
-  getPlayer(message, data, args) {
+  checkPlayer(message, data, args) {
     // grab the actual room object
     var body = JSON.parse(data.body);
     var player = body.Item;
 
     if (player === undefined) {
-      message.reply("it seems that you're not a part of the MUD yet! \nUse \"?start\" in test-zone to get started!");
+      message.reply('it seems that you\'re not a part of the MUD yet! \nUse "?start" in test-zone to get started!');
     }
     else {
       // get the room object that the player is in
-      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data, args));
+      db.getItem(message.channel.id, 'rooms', (data) => this.checkRoom(message, data, args, player));
     }
   }
 
-  getRoom(message, data, args) {
-    // grab the actual room object
+  checkRoom(message, data, args, player) {
     var body = JSON.parse(data.body);
     var room = body.Item;
 
     args = this.cleanArgs(args);
+    const enemy = args.object;
 
-    var object;
-    if (args.object === "room" || args.object === "here") {
-      this.replyToPlayer(message, true, room);
-    }
-    else {
-      // otherwise, the player is looking at an item, which we need to determine
-      object = this.determineItem(args.object, room);
-      if (object === undefined) {
-        // if the object doesn't exist, then the player is looking at an entity
-        object = this.determineNPC(args.object, room);
-        db.getItem(object, 'entities', (data) => this.replyToPlayer(message, false, room, data));
-      } else {
-        db.getItem(object, 'items', (data) => this.replyToPlayer(message, false, room, data));
-      }
+    //look for the npc
+    if(room.npcs.enemy) {
+      db.getItem(enemy, 'entities', (data) => this.combatLoop(message, player, data));
+    } else {
+      message.reply('glares with murderous intent towards' + args.object);
     }
   }
 
@@ -69,39 +61,35 @@ class AttackCommand extends commando.Command {
     args.object = args.object.toLowerCase();
     return args;
   }
-    
-  determineEnemy(searchName, room) {
-    // determine what NPC the player is looking at in the given room
-    if (searchName in room.npcs) {
-      //changed to only target hostile npcs
-      if(room.npcs.hostile)
-      {
-        return room.npcs[searchName];
-      }
-      else{
-        message.reply("Not an enemy");
-      }
-    }
-  }
 
-  combat(player, enemy){
-    while (player.health > 0 && enemy.health > 0){ //this should actually check all the enemies and players in the room
+  combatLoop(message, player, data) {
+    const enemy = JSON.parse(data.body).Item;
+    db.updateItem(player.id, 'busy', true, 'players', ()=>{});
+    db.updateItem(enemy, 'aggro', player.id, 'entities', () => {});
+    while (player.health > 0 && enemy.health > 0) {
       //calculate player damage on enemy and update value
-      var damage = player.strength - enemy.defense;
-      db.updateItem(enemy.id, "health", enemy.health - damage, "entities", ()=>{});
-      //kill enemy if damage was greater than enemy health
-      if(enemy.health <= 0)
-      {
-        db.deleteItem(enemy.id, "entities", ()=>{});
-        message.reply("Enemy killed");
-        break;
+      let damage = player.strength - enemy.defense;
+      if (damage > 0) {
+        db.updateItem(enemy.id, 'health', enemy.health - damage, 'entities', ()=>{});
       }
+      message.reply(' hit ' + enemy.name + ' for ' + damage.toString());
       //calculate enemy damage on agro target and update value
       damage = enemy.strength - player.defense; //for the following lines replace player with agro target
-      db.updateItem(player.id, "health", player.health - damage, "players", ()=>{});
-      if(player.health <= 0){
-        db.deleteItem(player.id, "players", ()=>{});
-      }
+      db.updateItem(player.id, 'health', player.health - damage, 'players', ()=>{});
+      message.reply(' was hit by ' + enemy.name + ' for ' + damage.toString());
+    }
+    if(enemy.health <= 0) {
+      db.updateItem(player.id, 'busy', false, 'players', ()=>{});
+      message.reply('defeated the' + enemy.name);
+      //TODO: loot roll here
+      /* TODO: move this delete to the end of the loot roll so 
+      we don't delete the enemy before distributing their loot */
+      db.deleteItem(enemy.id, 'entities', ()=>{});
+    }
+    if (player.health <= 0) {
+      db.updateItem(player.id, 'busy', false, 'players', ()=>{});
+      message.reply('was defeated by a' + enemy.name);
+      //TODO: revive player in starting room
     }
   }
 }
