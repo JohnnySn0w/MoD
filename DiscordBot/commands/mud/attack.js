@@ -55,7 +55,11 @@ class AttackCommand extends commando.Command {
     const enemy = JSON.parse(data.body).Item;
     console.log(data.body);
     if(enemy.hostile){
-      this.combatLoop(message, player, enemy);
+      if(enemy.aggro === '0') {
+        this.combatLoop(message, player, enemy);
+      } else {
+        message.reply(` ${enemy.aggro} else is already fighting that target!`);
+      }
     }
     message.reply(' glares with murderous intent towards ' + enemy.name);
   }
@@ -67,31 +71,38 @@ class AttackCommand extends commando.Command {
   }
 
   combatLoop(message, player, enemy) {
-    console.log('entering combat');
     db.updateItem(player.id, 'busy', true, 'players', ()=>{});
     db.updateItem(enemy.id, 'aggro', player.id, 'entities', () => {});
     while (player.health > 0 && enemy.health > 0) {
       //calculate player damage on enemy and update value
       let damage = player.strength - enemy.defense;
       if (damage > 0) {
-        db.updateItem(enemy.id, 'health', enemy.health - damage, 'entities', ()=>{});
+        enemy.health = enemy.health - damage;
+        message.reply(` hit ${enemy.name} for ${damage.toString()} damage.`);
+      } else {
+        message.reply(` swung at the ${enemy.name} and missed.`);
       }
-      message.reply(' hit ' + enemy.name + ' for ' + damage.toString());
       //calculate enemy damage on agro target and update value
       damage = enemy.strength - player.defense; //for the following lines replace player with agro target
-      db.updateItem(player.id, 'health', player.health - damage, 'players', ()=>{});
-      message.reply(' was hit by ' + enemy.name + ' for ' + damage.toString());
+      if (damage > 0) {
+        player.health = player.health - damage;
+        message.reply(` was hit by ${enemy.name} for ${damage.toString()} damage.`);
+      } else {
+        message.reply(` ${enemy.name} swung at ${player.name} and missed.`);
+      }
     }
+    db.updateItem(player.id, 'health', player.health, 'players', ()=>{});
+    db.updateItem(player.id, 'busy', false, 'players', ()=>{});
     if(enemy.health <= 0) {
-      db.updateItem(player.id, 'busy', false, 'players', ()=>{});
-      message.reply('defeated the' + enemy.name);
+      message.reply(`defeated the ${enemy.name}.`);
       //TODO: loot roll here
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
       db.deleteItem(enemy.id, 'entities', ()=>{});
+    } else {
+      db.updateItem(enemy.id, 'aggro', '0', 'entities', () => {});
     }
     if (player.health <= 0) {
-      db.updateItem(player.id, 'busy', false, 'players', ()=>{});
       message.reply('was defeated by a' + enemy.name);
       //TODO: revive player in starting room
     }

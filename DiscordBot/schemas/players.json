@@ -6,6 +6,7 @@
         "health": 100,
         "strength": 7,
         "defense": 5,
+        "busy": false,
         "inventory": [
 
         ],
