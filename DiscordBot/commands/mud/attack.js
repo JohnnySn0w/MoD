@@ -53,15 +53,15 @@ class AttackCommand extends commando.Command {
 
   checkHostile(message, player, data) {
     const enemy = JSON.parse(data.body).Item;
-    console.log(data.body);
     if(enemy.hostile){
-      if(enemy.aggro === '0') {
+      if(enemy.aggro === 'nobody') {
         this.combatLoop(message, player, enemy);
       } else {
         message.reply(` ${enemy.aggro} else is already fighting that target!`);
       }
+    } else {
+      message.reply(`glares with murderous intent towards ${enemy.name}.`);
     }
-    message.reply(' glares with murderous intent towards ' + enemy.name);
   }
 
   cleanArgs(args) {
@@ -82,6 +82,10 @@ class AttackCommand extends commando.Command {
       } else {
         message.reply(` swung at the ${enemy.name} and missed.`);
       }
+      //prevents enemy attacking if dead
+      if(enemy.health <= 0) {
+        break;
+      }
       //calculate enemy damage on agro target and update value
       damage = enemy.strength - player.defense; //for the following lines replace player with agro target
       if (damage > 0) {
@@ -100,7 +104,7 @@ class AttackCommand extends commando.Command {
       we don't delete the enemy before distributing their loot */
       db.deleteItem(enemy.id, 'entities', ()=>{});
     } else {
-      db.updateItem(enemy.id, 'aggro', '0', 'entities', () => {});
+      db.updateItem(enemy.id, 'aggro', 'nobody', 'entities', () => {});
     }
     if (player.health <= 0) {
       message.reply('was defeated by a' + enemy.name);

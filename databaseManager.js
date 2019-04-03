@@ -75,9 +75,9 @@ module.exports.updateItem = (itemId, paramsName, paramsValue, table) => {
   const params = {
     TableName: table,
     Key: {
-      itemId
+      id: itemId
     },
-    ConditionExpression: 'attribute_exists(itemId)',
+    ConditionExpression: 'attribute_exists(id)',
     UpdateExpression: 'set ' + paramsName + ' = :v',
     ExpressionAttributeValues: {
       ':v': paramsValue
