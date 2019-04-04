@@ -83,8 +83,8 @@ class AttackCommand extends commando.Command {
   }
 
   combatLoop(message, player, enemy) {
-    db.updateItem(player.id, 'busy', true, 'players', ()=>{});
-    db.updateItem(enemy.id, 'aggro', player.id, 'entities', () => {});
+    db.updateItem(player.id, ['busy'], [true], 'players', ()=>{});
+    db.updateItem(enemy.id, ['aggro'], [player.id], 'entities', () => {});
     while (player.health > 0 && enemy.health > 0) {
       //calculate player damage on enemy and update value
       let damage = player.strength - enemy.defense;
@@ -107,8 +107,8 @@ class AttackCommand extends commando.Command {
         message.reply(`${enemy.name} swung at ${player.name} and missed.`);
       }
     }
-    db.updateItem(player.id, 'health', player.health, 'players', ()=>{});
-    db.updateItem(player.id, 'busy', false, 'players', ()=>{});
+    console.log('updating player state');
+    db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{});
     if(enemy.health <= 0) {
       message.reply(`defeated the ${enemy.name}.`);
       //TODO: loot roll here
@@ -117,11 +117,10 @@ class AttackCommand extends commando.Command {
       db.deleteItem(enemy.id, 'entities', ()=>{});
     } else {
       console.log('removing aggro');
-      db.updateItem(enemy.id, 'aggro', 'nobody', 'entities', () => {});
+      db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
     }
     if (player.health <= 0) {
       message.reply(`was defeated by a ${enemy.name}.`);
-      //TODO: revive player in starting room
     }
   }
 }

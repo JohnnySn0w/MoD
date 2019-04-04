@@ -71,17 +71,32 @@ module.exports.deleteItem = (itemId, table) => {
   return dynamo.delete(params).promise();
 };
 
-module.exports.updateItem = (itemId, paramsName, paramsValue, table) => {
+function setUpdateExpression(paramsNames) {
+  let expression = `set ${paramsNames[0]} = :0`;
+  for (let i = 1; i < paramsNames.length; i++) {
+    expression = `${expression}, ${paramsNames[i]} = :${i}`;
+  }
+  return expression;
+}
+
+function setAttribValues(paramsValues) {
+  let attribs = {};
+  for (let i = 0; i < paramsValues.length; i++) {
+    attribs[`:${i}`] = paramsValues[i];
+  }
+  return attribs;
+}
+
+
+module.exports.updateItem = (itemId, paramsNames, paramsValues, table) => {
   const params = {
     TableName: table,
     Key: {
       id: itemId
     },
     ConditionExpression: 'attribute_exists(id)',
-    UpdateExpression: 'set ' + paramsName + ' = :v',
-    ExpressionAttributeValues: {
-      ':v': paramsValue
-    },
+    UpdateExpression: setUpdateExpression(paramsNames),
+    ExpressionAttributeValues: setAttribValues(paramsValues),
     ReturnValues: 'ALL_NEW'
   };
 
