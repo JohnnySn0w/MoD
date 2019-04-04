@@ -62,6 +62,7 @@ class MoveCommand extends commando.Command {
             // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
             message.reply("moved to \<#" + room.id + ">");
             message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(console.error);
+            this.client.channels.get(room.id).send("Another player has joined.");
         }
     }
 
