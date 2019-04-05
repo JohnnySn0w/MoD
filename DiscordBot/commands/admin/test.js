@@ -72,7 +72,11 @@ class Test extends commando.Command {
     testStartCommand(message) {
         var command = new start(this.client);
         command.run(message, "");
-        // db.deleteItem(message.member.id, 'players', (data) => this.testStartCommand2(message, data));
+        db.deleteItem(message.member.id, 'players', (data) => this.testStartCommand2(message, data));
+    }
+
+    testStartCommand2(message, data) {
+        
     }
 
     testStatsCommand(message) {
