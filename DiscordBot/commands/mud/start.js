@@ -12,7 +12,7 @@ class StartCommand extends commando.Command {
         });
     }
 
-    async run(message, args) {
+    async run(message) {
         // delete the user's command if not debugging
         if (!DEBUG)
             message.delete();
