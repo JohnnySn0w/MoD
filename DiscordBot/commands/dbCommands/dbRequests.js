@@ -21,7 +21,7 @@ class DB extends commando.Command {
       memberName: 'db',
       description: 'loads/retrieves a given object from the db',
       //bot permissions
-      clientPermissions: ['ADMINISTRATOR'],
+      clientPermissions: [''],
       //user permissions
       userPermissions: ['ADMINISTRATOR'],
       args: [
@@ -94,6 +94,11 @@ class DB extends commando.Command {
       if(!DEBUG) {
         message.delete();
       }
+    // } else if (args[0] === 'update') {
+    //   db.deleteItem(args[1], args[2], (data) => this.replies(message, data, 'update'));
+    //   if(!DEBUG) {
+    //     message.delete();
+    //   }
     } else if (args[0] === 'delete') {
       db.deleteItem(args[1], args[2], (data) => this.replies(message, data, 'delete'));
       if(!DEBUG) {
