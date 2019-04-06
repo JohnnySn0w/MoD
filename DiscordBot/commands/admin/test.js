@@ -65,7 +65,25 @@ class Test extends commando.Command {
     }
 
     testEverything(message) {
+        // literally just run through every test case with 4 seconds between each run
+        this.testLookCommand(message);
 
+        setTimeout(function() {
+            this.testMoveCommand(message);
+
+            setTimeout(function() {
+                this.testStartCommand(message);
+                
+                setTimeout(function() {
+                    this.testStatsCommand(message);
+                    
+                    setTimeout(function() {
+                        this.testTalkCommand(message);
+                        
+                    }, 4000);
+                }, 4000);
+            }, 4000);
+        }, 4000);
     }
 
     testLookCommand(message) {
@@ -169,7 +187,9 @@ class Test extends commando.Command {
     }
 
     testTalkCommand(message) {
-        
+        // grab the talk command and run it
+        var command = new talk(this.client);
+        command.run(message, {person: "nobody"});
     }
 }
 
