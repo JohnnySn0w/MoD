@@ -21,7 +21,7 @@ class DB extends commando.Command {
       memberName: 'db',
       description: 'loads/retrieves a given object from the db',
       //bot permissions
-      clientPermissions: [''],
+      // clientPermissions: [''],
       //user permissions
       userPermissions: ['ADMINISTRATOR'],
       args: [
