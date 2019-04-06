@@ -16,8 +16,6 @@ class Test extends commando.Command {
             group: 'admin',
             memberName: 'test',
             description: 'perform regression testing on all existing commands',
-            //bot permissions
-            clientPermissions: ['ADMINISTRATOR'],
             //user permissions
             userPermissions: ['ADMINISTRATOR'],
             args: [
