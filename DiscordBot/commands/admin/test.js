@@ -139,7 +139,11 @@ class Test extends commando.Command {
 
             setTimeout(function() {
                 command.run(message);
-                addPlayerBack(message);
+
+                // add the player back
+                setTimeout(function() {
+                    addPlayerBack(message);
+                }, 500);
             }, 500);
         }, 500);
     }
@@ -155,13 +159,17 @@ class Test extends commando.Command {
 
             setTimeout(function() {
                 command.run(message);
-                addPlayerBack(message);
+
+                // add the player back
+                setTimeout(function() {
+                    addPlayerBack(message);
+                }, 500);
             }, 500);
         }, 500);
     }
 
     testTalkCommand(message) {
-
+        
     }
 }
 
