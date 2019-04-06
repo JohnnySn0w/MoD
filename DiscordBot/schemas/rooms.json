@@ -13,10 +13,8 @@
         "npcs": {
             "old-man": "1",
 			"little-boy": "2"
-        },
-        "enemies": [
-
-        ]
+        }
+    
     },
     {
         "name": "room-0",
@@ -32,9 +30,6 @@
             "rocks": "2"
         },
         "npcs": [
-
-        ],
-        "enemies": [
 
         ]
     },
@@ -52,9 +47,6 @@
         },
         "npcs": [
 
-        ],
-        "enemies": [
-
         ]
     },
     {
@@ -69,9 +61,6 @@
             "ladder": "0"
         },
         "npcs": [
-
-        ],
-        "enemies": [
 
         ]
     }
