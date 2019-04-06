@@ -34,6 +34,9 @@ class Test extends commando.Command {
         command = this.cleanArgs(command);
 
         switch(command) {
+            case "everything":
+                this.testEverything(message);
+                break;
             case "look":
                 this.testLookCommand(message);
                 break;
@@ -61,28 +64,100 @@ class Test extends commando.Command {
         return command;
     }
 
-    testLookCommand(message) {
+    testEverything(message) {
 
+    }
+
+    testLookCommand(message) {
+        // grab the look command and run it with an invalid item
+        var command = new look(this.client);
+        command.run(message, {object: "nothing"});
+
+        // run the command again with the room
+        setTimeout(function() {
+            command.run(message, {object: "room"});
+
+            // again with an item
+            setTimeout(function() {
+                command.run(message, {object: "pillars"});
+
+                // again with an entity
+                setTimeout(function() {
+                    command.run(message, {object: "old-man"});
+
+                    // again after deleting the player
+                    setTimeout(function() {
+                        db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+
+                        setTimeout(function() {
+                            command.run(message, {object: "nothing"});
+
+                            // add the player back
+                            setTimeout(function() {
+                                addPlayerBack(message);
+                            }, 500);
+                        }, 500);
+                    }, 500);
+                }, 500);
+            }, 500);
+        }, 500);
     }
 
     testMoveCommand(message) {
+        // grab the move command and run it with an invalid direction
+        var command = new move(this.client);
+        command.run(message, {direction: "nowhere"});
 
+        // run the command again in an actual direction
+        setTimeout(function() {
+            command.run(message, {direction: "north"});
+
+            // delete the player and run the command once more.
+            setTimeout(function() {
+                db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+
+                setTimeout(function() {
+                    command.run(message, {direction: "north"});
+                    
+                    // add the player back
+                    setTimeout(function() {
+                        addPlayerBack(message);
+                    }, 500);
+                }, 500);
+            }, 500);
+        }, 500);
     }
 
     testStartCommand(message) {
+        // grab the start command and run it
         var command = new start(this.client);
         command.run(message);
+
+        // delete the player and then run the start command again
         setTimeout(function() {
             db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
 
             setTimeout(function() {
                 command.run(message);
+                addPlayerBack(message);
             }, 500);
         }, 500);
     }
 
     testStatsCommand(message) {
+        // grab the stats command and run it
+        var command = new stats(this.client);
+        command.run(message);
 
+        // delete the player and then run the stats command again
+        setTimeout(function() {
+            db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+
+            setTimeout(function() {
+                command.run(message);
+                addPlayerBack(message);
+            }, 500);
+        }, 500);
     }
 
     testTalkCommand(message) {
@@ -90,8 +165,27 @@ class Test extends commando.Command {
     }
 }
 
+function addPlayerBack(message) {
+    var newPlayer = {
+        'name': message.member.user.username,
+        'id': message.member.id,
+        'health': 100,
+        'level': 1,
+        'strength': 7,
+        'defense': 5,
+        'inventory': [],
+        'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
+    }
+
+    db.saveItem(newPlayer, 'players', (data) => addData(message));
+}
+
 function deleteData(data) {
     console.log("Data deleted");
+}
+
+function addData(data) {
+    console.log("Player re-added");
 }
 
 module.exports = Test;
