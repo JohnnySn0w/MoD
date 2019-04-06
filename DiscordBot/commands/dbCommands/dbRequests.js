@@ -104,6 +104,11 @@ class DB extends commando.Command {
       if(!DEBUG) {
         message.delete();
       }
+    } else if (args[0] === 'respawn') {
+      db.saveItem(gobbie, 'entities', (data) => this.replies(message, data, 'save'));
+      if(!DEBUG) {
+        message.delete();
+      }
     }
   }
 }
@@ -113,22 +118,35 @@ class DB extends commando.Command {
 // js object
 const dumbDynamoRoom = {
   'name': 'room',
-  'id': '69',
-  'roleid': '3456',
-  'description': 'You\'re in a large, cavernous room. Your footsteps echo into the darkness. Your journey begins to the north... \nThere\'s also an old-man and a little-boy in the room with you.',
+  'id': '532297083089321995',
+  'roleid': '525358056788328448',
+  'description': 'bluh bluh huge room',
   'exits': {
-    'north': 'room-0'
+    'north': '520340145342513155'
   },
   'items': [
 
   ],
   'npcs': {
+    'goblin': '0',
     'old-man': '1',
     'little-boy': '2'
-  },
-  'enemies': [
+  }
+};
 
-  ]
+const gobbie = {
+  'strength':3,
+  'level':0,
+  'defense':2,
+  'hostile':true,
+  'name':'Goblin',
+  'options':{},
+  'health':20,
+  'description':'A green, humanoid monster stands before you with a small club in his hand.',
+  'responses':{},
+  'aggro':'nobody',
+  'loot':[],
+  'id':'0'
 };
 
 // export the class to any 'require' calls in other files
