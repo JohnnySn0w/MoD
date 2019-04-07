@@ -229,7 +229,7 @@ function testTalkCommand(message, client) {
 }
 
 function testAttackCommand(message, client) {
-    message.channel.send("Not testing implemented yet.");
+    message.channel.send("No testing implemented yet.");
 }
 
 function addPlayerBack(message) {

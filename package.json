@@ -17,7 +17,7 @@
     "serverless-dynamodb-local": "^0.2.35"
   },
   "scripts": {
-    "start": "nodemon ./DiscordBot/index.js",
+    "start": "nodemon --max-old-space-size=2048 ./DiscordBot/index.js",
     "test": "jest",
     "watch": "jest --watch"
   },
