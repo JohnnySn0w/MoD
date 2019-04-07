@@ -1,7 +1,6 @@
 const {DEBUG} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
-const discord = require('discord.js');
 
 class MoveCommand extends commando.Command {
     constructor(client) {
@@ -62,7 +61,8 @@ class MoveCommand extends commando.Command {
         else {
             // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
             message.reply("moved to \<#" + room.id + ">");
-            message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(console.error);            
+            message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(console.error);
+            this.client.channels.get(room.id).send(message.member.user.username + " has entered.");
         }
     }
 
@@ -76,8 +76,6 @@ class MoveCommand extends commando.Command {
         if (direction in room.exits) {
             // if a room exists in the given direction, use that direction's associated room ID to get the next room
             db.getItem(room.exits[direction], 'rooms', (data) => this.getRoom(message, data, direction, false));
-            console.log(room.exits[direction]);
-            this.client.channels.get(room.exits[direction]).send("Another player has entered.");
         }
         else {
             // otherwise, alert the player of the lack of exits
