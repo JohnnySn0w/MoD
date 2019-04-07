@@ -63,9 +63,8 @@ class TalkCommand extends commando.Command {
 
 	getProgress(message, args, player, room, data) {
 		var body = JSON.parse(data.body);
-		var person = body.Item;
-
-        console.log("Entity - " + person);
+        var person = body.Item;
+        
         if (person === undefined) {
             message.reply("talks to no-one in particular...");
         }

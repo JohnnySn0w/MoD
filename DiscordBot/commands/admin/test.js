@@ -33,22 +33,25 @@ class Test extends commando.Command {
 
         switch(command) {
             case "everything":
-                this.testEverything(message);
+                this.testEverything(message, this.client);
                 break;
             case "look":
-                this.testLookCommand(message);
+                testLookCommand(message, this.client);
                 break;
             case "move":
-                this.testMoveCommand(message);
+                testMoveCommand(message, this.client);
                 break;
             case "start":
-                this.testStartCommand(message);
+                testStartCommand(message, this.client);
                 break;
             case "stats":
-                this.testStatsCommand(message);
+                testStatsCommand(message, this.client);
                 break;
             case "talk":
-                this.testTalkCommand(message);
+                testTalkCommand(message, this.client);
+                break;
+            case "attack":
+                testAttackCommand(message, this.client);
                 break;
             default:
                 if (!DEBUG)
@@ -62,78 +65,158 @@ class Test extends commando.Command {
         return command;
     }
 
-    testEverything(message) {
+    testEverything(message, client) {
         // literally just run through every test case with 4 seconds between each run
-        this.testLookCommand(message);
+        message.channel.send("Testing Look");
+        testLookCommand(message, client);
 
         setTimeout(function() {
-            this.testMoveCommand(message);
+            message.channel.send("Testing Move");
+            testMoveCommand(message, client);
 
             setTimeout(function() {
-                this.testStartCommand(message);
+                message.channel.send("Testing Start");
+                testStartCommand(message, client);
                 
                 setTimeout(function() {
-                    this.testStatsCommand(message);
+                    message.channel.send("Testing Stats");
+                    testStatsCommand(message, client);
                     
                     setTimeout(function() {
-                        this.testTalkCommand(message);
+                        message.channel.send("Testing Talk");                        
+                        testTalkCommand(message, client);
                         
+                        setTimeout(function() {
+                            message.channel.send("Testing Attack");                        
+                            testAttackCommand(message, client);
+                            
+                        }, 4000);
                     }, 4000);
                 }, 4000);
             }, 4000);
         }, 4000);
     }
+}
 
-    testLookCommand(message) {
-        // grab the look command and run it with an invalid item
-        var command = new look(this.client);
-        command.run(message, {object: "nothing"});
+function testLookCommand(message, client) {
+    // grab the look command and run it with an invalid item
+    var command = new look(client);
+    command.run(message, {object: "nothing"});
 
-        // run the command again with the room
+    // run the command again with the room
+    setTimeout(function() {
+        command.run(message, {object: "room"});
+
+        // again with an item
         setTimeout(function() {
-            command.run(message, {object: "room"});
+            command.run(message, {object: "pillars"});
 
-            // again with an item
+            // again with an entity
             setTimeout(function() {
-                command.run(message, {object: "pillars"});
+                command.run(message, {object: "old-man"});
 
-                // again with an entity
+                // again after deleting the player
                 setTimeout(function() {
-                    command.run(message, {object: "old-man"});
+                    db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
 
-                    // again after deleting the player
                     setTimeout(function() {
-                        db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+                        command.run(message, {object: "nothing"});
 
+                        // add the player back
                         setTimeout(function() {
-                            command.run(message, {object: "nothing"});
-
-                            // add the player back
-                            setTimeout(function() {
-                                addPlayerBack(message);
-                            }, 500);
+                            addPlayerBack(message);
                         }, 500);
                     }, 500);
                 }, 500);
             }, 500);
         }, 500);
-    }
+    }, 500);
+}
 
-    testMoveCommand(message) {
-        // grab the move command and run it with an invalid direction
-        var command = new move(this.client);
-        command.run(message, {direction: "nowhere"});
+function testMoveCommand(message, client) {
+    // grab the move command and run it with an invalid direction
+    var command = new move(client);
+    command.run(message, {direction: "nowhere"});
 
-        // run the command again in an actual direction
+    // run the command again in an actual direction
+    setTimeout(function() {
+        command.run(message, {direction: "north"});
+
+        // delete the player and run the command once more.
         setTimeout(function() {
-            command.run(message, {direction: "north"});
+            db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
 
-            // delete the player and run the command once more.
+            setTimeout(function() {
+                command.run(message, {direction: "north"});
+                
+                // add the player back
+                setTimeout(function() {
+                    addPlayerBack(message);
+                }, 500);
+            }, 500);
+        }, 500);
+    }, 500);
+}
+
+function testStartCommand(message, client) {
+    // grab the start command and run it
+    var command = new start(client);
+    command.run(message);
+
+    // delete the player and then run the start command again
+    setTimeout(function() {
+        db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+
+        setTimeout(function() {
+            command.run(message);
+
+            // add the player back
+            setTimeout(function() {
+                addPlayerBack(message);
+            }, 500);
+        }, 500);
+    }, 500);
+}
+
+function testStatsCommand(message, client) {
+    // grab the stats command and run it
+    var command = new stats(client);
+    command.run(message);
+
+    // delete the player and then run the stats command again
+    setTimeout(function() {
+        db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+
+        setTimeout(function() {
+            command.run(message);
+
+            // add the player back
+            setTimeout(function() {
+                addPlayerBack(message);
+            }, 500);
+        }, 500);
+    }, 500);
+}
+
+function testTalkCommand(message, client) {
+    // grab the talk command and run it
+    var command = new talk(client);
+    command.run(message, {person: "nobody"});
+
+    // run the command again with a valid npc
+    setTimeout(function() {
+        command.run(message, {person: "old-man"});
+
+        // interrupt the previous discussion by talking to another npc
+        setTimeout(function() {
+            command.run(message, {person: "little-boy"});
+
+            // delete the player and run the command again
             setTimeout(function() {
                 db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
 
                 setTimeout(function() {
-                    command.run(message, {direction: "north"});
+                    command.run(message, {person: "old-man"});
                     
                     // add the player back
                     setTimeout(function() {
@@ -142,53 +225,11 @@ class Test extends commando.Command {
                 }, 500);
             }, 500);
         }, 500);
-    }
+    }, 500);
+}
 
-    testStartCommand(message) {
-        // grab the start command and run it
-        var command = new start(this.client);
-        command.run(message);
-
-        // delete the player and then run the start command again
-        setTimeout(function() {
-            db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
-
-            setTimeout(function() {
-                command.run(message);
-
-                // add the player back
-                setTimeout(function() {
-                    addPlayerBack(message);
-                }, 500);
-            }, 500);
-        }, 500);
-    }
-
-    testStatsCommand(message) {
-        // grab the stats command and run it
-        var command = new stats(this.client);
-        command.run(message);
-
-        // delete the player and then run the stats command again
-        setTimeout(function() {
-            db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
-
-            setTimeout(function() {
-                command.run(message);
-
-                // add the player back
-                setTimeout(function() {
-                    addPlayerBack(message);
-                }, 500);
-            }, 500);
-        }, 500);
-    }
-
-    testTalkCommand(message) {
-        // grab the talk command and run it
-        var command = new talk(this.client);
-        command.run(message, {person: "nobody"});
-    }
+function testAttackCommand(message, client) {
+    message.channel.send("Not testing implemented yet.");
 }
 
 function addPlayerBack(message) {
