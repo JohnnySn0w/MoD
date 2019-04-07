@@ -3,7 +3,7 @@
         "name": "entry-room",
         "id": "530099209614000159",
         "roleid": "530096793422266428",
-        "description": "You're in a large, cavernous room. Your footsteps echo into the darkness. Your journey begins to the north... \nThere's also an old-man and a little-boy in the room with you.",
+        "description": "This room is large, and cavernous. Footsteps echo into the darkness. The journey begins to the north... \nThere's also an old-man and a little-boy in the room.",
         "exits": {
             "north": "530099456645791748"
         },
@@ -53,7 +53,7 @@
         "name": "room-2",
         "id": "530099522940960799",
         "roleid": "530097635449634828",
-        "description": "Light floods your eyes as you arrive at the surface. There seems to only be flat grasses for miles. Only the ladder at your feet breaks up the landscape.",
+        "description": "It's bright here at the surface. There seems to only be flat grasses for miles. Only the ladder breaks up the landscape.",
         "exits": {
             "down": "530099492091985921"
         },

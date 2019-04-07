@@ -6,7 +6,7 @@
         "health": 20,
         "strength": 3,
         "defense": 2,
-        "description": "A green, humanoid monster stands before you with a small club in his hand.",
+        "description": "A green, humanoid monster stands around with a small club in his hand.",
         "responses": {
         },
         "options": {
@@ -23,7 +23,7 @@
         "health": 10,
         "strength": 1,
         "defense": 2,
-        "description": "He's bent over and seems to be upset about something...",
+        "description": "There's an old man here, he's bent over and seems to be upset about something...",
         "responses": {
             "0": {
                 "reply": "Hello! I'm so old!",
@@ -136,7 +136,7 @@
         "health": 10,
         "strength": 3,
         "defense": 1,
-        "description": "It seems like he's a little boy.",
+        "description": "There's a little boy here.",
         "responses": {
             "0": {
                 "reply": "Hello!!! I'm a little boy!",
