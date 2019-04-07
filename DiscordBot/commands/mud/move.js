@@ -55,13 +55,14 @@ class MoveCommand extends commando.Command {
             else {
                 // otherwise, clean up the direction passed, and move the player into the next room
                 direction = this.cleanArgs(direction);
-                this.movePlayer(message, direction, room);
+                this.movePlayer(message, direction, room);                     
             }
         }
         else {
             // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
             message.reply("moved to \<#" + room.id + ">");
             message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(console.error);
+            this.client.channels.get(room.id).send(message.member.user.username + " has entered.");
         }
     }
 
