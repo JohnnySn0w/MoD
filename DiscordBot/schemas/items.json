@@ -16,5 +16,11 @@
         "id": "2",
         "description": "A large pile of imposing boulders block your path westward. It's no use trying to move them.",
         "grabbable": false
+    },
+    {
+        "name": "pillars",
+        "id": "3",
+        "description": "Omnious pillars tower above you.",
+        "grabbable": false
     }
 ]
