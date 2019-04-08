@@ -114,6 +114,7 @@ class AttackCommand extends commando.Command {
     if(enemy.health <= 0) {
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
       //TODO: loot roll here
+      message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string');
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
       db.deleteItem(enemy.id, 'entities', ()=>{});
