@@ -237,11 +237,12 @@ function addPlayerBack(message) {
         'name': message.member.user.username,
         'id': message.member.id,
         'health': 100,
+        'maxhealth': 100,
         'level': 1,
         'strength': 7,
         'defense': 5,
         'inventory': [],
-        'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
+        'progress': {'npc':{}}
     }
 
     db.saveItem(newPlayer, 'players', (data) => addData(message));
