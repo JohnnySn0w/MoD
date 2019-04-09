@@ -134,6 +134,8 @@ class AttackCommand extends commando.Command {
     // leveling
     if (player.experience % 5 == 0){
       player.level = player.level + 1;
+      player.strength = player.strength + 5;
+      player.defense = player.defense + 7;
       message.channel.send(`${player.name} has leveled up!`);
       message.member.send("You are now level" + player.level);
     }
