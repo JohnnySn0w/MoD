@@ -2,7 +2,6 @@
   kind of an example command
 */
 
-
 // importing from other files
 const commando = require('discord.js-commando');
 
@@ -17,11 +16,9 @@ class DB extends commando.Command {
   constructor(client) {
     super(client, {
       name: 'db',
-      group: 'mud',
+      group: 'admin',
       memberName: 'db',
       description: 'loads/retrieves a given object from the db',
-      //bot permissions
-      // clientPermissions: [''],
       //user permissions
       userPermissions: ['ADMINISTRATOR'],
       args: [

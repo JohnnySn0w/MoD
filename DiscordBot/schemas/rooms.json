@@ -7,9 +7,9 @@
         "exits": {
             "north": "530099456645791748"
         },
-        "items": [
-
-        ],
+        "items": {
+            "pillars": "3"
+        },
         "npcs": {
             "old-man": "1",
 			"little-boy": "2"
@@ -29,9 +29,9 @@
             "boulders": "2",
             "rocks": "2"
         },
-        "npcs": [
+        "npcs": {
 
-        ]
+        }
     },
     {
         "name": "room-1",
@@ -45,9 +45,9 @@
         "items": {
             "ladder": "1"
         },
-        "npcs": [
+        "npcs": {
 
-        ]
+        }
     },
     {
         "name": "room-2",
@@ -60,8 +60,8 @@
         "items": {
             "ladder": "0"
         },
-        "npcs": [
+        "npcs": {
 
-        ]
+        }
     }
 ]

@@ -45,8 +45,8 @@ class TalkCommand extends commando.Command {
 
   getRoom(message, args, player, data) {
     // grab the actual player object
-    let body = JSON.parse(data.body);
-    let room = body.Item;
+    const body = JSON.parse(data.body);
+    const room = body.Item;
 
     args = this.cleanArgs(args);
 
@@ -59,13 +59,17 @@ class TalkCommand extends commando.Command {
 
     }
   }
+  getProgress(message, args, player, room, data) {
+    const body = JSON.parse(data.body);
+    const person = body.Item;
 
-  getProgress(message, player, room, data) {
-    let body = JSON.parse(data.body);
-    let person = body.Item;
-    let response = (person === undefined) ? '' : this.determineResponse(person, player);
-
-    this.replyToPlayer(player, message, person, response, room, false);
+    if (person === undefined) {
+      message.channel.send(`${player.name} is conversing with unseen forces.`);
+    }
+    else {
+      const response = this.determineResponse(person, player);
+      this.replyToPlayer(player, message, person, response, room, false);
+    }
   }
 
   cleanArgs(args) {
@@ -146,16 +150,13 @@ class TalkCommand extends commando.Command {
               }
             });
           }
-        }
-        else {
+        } else {
           message.channel.send(`${person.name} is quite quiet.`);
         }
-      }
-      else {
+      } else {
         message.channel.send(`${player.name} is conversing with unseen forces.`);
       }
-    }
-    else {
+    } else {
       message.member.send('You are not in a MUD-related room');
     }
   }

@@ -66,7 +66,7 @@ class StartCommand extends commando.Command {
     // once the player data is stored on the database, reassign the player's room permissions to the entry room
     var entryRoomRole = message.guild.roles.find(role => role.name === 'entry-room');
     message.reply('Welcome to the MUD! Your journey starts in the above text channels. Good luck!');
-    message.member.setRoles([entryRoomRole]).catch(console.error);
+    message.member.setRoles([entryRoomRole]).catch(e => console.error(e));
   }
 }
 
