@@ -4,6 +4,7 @@
         "id": "0",
         "level": 0,
         "health": 100,
+        "maxhealth":100,
         "strength": 7,
         "defense": 5,
         "busy": false,
@@ -25,6 +26,7 @@
         "busy":false,
         "name":"☃JohnnySn0w☃",
         "health":100,
+        "maxhealth":100,
         "progress": {
             "npc":{}
         },

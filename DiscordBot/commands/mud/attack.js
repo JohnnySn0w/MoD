@@ -101,7 +101,7 @@ class AttackCommand extends commando.Command {
         break;
       }
       //calculate enemy damage on agro target and update value
-      damage = enemy.strength - player.defense; //for the following lines replace player with agro target
+      damage = 100; //for the following lines replace player with agro target
       if (damage > 0) {
         player.health = player.health - damage;
         message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage.toString()} damage.`);
@@ -121,6 +121,8 @@ class AttackCommand extends commando.Command {
       console.log('removing aggro');
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
       db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
+      db.updateItem(player.id, ['health'], [player.maxhealth],'players', () => {});
+      message.member.setRoles("530096793422266428").catch(console.error);
     }
   }
 }
