@@ -37,11 +37,11 @@ class LookCommand extends commando.Command {
     }
     else {
       // get the room object that the player is in
-      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data, args));
+      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, player, data, args));
     }
   }
 
-  getRoom(message, data, args) {
+  getRoom(message, player, data, args) {
     // grab the actual room object
     var body = JSON.parse(data.body);
     var room = body.Item;
@@ -50,7 +50,7 @@ class LookCommand extends commando.Command {
 
     var object;
     if (args.object === 'room' || args.object === 'here') {
-      this.replyToPlayer(message, true, room);
+      this.replyToPlayer(message, player, true, room);
     }
     else {
       // otherwise, the player is looking at an item, which we need to determine
@@ -58,9 +58,9 @@ class LookCommand extends commando.Command {
       if (object === undefined) {
         // if the object doesn't exist, then the player is looking at an entity
         object = this.determineNPC(args.object, room);
-        db.getItem(object, 'entities', (data) => this.replyToPlayer(message, false, room, data));
+        db.getItem(object, 'entities', (data) => this.replyToPlayer(message, player, false, room, data));
       } else {
-        db.getItem(object, 'items', (data) => this.replyToPlayer(message, false, room, data));
+        db.getItem(object, 'items', (data) => this.replyToPlayer(message, player, false, room, data));
       }
     }
   }
@@ -91,7 +91,7 @@ class LookCommand extends commando.Command {
     return npcObject;
   }
 
-  replyToPlayer(message, objectIsRoom, room, data) {
+  replyToPlayer(message, player, objectIsRoom, room, data) {
     // determine whether the object being looked at is the room itself
     var object;
     if (objectIsRoom === true) {
@@ -109,10 +109,10 @@ class LookCommand extends commando.Command {
     }
     else {
       if (object === undefined) {
-        message.reply(`${message.member.nickname} stares into space.`);
+        message.channel.send(`${player.name} stares into space.`);
       }
       else {
-        message.reply(object.description);
+        message.channel.send(object.description);
       }
     }
   }

@@ -55,16 +55,16 @@ class TalkCommand extends commando.Command {
     } else {
       // Get the NPC id and data
       let npcID = this.determineNPC(args.person, room);
-      db.getItem(npcID, 'entities', (data) => this.getProgress(message, args, player, room, data));
+      db.getItem(npcID, 'entities', (data) => this.getProgress(message, player, room, data));
 
     }
   }
-  getProgress(message, args, player, room, data) {
+  getProgress(message, player, room, data) {
     const body = JSON.parse(data.body);
     const person = body.Item;
 
     if (person === undefined) {
-      message.channel.send(`${message.member.nickname} is conversing with unseen forces.`);
+      message.channel.send(`${player.name} is conversing with unseen forces.`);
     }
     else {
       const response = this.determineResponse(person, player);
@@ -91,12 +91,13 @@ class TalkCommand extends commando.Command {
   // creates the npcs response and prompts based on players progress
   determineResponse(npc, player) {
     let response;
-        
-    if (!(npc === undefined)) {
+    if(npc.hostile){
+      response = `${npc.name} would rather a fight than a chat.`;
+    } else if (!(npc === undefined)) {
       // find player's progress with this npc
-      if (npc.id in player.progress.npc) { // check if talked to this npc before
+      if (player.progress.npc[npc.id]) { // check if talked to this npc before
         let progress = player.progress.npc[npc.id];
-        if (progress in npc.responses) {
+        if (npc.responses[progress]) {
           response = npc.responses[progress].reply;
           for (let i = 0; i < npc.responses[progress].prompts.length; i++) {
             response = `${response}\n${npc.responses[progress].prompts[i].prompt}`;
@@ -120,44 +121,40 @@ class TalkCommand extends commando.Command {
   replyToPlayer(player, message, person, response, room, stop) {
     let responded = false;
     let progress = player.progress.npc[person.id];
-    if (!(room === undefined)) {
-      if (!(progress === undefined)) {
-        if (!(progress === undefined) || !(person.hostile)) {
-          message.reply(person.name + ': ' + response);
+    if (!(person.responses === undefined)) {
+      if (!(person.hostile)) {
+        message.reply(`${person.name} says: ${response}`);
 
-          if (!stop) {
-            // responses change to using length
-            const filter = m => ((m.content < person.responses[progress].prompts.length) || (m.content.includes('?talk'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
-            const collector = message.channel.createMessageCollector(filter, {time: 15000});
-    
-            collector.on('collect', m => {
-              responded = true;
-              // stops collector
-              collector.stop();
-              if (m.content.includes('?talk')) {
-                let newResponse = 'Oh ok bye';
-                this.replyToPlayer(player, message, person, newResponse, room, true);
-              } else {    
-                this.makeProgress(player, person, m.content);
-                let newResponse = this.determineResponse(person, player);
-                this.replyToPlayer(player, message, person, newResponse, room, false);
-              }
-            });
-    
-            collector.on('end', () => {
-              if (!responded) {
-                message.channel.send(`${person.name} walked away from ${message.member.nickname}`);
-              }
-            });
-          }
-        } else {
-          message.channel.send(`${person.name} is quite quiet.`);
+        if (!stop) {
+          // responses change to using length
+          const filter = m => ((m.content < person.responses[progress].prompts.length) || (m.content.includes('?talk'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
+          const collector = message.channel.createMessageCollector(filter, {time: 15000});
+  
+          collector.on('collect', m => {
+            responded = true;
+            // stops collector
+            collector.stop();
+            if (m.content.includes('?talk')) {
+              let newResponse = 'Oh ok bye';
+              this.replyToPlayer(player, message, person, newResponse, room, true);
+            } else {    
+              this.makeProgress(player, person, m.content);
+              let newResponse = this.determineResponse(person, player);
+              this.replyToPlayer(player, message, person, newResponse, room, false);
+            }
+          });
+  
+          collector.on('end', () => {
+            if (!responded) {
+              message.channel.send(`${person.name} walked away from ${player.name}`);
+            }
+          });
         }
       } else {
-        message.channel.send(`${message.member.nickname} is conversing with unseen forces.`);
+        message.channel.send(`${person.name} would rather a fight than a chat.`);
       }
     } else {
-      message.member.send('You are not in a MUD-related room');
+      message.channel.send(`${person.name} is quite quiet.`);
     }
   }
 
@@ -175,7 +172,7 @@ class TalkCommand extends commando.Command {
 
     // push the progression to the database
     player.progress.npc[person.id] = progression;
-    db.saveItem(player, 'players', () => {});
+    db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
   }
 }
 

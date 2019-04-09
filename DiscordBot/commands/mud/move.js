@@ -37,11 +37,11 @@ class MoveCommand extends commando.Command {
     }
     else {
       // get the room object that the player is in
-      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data, direction, true));
+      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, player, data, direction, true));
     }
   }
 
-  getRoom(message, data, direction, firstRetrieval) {
+  getRoom(message, player, data, direction, firstRetrieval) {
     // grab the actual room object
     var body = JSON.parse(data.body);
     var room = body.Item;
@@ -54,13 +54,13 @@ class MoveCommand extends commando.Command {
       } else {
         // otherwise, clean up the direction passed, and move the player into the next room
         direction = this.cleanArgs(direction);
-        this.movePlayer(message, direction, room);
+        this.movePlayer(message, player, direction, room);
       }
     } else {
       // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
-      message.reply(`moved to <#${room.id}>`);
+      message.channel.send(`${player.name}moved to <#${room.id}>`);
       message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(e => console.error(e));
-      this.client.channels.get(room.id).send(`${message.member.nickname} has entered.`);
+      this.client.channels.get(room.id).send(`${player.name} has entered.`);
     }
   }
 
@@ -70,14 +70,14 @@ class MoveCommand extends commando.Command {
     return direction;
   }
 
-  movePlayer(message, direction, room) {
+  movePlayer(message, player, direction, room) {
     if (direction in room.exits) {
       // if a room exists in the given direction, use that direction's associated room ID to get the next room
       db.getItem(room.exits[direction], 'rooms', (data) => this.getRoom(message, data, direction, false));
     }
     else {
       // otherwise, alert the player of the lack of exits
-      message.reply(`${message.member.nickname} has lost their sense of direction`);
+      message.channel.send(`${player.name} has lost their sense of direction`);
     }
   }
 }

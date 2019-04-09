@@ -20,7 +20,7 @@
     {
         "name": "pillars",
         "id": "3",
-        "description": "Omnious pillars tower above you.",
+        "description": "Omnious pillars tower above.",
         "grabbable": false
     }
 ]
