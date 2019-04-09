@@ -64,7 +64,7 @@ class TalkCommand extends commando.Command {
     const person = body.Item;
 
     if (person === undefined) {
-      message.channel.send(`${player.name} is conversing with unseen forces.`);
+      message.channel.send(`${message.member.nickname} is conversing with unseen forces.`);
     }
     else {
       const response = this.determineResponse(person, player);
@@ -146,7 +146,7 @@ class TalkCommand extends commando.Command {
     
             collector.on('end', () => {
               if (!responded) {
-                message.channel.send(`${person.name} walked away from ${player.name}`);
+                message.channel.send(`${person.name} walked away from ${message.member.nickname}`);
               }
             });
           }
@@ -154,7 +154,7 @@ class TalkCommand extends commando.Command {
           message.channel.send(`${person.name} is quite quiet.`);
         }
       } else {
-        message.channel.send(`${player.name} is conversing with unseen forces.`);
+        message.channel.send(`${message.member.nickname} is conversing with unseen forces.`);
       }
     } else {
       message.member.send('You are not in a MUD-related room');
