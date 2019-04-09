@@ -3,71 +3,71 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class StartCommand extends commando.Command {
-    constructor(client) {
-        super(client, {
-            name: 'start',
-            group: 'mud',
-            memberName: 'start',
-            description: 'Sets the player on his or her journey into the MUD'
-        });
+  constructor(client) {
+    super(client, {
+      name: 'start',
+      group: 'mud',
+      memberName: 'start',
+      description: 'Sets the player on his or her journey into the MUD'
+    });
+  }
+
+  async run(message) {
+    // delete the user's command if not debugging
+    if (!DEBUG) {
+      message.delete();
     }
+    db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data));
+  }
 
-    async run(message) {
-        // delete the user's command if not debugging
-        if (!DEBUG)
-            message.delete();
-        
-        db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data));
+  getPlayer(message, data) {
+    // grab the actual player object
+    var body = JSON.parse(data.body);
+    var player = body.Item;
+
+    if (player === undefined) {
+      // if the player doesn't exist in the database, check which room they're in
+      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data));
     }
-
-    getPlayer(message, data) {
-        // grab the actual player object
-        var body = JSON.parse(data.body);
-        var player = body.Item;
-
-        if (player === undefined) {
-            // if the player doesn't exist in the database, check which room they're in
-            db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data));
-        }
-        else {
-            // otherwise, the player is already a part of the database
-            message.reply("it seems like you've already started!");
-        }
+    else {
+      // otherwise, the player is already a part of the database
+      message.member.send('You\'ve already started the MUD!');
     }
+  }
 
-    getRoom(message, data) {
-        // grab the actual room object
-        var body = JSON.parse(data.body);
-        var room = body.Item;
+  getRoom(message, data) {
+    // grab the actual room object
+    var body = JSON.parse(data.body);
+    var room = body.Item;
 
-        if (room === undefined) {
-            // if the player is not in a MUD room, create a new player object to push to the db
-            var newPlayer = {
-                'name': message.member.user.username,
-                'id': message.member.id,
-                'health': 100,
-                'level': 1,
-                'strength': 7,
-                'defense': 5,
-                'inventory': [],
-                'busy': false,
-                'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
-            }
+    if (room === undefined) {
+      // if the player is not in a MUD room, create a new player object to push to the db
+      var newPlayer = {
+        'name': message.member.user.username,
+        'id': message.member.id,
+        'health': 100,
+        'level': 1,
+        'strength': 7,
+        'defense': 5,
+        'inventory': [],
+        'busy': false,
+        'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
+      };
 
-            db.saveItem(newPlayer, 'players', (data) => this.setRoles(message));
-        }
-        else {
-            // otherwise, direct the user to where they can start the game at
-            message.reply("Sorry, you can't start playing the MUD unless you start in a non-MUD room.");
-        }
+      db.saveItem(newPlayer, 'players', () => this.setRoles(message));
     }
-
-    setRoles(message) {
-        // once the player data is stored on the database, reassign the player's room permissions to the entry room
-        var entryRoomRole = message.guild.roles.find(role => role.name === "entry-room");
-        message.reply("Welcome to the MUD! Your journey starts in the above text channels. Good luck!");
-        message.member.setRoles([entryRoomRole]).catch(console.error);
+    else {
+      // otherwise, direct the user to where they can start the game at
+      message.member.send('Sorry, you can\'t start playing the MUD unless you start in a non-MUD room.');
     }
+  }
+
+  setRoles(message) {
+    // once the player data is stored on the database, reassign the player's room permissions to the entry room
+    var entryRoomRole = message.guild.roles.find(role => role.name === 'entry-room');
+    message.reply('Welcome to the MUD! Your journey starts in the above text channels. Good luck!');
+    message.member.setRoles([entryRoomRole]).catch(e => console.error(e));
+  }
 }
 
 module.exports = StartCommand;
