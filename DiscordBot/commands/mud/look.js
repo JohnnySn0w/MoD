@@ -109,7 +109,7 @@ class LookCommand extends commando.Command {
     }
     else {
       if (object === undefined) {
-        message.reply(`${message.member.name} stares into space.`);
+        message.reply(`${message.member.user.username} stares into space.`);
       }
       else {
         message.reply(object.description);
