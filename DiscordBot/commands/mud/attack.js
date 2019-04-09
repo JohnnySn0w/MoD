@@ -114,7 +114,8 @@ class AttackCommand extends commando.Command {
     if(enemy.health <= 0) {
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
       //TODO: loot roll here
-      message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string');
+      this.rollLoot(message, player, enemy);
+      //message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string');
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
       db.deleteItem(enemy.id, 'entities', ()=>{});
@@ -122,6 +123,27 @@ class AttackCommand extends commando.Command {
       console.log('removing aggro');
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
       db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
+    }
+
+    rollLoot(message, player, enemy) {
+      loot_num = Math.floor(Math.random() * 5) + 1 ; // generating a random number between 1 and 5 for loot drop
+      switch(loot_num) {
+        case 1: // need to add response check for if the player want's to pickup the item or not
+        message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string for sword');
+
+        case 2:
+        message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string for shield');
+
+        case 2:
+        message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string for health potion');
+
+        case 3:
+        message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string for 10 gold');
+
+        case 4:
+        message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string for 50 gold');
+
+      }
     }
   }
 }
