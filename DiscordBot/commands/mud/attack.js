@@ -85,7 +85,7 @@ class AttackCommand extends commando.Command {
   }
 
   combatLoop(message, player, enemy) {
-    // baby experience testing
+    // experience counter
     var xp = 0;
     db.updateItem(player.id, ['busy'], [true], 'players', ()=>{});
     db.updateItem(enemy.id, ['aggro'], [player.id], 'entities', () => {});
@@ -95,14 +95,14 @@ class AttackCommand extends commando.Command {
       if (damage > 0) {
         enemy.health = enemy.health - damage;
         message.channel.send(`${player.name} hit ${enemy.name} for ${damage.toString()} damage.`);
-        xp = xp + 5; // increment experience counter; can vary depending on the enemy later
+        // increment experience counter; can vary depending on the enemy later
       } else {
         message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
       }
       //prevents enemy attacking if dead
       if(enemy.health <= 0) {
-        player.experience = player.experience + xp; // add xp to player experience
-        xp = 0;
+        //player.experience = player.experience + xp; // add xp to player experience
+        //xp = 0; //reset counter
         break;
       }
       //calculate enemy damage on agro target and update value
@@ -118,8 +118,8 @@ class AttackCommand extends commando.Command {
     db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{});
     if(enemy.health <= 0) {
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
-      player.experience = player.experience + xp; // add xp to player's experience
-      xp = 0; // reset xp to 0     
+      //player.experience = player.experience + xp; // add xp to player's experience
+      //xp = 0; // reset xp to 0     
 
       //TODO: loot roll here
       /* TODO: move this delete to the end of the loot roll so 
@@ -132,13 +132,13 @@ class AttackCommand extends commando.Command {
     }
 
     // leveling
-    if (player.experience % 5 == 0){
-      player.level = player.level + 1;
-      player.strength = player.strength + 5;
-      player.defense = player.defense + 7;
-      message.channel.send(`${player.name} has leveled up!`);
-      message.member.send("You are now level" + player.level);
-    }
+    //if (player.experience % 5 == 0){
+    //  player.level = player.level + 1;
+    //  player.strength = player.strength + 5;
+    //  player.defense = player.defense + 7;
+    //  message.channel.send(`${player.name} has leveled up!`);
+    //  message.member.send("You are now level" + player.level);
+    //}
   }
 }
 
