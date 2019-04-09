@@ -35,7 +35,7 @@ class TalkCommand extends commando.Command {
 
     if (player === undefined) {
       // if we couldn't find the player, they haven't started yet
-      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse "?start" in test-zone to get started!');
+      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
     }
     else {
       // otherwise, get the room object that the player is in

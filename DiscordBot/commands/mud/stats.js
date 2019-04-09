@@ -27,7 +27,7 @@ class StatsCommand extends commando.Command {
 
     if (player === undefined) {
       // if the player isn't in the database already, send them a notice that they need to "?start" the game
-      message.member.send('You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.');
+      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
     }
     else {
       // otherwise, direct message the player with their health, strength, and defense            

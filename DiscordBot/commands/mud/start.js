@@ -31,7 +31,7 @@ class StartCommand extends commando.Command {
     }
     else {
       // otherwise, the player is already a part of the database
-      message.member.send('You\'ve already started the game!');
+      message.member.send('You\'ve already started the MUD!');
     }
   }
 
