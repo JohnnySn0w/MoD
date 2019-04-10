@@ -124,28 +124,61 @@ class AttackCommand extends commando.Command {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
       db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
     }
-
-    rollLoot(message, player, enemy) {
-      loot_num = Math.floor(Math.random() * 5) + 1 ; // generating a random number between 1 and 5 for loot drop
+  }
+  rollLoot(message, player, enemy) {
+    loot_num = Math.floor(Math.random() * 5) + 1 ; // generating a random number between 1 and 5 for loot drop
       switch(loot_num) {
-        case 1: // need to add response check for if the player want's to pickup the item or not
-        message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string for sword');
-
+        case 1: // need to add response check for if the player wants to pickup the item or not
+          message.member.send(`After defeating  ${enemy.name} you can loot placeholder loot string for sword.`);
+          message.member.send(`[0] Pick up sword`);  // need to add these items to the item schema so they can be tangible
+          if(message.content === '0'){
+            message.member.send(`You have picked up the sword. Added to your inventory`); // inventory needs to be implemented before this will actually work
+          }
+          else{
+            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
+          }
         case 2:
-        message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string for shield');
-
+          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for shield`);
+          message.member.send('[0] Pick up shield')
+          if(message.content === '0'){
+            message.member.send(`You have picked up the shield. Added to your inventory`);
+          }
+          else{
+            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
+          }
         case 2:
-        message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string for health potion');
-
+          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for health potion`);
+          message.member.send(`[0] Pick uphealth potion`);  // need to add these items to the item schema so they can be tangible
+          if(message.content === '0'){
+            message.member.send(`You have picked up the sword. Added to your inventory`)
+          }
+          else{
+            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
+          }
         case 3:
-        message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string for 10 gold');
-
+          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for 10 gold`);
+          message.member.send(`[0] Pick up 10 gold`);  // need to add these items to the item schema so they can be tangible
+          if(message.content === '0'){
+            message.member.send(`You have picked up the 10 gold. Added to your inventory`)
+          }
+          else{
+            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
+          }
         case 4:
-        message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string for 50 gold');
+          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for 50 gold`);
+          message.member.send(`[0] Pick up 50 gold`);  // need to add these items to the item schema so they can be tangible
+          if(message.content === '0'){
+            message.member.send(`You have picked up the 50 gold. Added to your inventory`)
+          }
+          else{
+            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
+          }
 
+        default:
+          message.member.send(`After defeating ${enemy.name} you find that it did not drop any loot. How unfortunate.`);
       }
     }
-  }
+  
 }
 
 module.exports = AttackCommand;
