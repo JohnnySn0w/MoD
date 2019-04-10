@@ -81,6 +81,7 @@ class AttackCommand extends commando.Command {
   combatLoop(message, player, enemy) {
     db.updateItem(player.id, ['busy'], [true], 'players', ()=>{});
     db.updateItem(enemy.id, ['aggro'], [player.id], 'entities', () => {});
+    console.log("Player health - " + player.health);
     while (player.health > 0 && enemy.health > 0) {
       //calculate player damage on enemy and update value
       let damage = player.strength - enemy.defense;
@@ -103,9 +104,9 @@ class AttackCommand extends commando.Command {
         message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
       }
     }
-    console.log('updating player state');
-    db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{});
+
     if(enemy.health <= 0) {
+      db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{console.log("Player health updated")});
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
       //TODO: loot roll here
       /* TODO: move this delete to the end of the loot roll so 
@@ -116,10 +117,9 @@ class AttackCommand extends commando.Command {
       db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
 
       // respawn player
-      console.log("max health = " + player.maxhealth);
-      db.updateItem(player.id, ['health'], [player.maxhealth],'players', () => {});
+      db.updateItem(player.id, ['health'], [player.maxhealth],'players', () => {console.log("Player health restored")});
       message.member.setRoles([message.guild.roles.find(role => role.name === "entry-room")]).catch(console.error);
-      var channel = this.client.channels.find("name", "entry-room");
+      var channel = this.client.channels.find(channel => channel.name === "entry-room");
       channel.send(`${player.name} is reborn, ready to fight again!`);
     }
   }
