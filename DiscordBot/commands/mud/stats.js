@@ -31,7 +31,7 @@ class StatsCommand extends commando.Command {
     }
     else {
       // otherwise, direct message the player with their health, strength, and defense            
-      message.member.send('Health: ' + player.health + '\n' + 'Level: ' + player.level + '\n' + 'Strength: ' + player.strength + '\n' + 'Defense: ' + player.defense + '\n' + 'Experience: ' + player.experience);
+      message.member.send('Health: ' + player.health + '\n' + 'Level: ' + player.currentLevel + '\n' + 'Strength: ' + player.strength + '\n' + 'Defense: ' + player.defense + '\n' + 'Experience: ' + player.experience);
       // also send a warning if the player's health is low
       if (player.health > 0 && player.health < 11) {
         message.member.send('You\'re on death\'s door, my friend.');

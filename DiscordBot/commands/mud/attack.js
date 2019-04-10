@@ -31,17 +31,11 @@ class AttackCommand extends commando.Command {
   }
 
   checkPlayer(message, data, args) {
-    // grab the actual room object
+    // grab the actual player object
     var player = JSON.parse(data.body).Item;
 
     if (player === undefined) {
       message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
-    }
-    //TODO: this should be it's own external function in globals or something
-    //so we can put it on all commands without code replication
-    else if (player.health <= 0) {
-      message.channel.send(`${player.name} continues to be a lifeless corpse`);
-      message.member.send('pls respawn to continue playing');
     } else {
       // get the room object that the player is in
       db.getItem(message.channel.id, 'rooms', (data) => this.checkRoom(message, data, args, player));
@@ -52,32 +46,32 @@ class AttackCommand extends commando.Command {
     const room = JSON.parse(data.body).Item;
     const enemy = this.cleanArgs(args).object;
     //look for the npc
-    if(room.npcs[enemy]) {
-      db.getItem(room.npcs[enemy], 'entities', (data) => this.checkHostile(message, player, data));
-    } else {
-      message.channel.send(`${player.name} glares with murderous intent towards no one in particular.`);
+    if (room === undefined) {
+      message.member.send("You're not in of the MUD-related rooms.");
+    }
+    else {
+      if (room.npcs[enemy]) {
+        db.getItem(room.npcs[enemy], 'entities', (data) => this.checkHostile(message, player, data, room));
+      } else {
+        message.channel.send(`${player.name} glares with murderous intent towards no one in particular.`);
+      }
     }
   }
 
-  checkHostile(message, player, data) {
+  checkHostile(message, player, data, room) {
     const enemy = JSON.parse(data.body).Item;
-    try {
-      //this is a fancy way of making sure enemy is defined
-      //otherwise trying to access a key of an unef object throws a big error
-      if(enemy && enemy.hostile) {
-        if(enemy.aggro === 'nobody' || enemy.aggro === player.id) {
-          this.combatLoop(message, player, enemy);
-        } else {
-          message.channel.send(`${player.name} attempts to encroach on existing combat, and fails.`);
-        }
-      } else if(enemy){
-        message.channel.send(`${player.name} glares with murderous intent towards ${enemy.name}.`);
+    //this is a fancy way of making sure enemy is defined
+    //otherwise trying to access a key of an unef object throws a big error
+    if(enemy && enemy.hostile) {
+      if(enemy.aggro === 'nobody' || enemy.aggro === player.id) {
+        this.combatLoop(message, player, enemy, room);
       } else {
-        message.channel.send(`${player.name} is feeling stabby.`);
+        message.channel.send(`${player.name} attempts to encroach on existing combat, and fails.`);
       }
-    } catch (err) {
-      console.log(`${err}\nThis indicates an enemy not respawning correctly or quick enough`);
-      message.channel.send(`${player.name} tries to attack the air`);
+    } else if(enemy){
+      message.channel.send(`${player.name} glares with murderous intent towards ${enemy.name}.`);
+    } else {
+      message.channel.send(`${player.name} tries to attack the air.`);
     }
   }
 
@@ -87,9 +81,11 @@ class AttackCommand extends commando.Command {
     return args;
   }
 
-  combatLoop(message, player, enemy) {
+  combatLoop(message, player, enemy, room) {
     db.updateItem(player.id, ['busy'], [true], 'players', ()=>{});
     db.updateItem(enemy.id, ['aggro'], [player.id], 'entities', () => {});
+    console.log("Player health - " + player.health);
+
     while (player.health > 0 && enemy.health > 0) {
       //calculate player damage on enemy and update value
       let damage = player.strength - enemy.defense;
@@ -101,10 +97,12 @@ class AttackCommand extends commando.Command {
       } else {
         message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
       }
+
       //prevents enemy attacking if dead
       if(enemy.health <= 0) {
         break;
       }
+
       //calculate enemy damage on agro target and update value
       damage = enemy.strength - player.defense; //for the following lines replace player with agro target
       if (damage > 0) {
@@ -114,36 +112,60 @@ class AttackCommand extends commando.Command {
         message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
       }
     }
-    console.log('updating player state');
-    db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{});
+
     if(enemy.health <= 0) {
-      message.channel.send(`${player.name} defeated the ${enemy.name}.`);      
+      // update the player health and enemy aggro state and notify the room
+      db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{console.log("Player health updated")});
+      db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', ()=>{console.log("Enemy aggro updated")});
+      message.channel.send(`${player.name} defeated the ${enemy.name}.`);
 
       //TODO: loot roll here
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
-      db.deleteItem(enemy.id, 'entities', ()=>{});
+
+      // remove the enemy from the list of entities in the room and then re-add it after 10 seconds
+      console.log("Enemy name = " + enemy.name.toLowerCase());
+      delete room.npcs[enemy.name.toLowerCase()];
+      db.updateItem(room.id, ['npcs'], [room.npcs], 'rooms', ()=>{
+        console.log("Removed enemy from room - " + JSON.stringify(room.npcs));
+        setTimeout(function() {
+          respawnEnemy(enemy, room)
+        }, 10000);
+      });
     } else {
-      console.log('removing aggro');
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
       db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
+
+      // respawn player
+      db.updateItem(player.id, ['health'], [player.maxhealth],'players', () => {console.log("Player health restored")});
+      message.member.setRoles([message.guild.roles.find(role => role.name === "entry-room")]).catch(console.error);
+      var channel = this.client.channels.find(channel => channel.name === "entry-room");
+      channel.send(`${player.name} is reborn, ready to fight again!`);
     }
 
     // adding experience
-    db.updateItem(player.id, ['experience'], [player.experience + xp], 'players', ()=>{}); // add xp to player's experience
+    player.experience = player.experience + xp;
+    db.updateItem(player.id, ['experience'], [player.experience], 'players', ()=>{}); // add xp to player's experience
     xp = 0; // reset xp to 0    
 
     // leveling
-    if (player.experience >= player.nextLevel) {
-      db.updateItem(player.id, ['level'], [player.level = player.level + 1], 'players', ()=>{});
-      db.updateItem(player.id, ['nextLevel'], [player.nextLevel + (player.nextLevel * player.level)], 'players', ()=>{});
-      db.updateItem(player.id, ['strength'], [player.strength + player.level], 'players', ()=>{});
-      db.updateItem(player.id, ['defense'], [player.defense + player.level], 'players', ()=>{});
+    if (player.experience >= player.nextLevelExperience) {
+      db.updateItem(player.id, ['currentLevel'], [player.currentLevel = player.currentLevel + 1], 'players', ()=>{});
+      db.updateItem(player.id, ['nextLevelExperience'], [player.currentLevel + (player.nextLevelExperience * player.currentLevel)], 'players', ()=>{});
+      db.updateItem(player.id, ['strength'], [player.strength + player.currentLevel], 'players', ()=>{});
+      db.updateItem(player.id, ['defense'], [player.defense + player.currentLevel], 'players', ()=>{});
       message.channel.send(`${player.name} leveled up!`);
-      message.member.send("Level up!\n You're now at level " + player.level + ".\n" + "Experience: " + player.experience);
+      message.member.send("Level up!\n You're now at level " + player.currentLevel + ".\n" + "Experience: " + player.experience);
     }
 
   }
+}
+
+function respawnEnemy(enemy, room) {
+  room.npcs[enemy.name.toLowerCase()] = enemy.id;
+  db.updateItem(room.id, ['npcs'], [room.npcs], 'rooms', ()=>{
+    console.log(`${enemy.name} re-added`);
+  });
 }
 
 module.exports = AttackCommand;
