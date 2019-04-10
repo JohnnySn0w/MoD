@@ -29,6 +29,20 @@
             "npc":{}
         },
         "id":"214624397409910785",
-        "inventory":[]
+        "inventory":[],
+    },
+    {
+        "strength":7,
+        "level":1,
+        "defense":5,
+        "busy":false,
+        "name":"coolguy",
+        "health":100,
+        "progress": {
+            "npc":{}
+        },
+        "id":"198279866284507136",
+        "inventory":[],
+		    "gold": 50
     }
 ]

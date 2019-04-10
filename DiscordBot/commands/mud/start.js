@@ -51,7 +51,8 @@ class StartCommand extends commando.Command {
         'defense': 5,
         'inventory': [],
         'busy': false,
-        'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
+        'progress': {'npc':{}}, // progress is added dynamically with each new npc encounter now :^)
+        'gold': 50
       };
 
       db.saveItem(newPlayer, 'players', () => this.setRoles(message));
