@@ -2,6 +2,9 @@ const { DEBUG } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
+// experience counter
+var xp = 0;
+
 class AttackCommand extends commando.Command {
   constructor(client) {
     super(client, {
@@ -32,7 +35,7 @@ class AttackCommand extends commando.Command {
     var player = JSON.parse(data.body).Item;
 
     if (player === undefined) {
-      message.member.send('it seems that you\'re not a part of the MUD yet! \nUse "?start" in test-zone to get started!');
+      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
     }
     //TODO: this should be it's own external function in globals or something
     //so we can put it on all commands without code replication
@@ -93,6 +96,8 @@ class AttackCommand extends commando.Command {
       if (damage > 0) {
         enemy.health = enemy.health - damage;
         message.channel.send(`${player.name} hit ${enemy.name} for ${damage.toString()} damage.`);
+        // increment experience counter; can vary depending on the enemy later
+        xp = xp + 5;
       } else {
         message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
       }
@@ -112,7 +117,8 @@ class AttackCommand extends commando.Command {
     console.log('updating player state');
     db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{});
     if(enemy.health <= 0) {
-      message.channel.send(`${player.name} defeated the ${enemy.name}.`);
+      message.channel.send(`${player.name} defeated the ${enemy.name}.`);      
+
       //TODO: loot roll here
       this.rollLoot(message, player, enemy);
       //message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string');
@@ -124,6 +130,21 @@ class AttackCommand extends commando.Command {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
       db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
     }
+
+    // adding experience
+    db.updateItem(player.id, ['experience'], [player.experience + xp], 'players', ()=>{}); // add xp to player's experience
+    xp = 0; // reset xp to 0    
+
+    // leveling
+    if (player.experience >= player.nextLevel) {
+      db.updateItem(player.id, ['level'], [player.level = player.level + 1], 'players', ()=>{});
+      db.updateItem(player.id, ['nextLevel'], [player.nextLevel + (player.nextLevel * player.level)], 'players', ()=>{});
+      db.updateItem(player.id, ['strength'], [player.strength + player.level], 'players', ()=>{});
+      db.updateItem(player.id, ['defense'], [player.defense + player.level], 'players', ()=>{});
+      message.channel.send(`${player.name} leveled up!`);
+      message.member.send("Level up!\n You're now at level " + player.level + ".\n" + "Experience: " + player.experience);
+    }
+
   }
   rollLoot(message, player, enemy) {
     loot_num = Math.floor(Math.random() * 5) + 1 ; // generating a random number between 1 and 5 for loot drop

@@ -6,7 +6,8 @@ const client = new commando.Client({
 
 client.registry
 .registerGroups([
-    ['mud', 'MUD']
+	['mud', 'MUD'],
+	['admin', "Admin"]
 ])
 .registerDefaults()
 .registerCommandsIn(__dirname + "/commands");
