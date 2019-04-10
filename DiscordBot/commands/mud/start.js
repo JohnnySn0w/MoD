@@ -47,9 +47,11 @@ class StartCommand extends commando.Command {
           'id': message.member.id,
           'health': 100,
           'maxhealth':100,
-          'level': 1,
+          'currentLevel': 1,
           'strength': 7,
           'defense': 5,
+          'experience': 0,
+          'nextLevelExperience': 100,
           'inventory': [],
           'busy': false,
           'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)

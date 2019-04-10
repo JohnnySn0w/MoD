@@ -2,6 +2,9 @@ const { DEBUG } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
+// experience counter
+var xp = 0;
+
 class AttackCommand extends commando.Command {
   constructor(client) {
     super(client, {
@@ -89,6 +92,8 @@ class AttackCommand extends commando.Command {
       if (damage > 0) {
         enemy.health = enemy.health - damage;
         message.channel.send(`${player.name} hit ${enemy.name} for ${damage.toString()} damage.`);
+        // increment experience counter; can vary depending on the enemy later
+        xp = xp + 5;
       } else {
         message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
       }
@@ -137,6 +142,22 @@ class AttackCommand extends commando.Command {
       var channel = this.client.channels.find(channel => channel.name === "entry-room");
       channel.send(`${player.name} is reborn, ready to fight again!`);
     }
+
+    // adding experience
+    player.experience = player.experience + xp;
+    db.updateItem(player.id, ['experience'], [player.experience], 'players', ()=>{}); // add xp to player's experience
+    xp = 0; // reset xp to 0    
+
+    // leveling
+    if (player.experience >= player.nextLevelExperience) {
+      db.updateItem(player.id, ['currentLevel'], [player.currentLevel = player.currentLevel + 1], 'players', ()=>{});
+      db.updateItem(player.id, ['nextLevelExperience'], [player.currentLevel + (player.nextLevelExperience * player.currentLevel)], 'players', ()=>{});
+      db.updateItem(player.id, ['strength'], [player.strength + player.currentLevel], 'players', ()=>{});
+      db.updateItem(player.id, ['defense'], [player.defense + player.currentLevel], 'players', ()=>{});
+      message.channel.send(`${player.name} leveled up!`);
+      message.member.send("Level up!\n You're now at level " + player.currentLevel + ".\n" + "Experience: " + player.experience);
+    }
+
   }
 }
 

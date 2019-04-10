@@ -238,9 +238,11 @@ function addPlayerBack(message) {
         'id': message.member.id,
         'health': 100,
         'maxhealth': 100,
-        'level': 1,
+        'currentLevel': 1,
         'strength': 7,
         'defense': 5,
+        "experience":0,
+        "nextLevelExperience":100,
         'inventory': [],
         'progress': {'npc':{}}
     }
