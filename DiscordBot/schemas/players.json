@@ -6,6 +6,8 @@
         "health": 100,
         "strength": 7,
         "defense": 5,
+        "experience":0,
+        "nextLevel":100,
         "busy": false,
         "inventory": [
 
@@ -25,6 +27,8 @@
         "busy":false,
         "name":"☃JohnnySn0w☃",
         "health":100,
+        "experience":0,
+        "nextLevel":100,
         "progress": {
             "npc":{}
         },
