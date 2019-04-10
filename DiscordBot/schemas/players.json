@@ -2,16 +2,18 @@
     {
         "name": "John",
         "id": "0",
-        "level": 0,
+        "currentLevel": 0,
         "health": 100,
+        "maxhealth":100,
         "strength": 7,
         "defense": 5,
         "experience":0,
-        "nextLevel":100,
+        "nextLevelExperience":100,
         "busy": false,
         "inventory": [
 
         ],
+        "gold": 50,
         "progress": {
             "npc": {
                 "0": "0",
@@ -22,17 +24,33 @@
     },
     {
         "strength":7,
-        "level":1,
+        "currentLevel":1,
         "defense":5,
         "busy":false,
         "name":"☃JohnnySn0w☃",
         "health":100,
+        "maxhealth":100,
         "experience":0,
-        "nextLevel":100,
+        "nextLevelExperience":100,
         "progress": {
             "npc":{}
         },
         "id":"214624397409910785",
-        "inventory":[]
+        "inventory":[],
+        "gold": 50
+    },
+    {
+        "strength":7,
+        "level":1,
+        "defense":5,
+        "busy":false,
+        "name":"coolguy",
+        "health":100,
+        "progress": {
+            "npc":{}
+        },
+        "id":"198279866284507136",
+        "inventory":[],
+		"gold": 50
     }
 ]
