@@ -67,8 +67,8 @@ class TalkCommand extends commando.Command {
       message.channel.send(`${player.name} is conversing with unseen forces.`);
     }
     else {
-      const response = this.determineResponse(person, player);
-      this.replyToPlayer(player, message, person, response, room, false);
+      const [response, responseNum] = this.determineResponse(person, player);
+      this.replyToPlayer(player, message, person, response, responseNum, room, false);
     }
   }
 
@@ -81,7 +81,6 @@ class TalkCommand extends commando.Command {
   // determine what npc the player is looking at
   determineNPC(searchName, room) {
     let npcID;
-
     if (searchName in room.npcs) {
       npcID = room.npcs[searchName];
     }
@@ -91,6 +90,8 @@ class TalkCommand extends commando.Command {
   // creates the npcs response and prompts based on players progress
   determineResponse(npc, player) {
     let response;
+	  let responseNum = 0;
+    let offset = 0;
     if(npc.hostile){
       response = `${npc.name} would rather a fight than a chat.`;
     } else if (!(npc === undefined)) {
@@ -99,9 +100,20 @@ class TalkCommand extends commando.Command {
         let progress = player.progress.npc[npc.id];
         if (npc.responses[progress]) {
           response = npc.responses[progress].reply;
-          for (let i = 0; i < npc.responses[progress].prompts.length; i++) {
-            response = `${response}\n${npc.responses[progress].prompts[i].prompt}`;
-          }
+		      if (progress == "0" || !npc.vendor) {
+			      for (var i = 0; i < npc.responses[progress].prompts.length; i++) {
+			        response = response + '\n' + npc.responses[progress].prompts[i].prompt;
+			        responseNum = responseNum + 1;
+			      }
+		      } else {
+			      response = response + `\n[[You have ${player.gold} gold.]]`;
+			      for (var i = 0; i < npc.goods.length; i++) {
+              if(!npc.goods[i].soldOut) { //if its not sold out, list it! :^)
+			          response = response + '\n [' + i + '] ' +  npc.goods[i].item + ' - ' + npc.goods[i].cost + ' gold';
+              }
+			        responseNum = responseNum + 1;
+			      }
+		      }
         }
       } else { 
         // haven't talked to this npc before? 
@@ -110,15 +122,16 @@ class TalkCommand extends commando.Command {
         response = npc.responses['0'].reply;
         for (let i = 0; i < npc.responses['0'].prompts.length; i++) {
           response = `${response}\n${npc.responses['0'].prompts[i].prompt}`;
+			    responseNum = responseNum + 1;
         }
       }
-    }
-        
-    return response;
+    }        
+    return [response, responseNum];
   }
 
   // respond to the npc's response
-  replyToPlayer(player, message, person, response, room, stop) {
+  replyToPlayer(player, message, person, response, responseNum, room, stop) {
+    //console.log(responseNum);
     let responded = false;
     let progress = player.progress.npc[person.id];
     if (!(person.responses === undefined)) {
@@ -127,26 +140,38 @@ class TalkCommand extends commando.Command {
 
         if (!stop) {
           // responses change to using length
-          const filter = m => ((m.content < person.responses[progress].prompts.length) || (m.content.includes('?talk'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
-          const collector = message.channel.createMessageCollector(filter, {time: 15000});
+          const filter = m => (((m.content < responseNum) && (Number.isInteger(Number(m.content)))) || (m.content.includes('?talk'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
+          const collector = message.channel.createMessageCollector(filter, {time: 20000});
   
           collector.on('collect', m => {
             responded = true;
             // stops collector
-            collector.stop();
+            if (person.vendor && progress != '0')
+            {
+              if (person.goods[m.content].soldOut) {
+                return;
+              } else {
+                collector.stop();
+              }
+            } else { collector.stop(); }            
             if (m.content.includes('?talk')) {
               let newResponse = 'Oh ok bye';
-              this.replyToPlayer(player, message, person, newResponse, room, true);
+              this.replyToPlayer(player, message, person, newResponse, 1, room, true);
             } else {    
-              this.makeProgress(player, person, m.content);
-              let newResponse = this.determineResponse(person, player);
-              this.replyToPlayer(player, message, person, newResponse, room, false);
+              this.makeProgress(player, person, m.content, message);
+              let [newResponse, newResponseNum] = this.determineResponse(person, player);
+              this.replyToPlayer(player, message, person, newResponse, newResponseNum, room, false);
             }
+            
           });
   
           collector.on('end', () => {
             if (!responded) {
               message.channel.send(`${person.name} walked away from ${player.name}`);
+              if (person.vendor){ // let shopkeeps reset back to their first state everytime...
+                player.progress.npc[person.id] = '0';
+                db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
+              }
             }
           });
         }
@@ -159,20 +184,55 @@ class TalkCommand extends commando.Command {
   }
 
   // Adjusts the players conversational progress with the npc
-  makeProgress(player, person, playerResponse) { 
+  makeProgress(player, person, playerResponse, message) { 
     let currentProgress = player.progress.npc[person.id];
     let progression = currentProgress;
 
-    for (let i = 0; i < person.responses[currentProgress].prompts.length; i++) {			
-      if (i.toString() === playerResponse) {
-        progression = person.responses[currentProgress].prompts[i].progression;
-        break;
+	  if ((!person.vendor) || progression == '0') {
+	    for (let i = 0; i < person.responses[currentProgress].prompts.length; i++) {			
+		    if (i.toString() === playerResponse) {
+		      progression = person.responses[currentProgress].prompts[i].progression;
+		      break;
+		    }
+	    }
+	  }
+    else {
+      //let itemID = person.goods[Object.keys(person.goods)[playerResponse]];
+      if (this.checkGold(player, person, playerResponse)) {
+        progression = 'success';
+        this.buyItem(player, person, person.goods[playerResponse]);
+      } else {
+        progression = 'failure';
       }
     }
 
     // push the progression to the database
     player.progress.npc[person.id] = progression;
     db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
+  }
+
+  checkGold(player, person, choice)
+  { // checks price and returns if player can afford it
+    let itemCost = person.goods[choice].cost;
+    if (player.gold < itemCost) { return false;} 
+    else { return true; }
+  }
+
+  buyItem(player, person, item)
+  {
+    if (!item.soldOut)
+    {
+      player.inventory[player.inventory.length]= item.id; // Idk how we're doing inventory but rn, im just pushing the item's id
+      // add to player inventory
+      db.updateItem(player.id, ['inventory'], [item.id], 'players', () => {});
+      // take gold from player inventory
+      player.gold = player.gold - item.cost;
+      db.updateItem(player.id, ['gold'], [player.gold], 'players', () => {});
+      // set item to sold out in npc goods section
+      // TODO: repopulate after a period of time?
+      item.soldOut = true;
+      db.updateItem(person.id, ['goods'], [person.goods], 'entities', () => {});
+    }
   }
 }
 

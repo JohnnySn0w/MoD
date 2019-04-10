@@ -21,7 +21,7 @@
         "name": "room-0",
         "id": "530099456645791748",
         "roleid": "530097563748139028",
-        "description": "The cave walls narrow in and create a hallway of sorts. The hallways comes to a split where the west path leads to light while the east path leads to a pile of rocks. To the south is a large room.",
+        "description": "The cave walls narrow in and create a hallway of sorts. The hallways comes to a split where the west path leads to light while the east path leads to a pile of rocks. To the south is a large room.\nThe shadowy figure of the shopkeep looms in the corner.",
         "exits": {
             "west": "530099492091985921",
             "south": "530099209614000159"
@@ -31,7 +31,7 @@
             "rocks": "2"
         },
         "npcs": {
-
+            "shopkeep": "3"
         }
     },
     {
