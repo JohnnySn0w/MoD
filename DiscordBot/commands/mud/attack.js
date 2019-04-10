@@ -35,7 +35,7 @@ class AttackCommand extends commando.Command {
     var player = JSON.parse(data.body).Item;
 
     if (player === undefined) {
-      message.member.send('it seems that you\'re not a part of the MUD yet! \nUse "?start" in test-zone to get started!');
+      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
     }
     //TODO: this should be it's own external function in globals or something
     //so we can put it on all commands without code replication

@@ -3,27 +3,27 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class StatsCommand extends commando.Command {
-    constructor(client) {
-        super(client, {
-            name: 'stats',
-            group: 'mud',
-            memberName: 'stats',
-            description: 'Shows player stats for the player who calls for them'      
-        });
+  constructor(client) {
+    super(client, {
+      name: 'stats',
+      group: 'mud',
+      memberName: 'stats',
+      description: 'Shows player stats for the player who calls for them'      
+    });
+  }
+
+  async run(message) {
+    db.getItem(message.member.id, 'players', (data) => this.getPlayer(data, message));
+    // delete the user's command if not debugging
+    if (!DEBUG) {
+      message.delete();
     }
+  }
 
-    async run(message, args) {
-        db.getItem(message.member.id, 'players', (data) => this.getPlayer(data, message));
-
-        // delete the user's command if not debugging
-        if (!DEBUG)
-            message.delete();
-    }
-
-    getPlayer(data, message) {
-        // grab the actual player object
-        var body = JSON.parse(data.body);
-        var player = body.Item;
+  getPlayer(data, message) {
+    // grab the actual player object
+    var body = JSON.parse(data.body);
+    var player = body.Item;
 
         if (player === undefined) {
             // if the player isn't in the database already, send them a notice that they need to "?start" the game
@@ -38,7 +38,9 @@ class StatsCommand extends commando.Command {
                 message.member.send("You're on death's door, my friend.");
             }
         }
+
     }
+  }
         
 }
     
