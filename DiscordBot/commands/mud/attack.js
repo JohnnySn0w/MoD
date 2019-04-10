@@ -118,8 +118,9 @@ class AttackCommand extends commando.Command {
       // respawn player
       console.log("max health = " + player.maxhealth);
       db.updateItem(player.id, ['health'], [player.maxhealth],'players', () => {});
-      message.member.setRoles([message.guild.roles.get("530096793422266428")]).catch(console.error);
-      // TODO insert message in starting room about player respawning
+      message.member.setRoles([message.guild.roles.find(role => role.name === "entry-room")]).catch(console.error);
+      var channel = this.client.channels.find("name", "entry-room");
+      channel.send(`${player.name} is reborn, ready to fight again!`);
     }
   }
 }
