@@ -2,6 +2,9 @@ const { DEBUG } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
+// experience counter
+var xp = 0;
+
 class AttackCommand extends commando.Command {
   constructor(client) {
     super(client, {
@@ -85,9 +88,6 @@ class AttackCommand extends commando.Command {
   }
 
   combatLoop(message, player, enemy) {
-    // experience counter
-    var xp = 0;
-
     db.updateItem(player.id, ['busy'], [true], 'players', ()=>{});
     db.updateItem(enemy.id, ['aggro'], [player.id], 'entities', () => {});
     while (player.health > 0 && enemy.health > 0) {
@@ -97,6 +97,7 @@ class AttackCommand extends commando.Command {
         enemy.health = enemy.health - damage;
         message.channel.send(`${player.name} hit ${enemy.name} for ${damage.toString()} damage.`);
         // increment experience counter; can vary depending on the enemy later
+        xp = xp + 5;
       } else {
         message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
       }
@@ -129,16 +130,17 @@ class AttackCommand extends commando.Command {
     }
 
     // adding experience
-    player.experience = player.experience + xp; // add xp to player's experience
+    db.updateItem(player.id, ['experience'], [player.experience + xp], 'players', ()=>{}); // add xp to player's experience
     xp = 0; // reset xp to 0    
 
     // leveling
-    if (player.experience > player.nextLevel) {
-      player.level++;
-      player.nextLevel = player.nextLevel + (player.nextLevel*player.level);
+    if (player.experience >= player.nextLevel) {
+      db.updateItem(player.id, ['level'], [player.level = player.level + 1], 'players', ()=>{});
+      db.updateItem(player.id, ['nextLevel'], [player.nextLevel + (player.nextLevel * player.level)], 'players', ()=>{});
+      db.updateItem(player.id, ['strength'], [player.strength + player.level], 'players', ()=>{});
+      db.updateItem(player.id, ['defense'], [player.defense + player.level], 'players', ()=>{});
       message.channel.send(`${player.name} leveled up!`);
       message.member.send("Level up!\n You're now at level " + player.level + ".\n" + "Experience: " + player.experience);
-      console.log(player.experience +", " + player.nextLevel + ", " + player.level);
     }
 
   }
