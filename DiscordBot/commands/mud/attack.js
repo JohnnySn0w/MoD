@@ -2,6 +2,9 @@ const { DEBUG } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
+// experience counter
+var xp = 0;
+
 class AttackCommand extends commando.Command {
   constructor(client) {
     super(client, {
@@ -93,6 +96,8 @@ class AttackCommand extends commando.Command {
       if (damage > 0) {
         enemy.health = enemy.health - damage;
         message.channel.send(`${player.name} hit ${enemy.name} for ${damage.toString()} damage.`);
+        // increment experience counter; can vary depending on the enemy later
+        xp = xp + 5;
       } else {
         message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
       }
@@ -112,7 +117,8 @@ class AttackCommand extends commando.Command {
     console.log('updating player state');
     db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{});
     if(enemy.health <= 0) {
-      message.channel.send(`${player.name} defeated the ${enemy.name}.`);
+      message.channel.send(`${player.name} defeated the ${enemy.name}.`);      
+
       //TODO: loot roll here
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
@@ -122,6 +128,21 @@ class AttackCommand extends commando.Command {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
       db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
     }
+
+    // adding experience
+    db.updateItem(player.id, ['experience'], [player.experience + xp], 'players', ()=>{}); // add xp to player's experience
+    xp = 0; // reset xp to 0    
+
+    // leveling
+    if (player.experience >= player.nextLevel) {
+      db.updateItem(player.id, ['level'], [player.level = player.level + 1], 'players', ()=>{});
+      db.updateItem(player.id, ['nextLevel'], [player.nextLevel + (player.nextLevel * player.level)], 'players', ()=>{});
+      db.updateItem(player.id, ['strength'], [player.strength + player.level], 'players', ()=>{});
+      db.updateItem(player.id, ['defense'], [player.defense + player.level], 'players', ()=>{});
+      message.channel.send(`${player.name} leveled up!`);
+      message.member.send("Level up!\n You're now at level " + player.level + ".\n" + "Experience: " + player.experience);
+    }
+
   }
 }
 
