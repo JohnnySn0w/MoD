@@ -244,7 +244,8 @@ function addPlayerBack(message) {
         "experience":0,
         "nextLevelExperience":100,
         'inventory': [],
-        'progress': {'npc':{}}
+        'progress': {'npc':{}}, // progress is added dynamically with each new npc encounter now :^)
+        'gold': 50
     }
 
     db.saveItem(newPlayer, 'players', (data) => addData(message));

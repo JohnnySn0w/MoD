@@ -46,6 +46,7 @@ class StartCommand extends commando.Command {
                 'name': message.member.user.username,
                 'id': message.member.id,
                 'health': 100,
+                'maxhealth': 100,
                 'currentLevel': 1,
                 'strength': 7,
                 'defense': 5,
