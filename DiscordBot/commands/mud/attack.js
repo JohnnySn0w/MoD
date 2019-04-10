@@ -32,7 +32,7 @@ class AttackCommand extends commando.Command {
     var player = JSON.parse(data.body).Item;
 
     if (player === undefined) {
-      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse "?start" in test-zone to get started!');
+      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
     } else {
       // get the room object that the player is in
       db.getItem(message.channel.id, 'rooms', (data) => this.checkRoom(message, data, args, player));
