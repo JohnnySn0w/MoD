@@ -87,6 +87,7 @@ class AttackCommand extends commando.Command {
   combatLoop(message, player, enemy) {
     // experience counter
     var xp = 0;
+
     db.updateItem(player.id, ['busy'], [true], 'players', ()=>{});
     db.updateItem(enemy.id, ['aggro'], [player.id], 'entities', () => {});
     while (player.health > 0 && enemy.health > 0) {
@@ -101,8 +102,6 @@ class AttackCommand extends commando.Command {
       }
       //prevents enemy attacking if dead
       if(enemy.health <= 0) {
-        //player.experience = player.experience + xp; // add xp to player experience
-        //xp = 0; //reset counter
         break;
       }
       //calculate enemy damage on agro target and update value
@@ -117,9 +116,7 @@ class AttackCommand extends commando.Command {
     console.log('updating player state');
     db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{});
     if(enemy.health <= 0) {
-      message.channel.send(`${player.name} defeated the ${enemy.name}.`);
-      //player.experience = player.experience + xp; // add xp to player's experience
-      //xp = 0; // reset xp to 0     
+      message.channel.send(`${player.name} defeated the ${enemy.name}.`);      
 
       //TODO: loot roll here
       /* TODO: move this delete to the end of the loot roll so 
@@ -131,14 +128,19 @@ class AttackCommand extends commando.Command {
       db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
     }
 
+    // adding experience
+    player.experience = player.experience + xp; // add xp to player's experience
+    xp = 0; // reset xp to 0    
+
     // leveling
-    //if (player.experience % 5 == 0){
-    //  player.level = player.level + 1;
-    //  player.strength = player.strength + 5;
-    //  player.defense = player.defense + 7;
-    //  message.channel.send(`${player.name} has leveled up!`);
-    //  message.member.send("You are now level" + player.level);
-    //}
+    if (player.experience > player.nextLevel) {
+      player.level++;
+      player.nextLevel = player.nextLevel + (player.nextLevel*player.level);
+      message.channel.send(`${player.name} leveled up!`);
+      message.member.send("Level up!\n You're now at level " + player.level + ".\n" + "Experience: " + player.experience);
+      console.log(player.experience +", " + player.nextLevel + ", " + player.level);
+    }
+
   }
 }
 
