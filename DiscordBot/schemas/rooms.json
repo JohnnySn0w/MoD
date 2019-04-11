@@ -11,7 +11,6 @@
             "pillars": "3"
         },
         "npcs": {
-            "goblin": "0",
             "old-man": "1",
             "little-boy": "2",
             "shopkeep": "3"
