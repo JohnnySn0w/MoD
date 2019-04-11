@@ -7,7 +7,6 @@
         "strength": 3,
         "defense": 2,
         "description": "A green, humanoid monster stands around with a small club in his hand.",
-        "hostile": true,
         "loot": [
         ],
         "aggro": "nobody"
