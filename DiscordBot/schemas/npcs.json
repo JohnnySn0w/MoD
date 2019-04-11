@@ -108,7 +108,9 @@
                 ]
             }
         },
-        "vendor": false
+        "goods": [
+            
+        ]
     }, 
     {
         "name": "Little Boy",
@@ -159,7 +161,9 @@
                 ]
             }
         },
-        "vendor": false
+        "goods": [
+            
+        ]
     }, 
     {
         "name": "Shopkeep",
@@ -196,7 +200,6 @@
                 "prompts": []
             }
         },
-        "vendor": true,
         "goods": [
             {
                 "item": "ALEVE",

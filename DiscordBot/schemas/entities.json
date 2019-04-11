@@ -126,7 +126,9 @@
       }
     },
     "hostile": false,
-		"vendor": false,
+    "goods": [
+
+    ],
     "loot": [
     ]
   }, 
@@ -180,7 +182,9 @@
             }
         },
         "hostile": false,
-		"vendor": false,
+        "goods": [
+
+        ],
         "loot": [
         ]
     }, 
@@ -220,7 +224,6 @@
       }
 		},
 		"hostile": false,
-		"vendor": true,
 		"loot": [		
 		],
 		"goods": [
