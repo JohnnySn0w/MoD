@@ -15,6 +15,9 @@
             "old-man": "1",
             "little-boy": "2",
             "shopkeep": "3"
+        },
+        "enemies": {
+            "goblin": "0"
         }
     },
     {
@@ -32,6 +35,9 @@
         },
         "npcs": {
             "shopkeep": "3"
+        },
+        "enemies": {
+            
         }
     },
     {
@@ -48,6 +54,9 @@
         },
         "npcs": {
 
+        },
+        "enemies": {
+            
         }
     },
     {
@@ -63,6 +72,9 @@
         },
         "npcs": {
 
+        },
+        "enemies": {
+            
         }
     }
 ]
