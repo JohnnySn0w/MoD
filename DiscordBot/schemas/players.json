@@ -13,6 +13,8 @@
         "inventory": [
 
         ],
+        "weapon": [],
+        "equipment": [],
         "gold": 50,
         "progress": {
             "npc": {
@@ -37,6 +39,8 @@
         },
         "id":"214624397409910785",
         "inventory":[],
+        "weapon": [],
+        "equipment": [],
         "gold": 50
     },
     {
@@ -51,6 +55,8 @@
         },
         "id":"198279866284507136",
         "inventory":[],
+        "weapon": [],
+        "equipment": [],
 		"gold": 50
     }
 ]

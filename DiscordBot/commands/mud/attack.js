@@ -120,7 +120,7 @@ class AttackCommand extends commando.Command {
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
 
       //TODO: loot roll here
-      this.rollLoot(message, player, enemy);
+      //this.rollLoot(message, player, enemy);
       //message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string');
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
@@ -169,6 +169,7 @@ class AttackCommand extends commando.Command {
           message.member.send(`[0] Pick up sword`);  // need to add these items to the item schema so they can be tangible
           if(message.content === '0'){
             message.member.send(`You have picked up the sword. Added to your inventory`); // inventory needs to be implemented before this will actually work
+            db.updateItem(player.id, ['weapon'], ['basic-ass sword'], 'players', ()=>{}); // theoretically, this will add the basic sword to your weapon slot
           }
           else{
             message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
@@ -178,33 +179,37 @@ class AttackCommand extends commando.Command {
           message.member.send('[0] Pick up shield')
           if(message.content === '0'){
             message.member.send(`You have picked up the shield. Added to your inventory`);
-          }
-          else{
-            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
-          }
-        case 2:
-          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for health potion`);
-          message.member.send(`[0] Pick uphealth potion`);  // need to add these items to the item schema so they can be tangible
-          if(message.content === '0'){
-            message.member.send(`You have picked up the sword. Added to your inventory`)
+            db.updateItem(player.id, ['equipment'], ['dinky shield'], 'players', ()=>{}); // theoretically, this will add the dinky shield to your weapon slot
           }
           else{
             message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
           }
         case 3:
-          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for 10 gold`);
-          message.member.send(`[0] Pick up 10 gold`);  // need to add these items to the item schema so they can be tangible
+          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for health potion`);
+          message.member.send(`[0] Pick uphealth potion`);  // need to add these items to the item schema so they can be tangible
           if(message.content === '0'){
-            message.member.send(`You have picked up the 10 gold. Added to your inventory`)
+            message.member.send(`You have picked up the sword. Added to your inventory`)
+            db.updateItem(player.id, ['inventory'], ['small health potion'], 'players', ()=>{}); // theoretically, this will add to your inventory
           }
           else{
             message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
           }
         case 4:
+          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for 10 gold`);
+          message.member.send(`[0] Pick up 10 gold`);  // need to add these items to the item schema so they can be tangible
+          if(message.content === '0'){
+            message.member.send(`You have picked up the 10 gold. Added to your inventory`)
+            db.updateItem(player.id, ['gold'], [player.gold = player.gold + 10], 'players', ()=>{}); // theoretically, this will add some gold to your bank account
+          }
+          else{
+            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
+          }
+        case 5:
           message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for 50 gold`);
           message.member.send(`[0] Pick up 50 gold`);  // need to add these items to the item schema so they can be tangible
           if(message.content === '0'){
             message.member.send(`You have picked up the 50 gold. Added to your inventory`)
+            db.updateItem(player.id, ['gold'], [player.gold = player.gold + 50], 'players', ()=>{}); // theoretically, this will add some gold to your bank account
           }
           else{
             message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
@@ -213,7 +218,7 @@ class AttackCommand extends commando.Command {
         default:
           message.member.send(`After defeating ${enemy.name} you find that it did not drop any loot. How unfortunate.`);
       }
-    }
+  }
   
 }
 
