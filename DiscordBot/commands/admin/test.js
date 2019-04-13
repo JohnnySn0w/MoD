@@ -216,16 +216,21 @@ function testTalkCommand(message, client) {
         setTimeout(function() {
             command.run(message, {person: "little-boy"});
 
-            // delete the player and run the command again
+            // attempt to talk to an enemy
             setTimeout(function() {
-                db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+                command.run(message, {person: "goblin"});
 
+                // delete the player and run the command again
                 setTimeout(function() {
-                    command.run(message, {person: "old-man"});
-                    
-                    // add the player back
+                    db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+
                     setTimeout(function() {
-                        addPlayerBack(message);
+                        command.run(message, {person: "old-man"});
+                        
+                        // add the player back
+                        setTimeout(function() {
+                            addPlayerBack(message);
+                        }, 500);
                     }, 500);
                 }, 500);
             }, 500);
