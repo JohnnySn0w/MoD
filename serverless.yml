@@ -23,6 +23,10 @@ custom:
             sources: [./DiscordBot/schemas/rooms.json]
           - table: players
             sources: [./DiscordBot/schemas/players.json]
+          - table: npcs
+            sources: [./DiscordBot/schemas/npcs.json]
+          - table: enemies
+            sources: [./DiscordBot/schemas/enemies.json]
           
 
 provider:
@@ -124,6 +128,32 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: players
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    npcTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: npcs
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    enemyTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: enemies
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S

@@ -56,9 +56,20 @@ class LookCommand extends commando.Command {
       // otherwise, the player is looking at an item, which we need to determine
       object = this.determineItem(args.object, room);
       if (object === undefined) {
-        // if the object doesn't exist, then the player is looking at an entity
+        // if the object doesn't exist, then the player is looking at an NPC, enemy, or nothing
         object = this.determineNPC(args.object, room);
-        db.getItem(object, 'entities', (data) => this.replyToPlayer(message, player, false, room, data));
+        if (object === undefined) {
+          // if the object still doesn't exist, then the player is looking at an enemy or nothing
+          object = this.determineEnemy(args.object, room);
+          if (object === undefined) {
+            // the player is not looking at anything
+            message.channel.send(`${player.name} stares into space.`);
+          } else {
+            db.getItem(object, 'enemies', (data) => this.replyToPlayer(message, player, false, room, data));
+          }
+        } else {
+          db.getItem(object, 'npcs', (data) => this.replyToPlayer(message, player, false, room, data));
+        }
       } else {
         db.getItem(object, 'items', (data) => this.replyToPlayer(message, player, false, room, data));
       }
@@ -91,29 +102,40 @@ class LookCommand extends commando.Command {
     return npcObject;
   }
 
-  replyToPlayer(message, player, objectIsRoom, room, data) {
-    // determine whether the object being looked at is the room itself
-    var object;
-    if (objectIsRoom === true) {
-      object = room;
-    } else {
-      var body = JSON.parse(data.body);
-      var item = body.Item;
+  determineEnemy(searchName, room) {
+    // determine what enemy the player is looking at in the given room
+    var enemyObject;
+    if (searchName in room.enemies) {
+      enemyObject = room.enemies[searchName];
+    }
+    
+    return enemyObject;
+  }
 
-      object = item;
-    }
-        
-    // handle situations where either the room or the object may be undefined
-    if (room === undefined) {
-      message.member.send('You are not in a MUD-related room.');
-    }
-    else {
-      if (object === undefined) {
-        message.channel.send(`${player.name} stares into space.`);
+  replyToPlayer(message, player, objectIsRoom, room, data) {
+    try {
+      // determine whether the object being looked at is the room itself
+      var object;
+      if (objectIsRoom === true) {
+        object = room;
+      } else {
+        var body = JSON.parse(data.body);
+        var item = body.Item;
+
+        object = item;
+      }
+          
+      // handle situations where either the room or the object may be undefined
+      if (room === undefined) {
+        message.member.send('You are not in a MUD-related room.');
       }
       else {
         message.channel.send(object.description);
       }
+    }
+    catch (error) {
+      console.log("Looking at an object broke something.\n" + error.message);
+      message.channel.send(`${player.name} stares into space.`);
     }
   }
 }

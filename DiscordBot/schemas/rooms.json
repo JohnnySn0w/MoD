@@ -3,7 +3,7 @@
         "name": "entry-room",
         "id": "530099209614000159",
         "roleid": "530096793422266428",
-        "description": "This room is large, and cavernous. Footsteps echo into the darkness. The journey begins to the north... \nThere's also an old-man and a little-boy in the room.",
+        "description": "This room is large and cavernous, with pillars extending to the ceiling. Footsteps echo into the darkness. The journey begins to the north... \nThere's also an old-man, a little-boy, and a shopkeep in the room.",
         "exits": {
             "north": "530099456645791748"
         },
@@ -11,11 +11,13 @@
             "pillars": "3"
         },
         "npcs": {
-            "goblin": "0",
             "old-man": "1",
-			"little-boy": "2"
+            "little-boy": "2",
+            "shopkeep": "3"
+        },
+        "enemies": {
+            "goblin": "0"
         }
-    
     },
     {
         "name": "room-0",
@@ -32,6 +34,9 @@
         },
         "npcs": {
             "shopkeep": "3"
+        },
+        "enemies": {
+            
         }
     },
     {
@@ -48,6 +53,9 @@
         },
         "npcs": {
 
+        },
+        "enemies": {
+            
         }
     },
     {
@@ -63,6 +71,9 @@
         },
         "npcs": {
 
+        },
+        "enemies": {
+            
         }
     }
 ]

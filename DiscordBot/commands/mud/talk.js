@@ -100,7 +100,7 @@ class TalkCommand extends commando.Command {
         let progress = player.progress.npc[npc.id];
         if (npc.responses[progress]) {
           response = npc.responses[progress].reply;
-		      if (progress == "0" || !npc.vendor) {
+		      if (progress == "0" || !(npc.goods.length > 0)) {
 			      for (var i = 0; i < npc.responses[progress].prompts.length; i++) {
 			        response = response + '\n' + npc.responses[progress].prompts[i].prompt;
 			        responseNum = responseNum + 1;
@@ -146,7 +146,7 @@ class TalkCommand extends commando.Command {
           collector.on('collect', m => {
             responded = true;
             // stops collector
-            if (person.vendor && progress != '0')
+            if ((person.goods.length > 0) && progress != '0')
             {
               if (person.goods[m.content].soldOut) {
                 return;
@@ -168,7 +168,7 @@ class TalkCommand extends commando.Command {
           collector.on('end', () => {
             if (!responded) {
               message.channel.send(`${person.name} walked away from ${player.name}`);
-              if (person.vendor){ // let shopkeeps reset back to their first state everytime...
+              if (person.goods.length > 0){ // let shopkeeps reset back to their first state everytime...
                 player.progress.npc[person.id] = '0';
                 db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
               }
@@ -188,7 +188,7 @@ class TalkCommand extends commando.Command {
     let currentProgress = player.progress.npc[person.id];
     let progression = currentProgress;
 
-	  if ((!person.vendor) || progression == '0') {
+	  if (!(person.goods.length > 0) || progression == '0') {
 	    for (let i = 0; i < person.responses[currentProgress].prompts.length; i++) {			
 		    if (i.toString() === playerResponse) {
 		      progression = person.responses[currentProgress].prompts[i].progression;
