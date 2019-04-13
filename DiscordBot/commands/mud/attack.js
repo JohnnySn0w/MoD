@@ -105,8 +105,11 @@ class AttackCommand extends commando.Command {
 
       //calculate enemy damage on agro target and update value
       damage = enemy.strength - player.defense; //for the following lines replace player with agro target
+      //console.log(damage, enemy.strength, player.defense);
       if (damage > 0) {
-        player.health = player.health - damage;
+        db.updateItem(player.id, ['health'], [player.health = player.health - damage], 'players', ()=>{console.log("Player health updated")});
+        console.log(player.health);
+        //player.health = player.health - damage;
         message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage.toString()} damage.`);
       } else {
         message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
@@ -120,8 +123,8 @@ class AttackCommand extends commando.Command {
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
 
       //TODO: loot roll here
-      //this.rollLoot(message, player, enemy);
-      //message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string');
+      this.rollLoot(message, player, enemy);
+      message.member.send('After defeating ' + `${enemy.name}`+ ', you can loot' + ' placeholder loot string');
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
 
@@ -162,7 +165,7 @@ class AttackCommand extends commando.Command {
 
   }
   rollLoot(message, player, enemy) {
-    loot_num = Math.floor(Math.random() * 5) + 1 ; // generating a random number between 1 and 5 for loot drop
+    var loot_num = Math.floor(Math.random() * 5) + 1 ; // generating a random number between 1 and 5 for loot drop
       switch(loot_num) {
         case 1: // need to add response check for if the player wants to pickup the item or not
           message.member.send(`After defeating  ${enemy.name} you can loot placeholder loot string for sword.`);
