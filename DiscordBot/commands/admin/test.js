@@ -111,20 +111,25 @@ function testLookCommand(message, client) {
         setTimeout(function() {
             command.run(message, {object: "pillars"});
 
-            // again with an entity
+            // again with an NPC
             setTimeout(function() {
                 command.run(message, {object: "old-man"});
 
-                // again after deleting the player
-                setTimeout(function() {
-                    db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+                // again with an enemy
+                setTimeout (function() {
+                    command.run(message, {object: "goblin"});
 
+                    // again after deleting the player
                     setTimeout(function() {
-                        command.run(message, {object: "nothing"});
+                        db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
 
-                        // add the player back
                         setTimeout(function() {
-                            addPlayerBack(message);
+                            command.run(message, {object: "nothing"});
+
+                            // add the player back
+                            setTimeout(function() {
+                                addPlayerBack(message);
+                            }, 500);
                         }, 500);
                     }, 500);
                 }, 500);
@@ -211,16 +216,21 @@ function testTalkCommand(message, client) {
         setTimeout(function() {
             command.run(message, {person: "little-boy"});
 
-            // delete the player and run the command again
+            // attempt to talk to an enemy
             setTimeout(function() {
-                db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+                command.run(message, {person: "goblin"});
 
+                // delete the player and run the command again
                 setTimeout(function() {
-                    command.run(message, {person: "old-man"});
-                    
-                    // add the player back
+                    db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+
                     setTimeout(function() {
-                        addPlayerBack(message);
+                        command.run(message, {person: "old-man"});
+                        
+                        // add the player back
+                        setTimeout(function() {
+                            addPlayerBack(message);
+                        }, 500);
                     }, 500);
                 }, 500);
             }, 500);
