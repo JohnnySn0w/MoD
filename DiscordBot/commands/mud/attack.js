@@ -105,11 +105,9 @@ class AttackCommand extends commando.Command {
 
       //calculate enemy damage on agro target and update value
       damage = enemy.strength - player.defense; //for the following lines replace player with agro target
-      //console.log(damage, enemy.strength, player.defense);
+
       if (damage > 0) {
-        db.updateItem(player.id, ['health'], [player.health = player.health - damage], 'players', ()=>{console.log("Player health updated")});
-        console.log(player.health);
-        //player.health = player.health - damage;
+        player.health = player.health - damage;
         message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage.toString()} damage.`);
       } else {
         message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
@@ -128,14 +126,14 @@ class AttackCommand extends commando.Command {
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
 
-      // remove the enemy from the list of entities in the room and then re-add it after 10 seconds
+      // remove the enemy from the list of entities in the room and then re-add it after 30 seconds
       console.log("Enemy name = " + enemy.name.toLowerCase());
       delete room.npcs[enemy.name.toLowerCase()];
       db.updateItem(room.id, ['npcs'], [room.npcs], 'rooms', ()=>{
         console.log("Removed enemy from room - " + JSON.stringify(room.npcs));
         setTimeout(function() {
           respawnEnemy(enemy, room)
-        }, 10000);
+        }, 30000);
       });
     } else {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
