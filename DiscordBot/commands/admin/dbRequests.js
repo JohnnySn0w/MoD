@@ -102,7 +102,7 @@ class DB extends commando.Command {
         message.delete();
       }
     } else if (args[0] === 'respawn') {
-      db.saveItem(gobbie, 'entities', (data) => this.replies(message, data, 'save'));
+      db.saveItem(gobbie, 'enemies', (data) => this.replies(message, data, 'save'));
       if(!DEBUG) {
         message.delete();
       }

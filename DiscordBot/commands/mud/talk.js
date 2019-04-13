@@ -53,22 +53,21 @@ class TalkCommand extends commando.Command {
     if (room === undefined) {
       message.member.send('You are not in a MUD related room.');
     } else {
-      // Get the NPC id and data
+      // determine if the player is talking to an NPC
       let npcID = this.determineNPC(args.person, room);
-      db.getItem(npcID, 'entities', (data) => this.getProgress(message, player, room, data));
-
-    }
-  }
-  getProgress(message, player, room, data) {
-    const body = JSON.parse(data.body);
-    const person = body.Item;
-
-    if (person === undefined) {
-      message.channel.send(`${player.name} is conversing with unseen forces.`);
-    }
-    else {
-      const [response, responseNum] = this.determineResponse(person, player);
-      this.replyToPlayer(player, message, person, response, responseNum, room, false);
+      if (npcID === undefined) {
+        // if not an npc, determine if the player is talking to an enemy
+        let enemyID = this.determineEnemy(args.person, room);
+        if (enemyID === undefined) {
+          // if not an enemy either, they're talking to no one
+          message.channel.send(`${player.name} is conversing with no one.`);
+        }
+        else
+          // if an enemy, then mention that the player can't talk to the enemy
+          message.channel.send(`The ${args.person} would rather a fight than a chat.`);
+      }
+      else
+        db.getItem(npcID, 'npcs', (data) => this.getProgress(message, player, room, data));
     }
   }
 
@@ -87,12 +86,34 @@ class TalkCommand extends commando.Command {
     return npcID;
   }
 
+  // determine what enemy the player is looking at
+  determineEnemy(searchName, room) {
+    let enemyID;
+    if (searchName in room.enemies) {
+      enemyID = room.enemies[searchName];
+    }
+    return enemyID;
+  }
+
+  getProgress(message, player, room, data) {
+    const body = JSON.parse(data.body);
+    const person = body.Item;
+
+    if (person === undefined) {
+      message.channel.send(`${player.name} is conversing with unseen forces.`);
+    }
+    else {
+      const [response, responseNum] = this.determineResponse(person, player);
+      this.replyToPlayer(player, message, person, response, responseNum, room, false);
+    }
+  }
+
   // creates the npcs response and prompts based on players progress
   determineResponse(npc, player) {
     let response;
 	  let responseNum = 0;
     let offset = 0;
-    if(npc.hostile){
+    if (npc.hostile) {
       response = `${npc.name} would rather a fight than a chat.`;
     } else if (!(npc === undefined)) {
       // find player's progress with this npc
@@ -231,7 +252,7 @@ class TalkCommand extends commando.Command {
       // set item to sold out in npc goods section
       // TODO: repopulate after a period of time?
       item.soldOut = true;
-      db.updateItem(person.id, ['goods'], [person.goods], 'entities', () => {});
+      db.updateItem(person.id, ['goods'], [person.goods], 'npcs', () => {});
     }
   }
 }
