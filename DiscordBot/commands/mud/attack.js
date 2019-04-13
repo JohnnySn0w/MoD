@@ -129,6 +129,9 @@ class AttackCommand extends commando.Command {
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
 
+<<<<<<< HEAD
+      // remove the enemy from the list of entities in the room and then re-add it after 30 seconds
+=======
       // remove the enemy from the list of enemies in the room and then re-add it after 10 seconds
       console.log("Enemy name = " + enemy.name.toLowerCase());
       delete room.enemies[enemy.name.toLowerCase()];
