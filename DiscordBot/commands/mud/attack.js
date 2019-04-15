@@ -44,19 +44,34 @@ class AttackCommand extends commando.Command {
 
   checkRoom(message, data, args, player) {
     const room = JSON.parse(data.body).Item;
-    const entity = this.cleanArgs(args).object;
+    const enemy = this.cleanArgs(args).object;
     //look for the npc
     if (room === undefined) {
       message.member.send("You're not in of the MUD-related rooms.");
     }
     else {
-      if (room.enemies[entity]) {
-        db.getItem(room.enemies[entity], 'enemies', (data) => this.checkHostile(message, player, data, room));
-      } else if (room.npcs[entity]) {
-        message.channel.send(`${player.name} glares with murderous intent towards ${entity}.`);
+      if (room.npcs[enemy]) {
+        db.getItem(room.npcs[enemy], 'entities', (data) => this.checkHostile(message, player, data, room));
       } else {
         message.channel.send(`${player.name} glares with murderous intent towards no one in particular.`);
       }
+    }
+  }
+
+  checkHostile(message, player, data, room) {
+    const enemy = JSON.parse(data.body).Item;
+    //this is a fancy way of making sure enemy is defined
+    //otherwise trying to access a key of an unef object throws a big error
+    if(enemy && enemy.hostile) {
+      if(enemy.aggro === 'nobody' || enemy.aggro === player.id) {
+        this.combatLoop(message, player, enemy, room);
+      } else {
+        message.channel.send(`${player.name} attempts to encroach on existing combat, and fails.`);
+      }
+    } else if(enemy){
+      message.channel.send(`${player.name} glares with murderous intent towards ${enemy.name}.`);
+    } else {
+      message.channel.send(`${player.name} tries to attack the air.`);
     }
   }
 
@@ -66,27 +81,9 @@ class AttackCommand extends commando.Command {
     return args;
   }
 
-  checkHostile(message, player, data, room) {
-    const enemy = JSON.parse(data.body).Item;
-    //this is a fancy way of making sure enemy is defined
-    //otherwise trying to access a key of an unef object throws a big error
-    console.log("Goblin = " + JSON.stringify(enemy));
-    if (enemy) {
-      if (enemy.aggro === 'nobody' || enemy.aggro === player.id) {
-        this.combatLoop(message, player, enemy, room);
-      } else if (enemy.aggro === player.id) {
-        message.reply(`you're already fighting the ${enemy.name}!`);
-      } else {
-        message.channel.send(`${player.name} attempts to encroach on existing combat, and fails.`);
-      }
-    } else {
-      message.channel.send(`${player.name} tries to attack the air.`);
-    }
-  }
-
   combatLoop(message, player, enemy, room) {
     db.updateItem(player.id, ['busy'], [true], 'players', ()=>{});
-    db.updateItem(enemy.id, ['aggro'], [player.id], 'enemies', () => {});
+    db.updateItem(enemy.id, ['aggro'], [player.id], 'entities', () => {});
     console.log("Player health - " + player.health);
 
     while (player.health > 0 && enemy.health > 0) {
@@ -119,27 +116,27 @@ class AttackCommand extends commando.Command {
     if(enemy.health <= 0) {
       // update the player health and enemy aggro state and notify the room
       db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{console.log("Player health updated")});
-      db.updateItem(enemy.id, ['aggro'], ['nobody'], 'enemies', ()=>{console.log("Enemy aggro updated")});
+      db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', ()=>{console.log("Enemy aggro updated")});
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
 
       //TODO: loot roll here
-      //this.rollLoot(message, player, enemy);
+      this.rollLoot(message, player, enemy);
       //message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string');
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
 
-      // remove the enemy from the list of enemies in the room and then re-add it after 10 seconds
+      // remove the enemy from the list of entities in the room and then re-add it after 10 seconds
       console.log("Enemy name = " + enemy.name.toLowerCase());
-      delete room.enemies[enemy.name.toLowerCase()];
-      db.updateItem(room.id, ['enemies'], [room.enemies], 'rooms', ()=>{
-        console.log("Removed enemy from room - " + JSON.stringify(room.enemies));
+      delete room.npcs[enemy.name.toLowerCase()];
+      db.updateItem(room.id, ['npcs'], [room.npcs], 'rooms', ()=>{
+        console.log("Removed enemy from room - " + JSON.stringify(room.npcs));
         setTimeout(function() {
           respawnEnemy(enemy, room)
         }, 10000);
       });
     } else {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
-      db.updateItem(enemy.id, ['aggro'], ['nobody'], 'enemies', () => {});
+      db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
 
       // respawn player
       db.updateItem(player.id, ['health'], [player.maxhealth],'players', () => {console.log("Player health restored")});
@@ -165,69 +162,35 @@ class AttackCommand extends commando.Command {
 
   }
   rollLoot(message, player, enemy) {
-    loot_num = Math.floor(Math.random() * 5) + 1 ; // generating a random number between 1 and 5 for loot drop
-      switch(loot_num) {
-        case 1: // need to add response check for if the player wants to pickup the item or not
-          message.member.send(`After defeating  ${enemy.name} you can loot placeholder loot string for sword.`);
-          message.member.send(`[0] Pick up sword`);  // need to add these items to the item schema so they can be tangible
-          if(message.content === '0'){
-            message.member.send(`You have picked up the sword. Added to your inventory`); // inventory needs to be implemented before this will actually work
-            db.updateItem(player.id, ['weapon'], ['basic-ass sword'], 'players', ()=>{}); // theoretically, this will add the basic sword to your weapon slot
-          }
-          else{
-            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
-          }
-        case 2:
-          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for shield`);
-          message.member.send('[0] Pick up shield')
-          if(message.content === '0'){
-            message.member.send(`You have picked up the shield. Added to your inventory`);
-            db.updateItem(player.id, ['equipment'], ['dinky shield'], 'players', ()=>{}); // theoretically, this will add the dinky shield to your weapon slot
-          }
-          else{
-            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
-          }
-        case 3:
-          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for health potion`);
-          message.member.send(`[0] Pick uphealth potion`);  // need to add these items to the item schema so they can be tangible
-          if(message.content === '0'){
-            message.member.send(`You have picked up the sword. Added to your inventory`)
-            db.updateItem(player.id, ['inventory'], ['small health potion'], 'players', ()=>{}); // theoretically, this will add to your inventory
-          }
-          else{
-            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
-          }
-        case 4:
-          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for 10 gold`);
-          message.member.send(`[0] Pick up 10 gold`);  // need to add these items to the item schema so they can be tangible
-          if(message.content === '0'){
-            message.member.send(`You have picked up the 10 gold. Added to your inventory`)
-            db.updateItem(player.id, ['gold'], [player.gold = player.gold + 10], 'players', ()=>{}); // theoretically, this will add some gold to your bank account
-          }
-          else{
-            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
-          }
-        case 5:
-          message.member.send(`After defeating ${enemy.name} you can loot placeholder loot string for 50 gold`);
-          message.member.send(`[0] Pick up 50 gold`);  // need to add these items to the item schema so they can be tangible
-          if(message.content === '0'){
-            message.member.send(`You have picked up the 50 gold. Added to your inventory`)
-            db.updateItem(player.id, ['gold'], [player.gold = player.gold + 50], 'players', ()=>{}); // theoretically, this will add some gold to your bank account
-          }
-          else{
-            message.member.send(`You decide to leave the item on teh ground. what need have you for it anyway?`)
-          }
+    let picked_up = false;
+    let loot_num = Math.floor(Math.random() * enemy.loot.length) + 1 ; // generating a random number between 1 and 5 for loot drop
+    message.member.send(`After defeating ${enemy.name} you can loot ${enemy.loot[loot_num]}`);
+    message.member.send(`[0] Pick up ${enemy.loot[loot_num]}`);  // need to add these items to the item schema so they can be tangible
 
-        default:
-          message.member.send(`After defeating ${enemy.name} you find that it did not drop any loot. How unfortunate.`);
-      }
-  }
+
+    const filter = m => ((m.content == 0) && (Number.isInteger(Number(m.content)))); //only accepts responses in key and only from the person who started convo
+    const collector = message.channel.createMessageCollector(filter, {time: 20000});
   
+    collector.on('collect', m => {
+      picked_up = true;
+      collector.stop();            
+    });
+
+    collector.on('end', () => {
+      if (!picked_up) {
+        message.member.send(`You decide to leave ${enemy.loot[loot_num]} on the ground. What need have you for it anyway?`);
+      }
+      else {
+        message.member.send(`You have picked up the 50 gold. Added to your inventory`);
+       // db.updateItem(player.id, ['gold'], [player.gold = player.gold + 50], 'players', ()=>{}); // theoretically, this will add some gold to your bank account
+      }
+    });
+  }
 }
 
 function respawnEnemy(enemy, room) {
-  room.enemies[enemy.name.toLowerCase()] = enemy.id;
-  db.updateItem(room.id, ['enemies'], [room.enemies], 'rooms', ()=>{
+  room.npcs[enemy.name.toLowerCase()] = enemy.id;
+  db.updateItem(room.id, ['npcs'], [room.npcs], 'rooms', ()=>{
     console.log(`${enemy.name} re-added`);
   });
 }
