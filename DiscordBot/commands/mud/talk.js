@@ -89,18 +89,20 @@ class TalkCommand extends commando.Command {
     let responseNum = 0;
 
     // find player's progress with this npc
-    if (player.progress.npc[npc.id]) {
-      // check if talked to this npc before
-      let progress = player.progress.npc[npc.id];
-
-      if (npc.responses[progress]) {
-        response = npc.responses[progress].reply;
-        if (progress == "0" || !(npc.goods.length > 0)) {
-          for (var i = 0; i < npc.responses[progress].prompts.length; i++) {
-            response = response + '\n' + npc.responses[progress].prompts[i].prompt;
+    let playerProgress = player.progress.npc[npc.id];
+    if (playerProgress) {
+      // ensure that the npc has an actual response for that progress
+      if (npc.responses[playerProgress]) {
+        response = npc.responses[playerProgress].reply;
+        // determine if the player is in a shopkeep menu
+        if (playerProgress == "0" || !(npc.goods.length > 0)) {
+          // create the dialogue tree for the player
+          for (var i = 0; i < npc.responses[playerProgress].prompts.length; i++) {
+            response = response + '\n' + npc.responses[playerProgress].prompts[i].prompt;
             responseNum = responseNum + 1;
           }
         } else {
+          // if the player is in a shopkeep menu, list the goods and the player's gold
           response = response + `\n[[You have ${player.inventory.gold} gold.]]`;
           for (var i = 0; i < npc.goods.length; i++) {
             if(!npc.goods[i].soldOut) { //if its not sold out, list it! :^)
@@ -109,13 +111,15 @@ class TalkCommand extends commando.Command {
             responseNum = responseNum + 1;
           }
         }
+      } else {
+        message.channel.send(`${player.name} replied to ${npc.name} in a strange way.`);
       }
-    } else { 
-      // haven't talked to this npc before? 
-      //NBD create npc progress in the player object and get chattin :)
+    } else {
+      // if the player hasn't talked to this NPC before, create the player's progress in their object
       player.progress.npc[npc.id] = '0';
       response = npc.responses['0'].reply;
 
+      // create the dialoge tree for the player
       for (let i = 0; i < npc.responses['0'].prompts.length; i++) {
         response = `${response}\n${npc.responses['0'].prompts[i].prompt}`;
         responseNum = responseNum + 1;
