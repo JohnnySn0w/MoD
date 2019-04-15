@@ -17,6 +17,7 @@ class DB extends commando.Command {
     super(client, {
       name: 'db',
       group: 'admin',
+      ownerOnly: true,
       memberName: 'db',
       description: 'loads/retrieves a given object from the db',
       //user permissions
@@ -102,7 +103,7 @@ class DB extends commando.Command {
         message.delete();
       }
     } else if (args[0] === 'respawn') {
-      db.saveItem(gobbie, 'entities', (data) => this.replies(message, data, 'save'));
+      db.saveItem(gobbie, 'enemies', (data) => this.replies(message, data, 'save'));
       if(!DEBUG) {
         message.delete();
       }
