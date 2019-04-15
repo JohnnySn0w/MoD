@@ -10,10 +10,14 @@
         "experience":0,
         "nextLevelExperience":100,
         "busy": false,
-        "inventory": [
+        "inventory": {
+            "keys": [
 
-        ],
-        "gold": 50,
+            ],
+            "weapon": null,
+            "armor": null,
+            "gold": 0
+        },
         "progress": {
             "npc": {
                 "0": "0",
@@ -36,8 +40,14 @@
             "npc":{}
         },
         "id":"214624397409910785",
-        "inventory":[],
-        "gold": 50
+        "inventory": {
+            "key": [
+
+            ],
+            "weapon": null,
+            "armor": null,
+            "gold": 0
+        }
     },
     {
         "strength":7,
@@ -50,7 +60,13 @@
             "npc":{}
         },
         "id":"198279866284507136",
-        "inventory":[],
-        "gold": 50
+        "inventory": {
+            "key": [
+
+            ],
+            "weapon": null,
+            "armor": null,
+            "gold": 0
+        }
     }
 ]

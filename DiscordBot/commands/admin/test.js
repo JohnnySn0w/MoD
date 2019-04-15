@@ -253,9 +253,15 @@ function addPlayerBack(message) {
         'defense': 5,
         "experience":0,
         "nextLevelExperience":100,
-        'inventory': [],
+        'inventory': {
+            'keys': [
+
+            ],
+            'weapon': null,
+            'armor': null,
+            'gold': 0
+        },
         'progress': {'npc':{}}, // progress is added dynamically with each new npc encounter now :^)
-        'gold': 50,
         'busy': false
     }
 

@@ -101,7 +101,7 @@ class TalkCommand extends commando.Command {
             responseNum = responseNum + 1;
           }
         } else {
-          response = response + `\n[[You have ${player.gold} gold.]]`;
+          response = response + `\n[[You have ${player.inventory.gold} gold.]]`;
           for (var i = 0; i < npc.goods.length; i++) {
             if(!npc.goods[i].soldOut) { //if its not sold out, list it! :^)
               response = response + '\n [' + i + '] ' +  npc.goods[i].item + ' - ' + npc.goods[i].cost + ' gold';
@@ -206,7 +206,7 @@ class TalkCommand extends commando.Command {
   checkGold(player, person, choice)
   { // checks price and returns if player can afford it
     let itemCost = person.goods[choice].cost;
-    if (player.gold < itemCost) { return false;} 
+    if (player.inventory.gold < itemCost) { return false;} 
     else { return true; }
   }
 
@@ -214,12 +214,12 @@ class TalkCommand extends commando.Command {
   {
     if (!item.soldOut)
     {
-      player.inventory[player.inventory.length]= item.id; // Idk how we're doing inventory but rn, im just pushing the item's id
+      //player.inventory[player.inventory.length]= item.id; // Idk how we're doing inventory but rn, im just pushing the item's id
       // add to player inventory
       db.updateItem(player.id, ['inventory'], [item.id], 'players', () => {});
       // take gold from player inventory
-      player.gold = player.gold - item.cost;
-      db.updateItem(player.id, ['gold'], [player.gold], 'players', () => {});
+      player.inventory.gold = player.inventory.gold - item.cost;
+      db.updateItem(player.id, ['gold'], [player.inventory.gold], 'players', () => {});
       // set item to sold out in npc goods section
       // TODO: repopulate after a period of time?
       item.soldOut = true;
