@@ -1,7 +1,8 @@
 const commando = require('discord.js-commando');
-const login = require('./loginCode');
+const { key, owner } = require('./config');
 const client = new commando.Client({
-    commandPrefix: '?'
+	commandPrefix: '?',
+	owner: owner,
 });
 
 client.registry
@@ -12,7 +13,7 @@ client.registry
 .registerDefaults()
 .registerCommandsIn(__dirname + "/commands");
 
-client.login(login.key);
+client.login(key);
 
 console.log("Bot is running");
 /*
