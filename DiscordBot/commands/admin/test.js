@@ -206,26 +206,26 @@ function testStatsCommand(message, client) {
 function testTalkCommand(message, client) {
     // grab the talk command and run it
     var command = new talk(client);
-    command.run(message, {person: "nobody"});
+    command.run(message, {npc: "nobody"});
 
     // run the command again with a valid npc
     setTimeout(function() {
-        command.run(message, {person: "old-man"});
+        command.run(message, {npc: "old-man"});
 
         // interrupt the previous discussion by talking to another npc
         setTimeout(function() {
-            command.run(message, {person: "little-boy"});
+            command.run(message, {npc: "little-boy"});
 
             // attempt to talk to an enemy
             setTimeout(function() {
-                command.run(message, {person: "goblin"});
+                command.run(message, {npc: "goblin"});
 
                 // delete the player and run the command again
                 setTimeout(function() {
                     db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
 
                     setTimeout(function() {
-                        command.run(message, {person: "old-man"});
+                        command.run(message, {npc: "old-man"});
                         
                         // add the player back
                         setTimeout(function() {
@@ -253,9 +253,16 @@ function addPlayerBack(message) {
         'defense': 5,
         "experience":0,
         "nextLevelExperience":100,
-        'inventory': [],
+        'inventory': {
+            'keys': [
+
+            ],
+            'weapon': null,
+            'armor': null,
+            'gold': 100
+        },
         'progress': {'npc':{}}, // progress is added dynamically with each new npc encounter now :^)
-        'gold': 50
+        'busy': false
     }
 
     db.saveItem(newPlayer, 'players', (data) => addData(message));

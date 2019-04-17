@@ -195,7 +195,7 @@
                 "reply": "....you're joking right? \n....take a look",
                 "prompts": []
             },
-            "noMoreStock": {
+            "soldout": {
                 "reply": "....I'm out of stock",
                 "prompts": []
             }

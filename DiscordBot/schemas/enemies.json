@@ -9,6 +9,18 @@
         "description": "A green, humanoid monster stands around with a small club in his hand.",
         "loot": [
         ],
-        "aggro": "nobody"
+        "respawn": null
+    },
+    {
+        "name": "Goblin-Warrior",
+        "id": "1",
+        "level": 4,
+        "health": 50,
+        "strength": 10,
+        "defense": 6,
+        "description": "An large, green humanoid that has been in quite a few scraps already. She wields a large axe.",
+        "loot": [
+        ],
+        "respawn": 10
     }
 ]
