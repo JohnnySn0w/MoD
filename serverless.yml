@@ -15,8 +15,6 @@ custom:
     seed:
       mainTables:
         sources:
-          - table: entities
-            sources: [./DiscordBot/schemas/entities.json]
           - table: items
             sources: [./DiscordBot/schemas/items.json]
           - table: rooms
@@ -85,19 +83,6 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:custom.dynamodb.${self:custom.myStage}.ENTITIES_DYNAMODB_TABLE}
-    EntityTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: entities
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     itemTable:
       Type: AWS::DynamoDB::Table
       Properties:
