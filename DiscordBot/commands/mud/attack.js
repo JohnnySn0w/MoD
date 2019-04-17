@@ -45,28 +45,18 @@ class AttackCommand extends commando.Command {
 
   checkRoom(message, data, args, player) {
     const room = JSON.parse(data.body).Item;
-<<<<<<< HEAD
-    const enemy = this.cleanArgs(args).object;
-    //look for the npc
-=======
     const entity = this.cleanArgs(args).object;
 
     // check if the player is in a MUD-room
->>>>>>> dbf68e69f0e83985752383882f3d7be0eea13d06
     if (room === undefined) {
       message.member.send("You're not in of the MUD-related rooms.");
     }
     else {
-<<<<<<< HEAD
-      if (room.npcs[enemy]) {
-        db.getItem(room.npcs[enemy], 'entities', (data) => this.checkHostile(message, player, data, room));
-=======
       // determine if the entity is an enemy, npc, or invalid object
       if (room.enemies[entity]) {
         db.getItem(room.enemies[entity], 'enemies', (data) => this.checkHostile(message, player, data, room));
       } else if (room.npcs[entity]) {
         message.channel.send(`${player.name} glares with murderous intent towards ${entity}.`);
->>>>>>> dbf68e69f0e83985752383882f3d7be0eea13d06
       } else {
         message.channel.send(`${player.name} glares with murderous intent towards no one in particular.`);
       }
@@ -75,20 +65,12 @@ class AttackCommand extends commando.Command {
 
   checkHostile(message, player, data, room) {
     const enemy = JSON.parse(data.body).Item;
-<<<<<<< HEAD
-    //this is a fancy way of making sure enemy is defined
-    //otherwise trying to access a key of an unef object throws a big error
-    if(enemy && enemy.hostile) {
-      if(enemy.aggro === 'nobody' || enemy.aggro === player.id) {
-        this.combatLoop(message, player, enemy, room);
-=======
 
     // this is a fancy way of making sure enemy is defined
     if (enemy) {
       // make sure the player isn't busy attacking or talking to someone else already
       if (player.busy) {
         message.reply(`you seem to be in the middle of something already!`);
->>>>>>> dbf68e69f0e83985752383882f3d7be0eea13d06
       } else {
         // make the player too busy to do anything else
         db.updateItem(player.id, ['busy'], [true], 'players', ()=>{
@@ -110,14 +92,7 @@ class AttackCommand extends commando.Command {
   }
 
   combatLoop(message, player, enemy, room) {
-<<<<<<< HEAD
-    db.updateItem(player.id, ['busy'], [true], 'players', ()=>{});
-    db.updateItem(enemy.id, ['aggro'], [player.id], 'entities', () => {});
-    console.log("Player health - " + player.health);
-
-=======
     // commence the battle to the death
->>>>>>> dbf68e69f0e83985752383882f3d7be0eea13d06
     while (player.health > 0 && enemy.health > 0) {
       // calculate player damage on enemy and update value
       let damage = player.strength - enemy.defense;
@@ -148,12 +123,7 @@ class AttackCommand extends commando.Command {
 
     if(enemy.health <= 0) {
       // update the player health and enemy aggro state and notify the room
-<<<<<<< HEAD
-      db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{console.log("Player health updated")});
-      db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', ()=>{console.log("Enemy aggro updated")});
-=======
       db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{console.log("Player health and busy updated")});
->>>>>>> dbf68e69f0e83985752383882f3d7be0eea13d06
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
 
       //TODO: loot roll here
@@ -163,21 +133,6 @@ class AttackCommand extends commando.Command {
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
 
-<<<<<<< HEAD
-      // remove the enemy from the list of entities in the room and then re-add it after 10 seconds 
-
-      console.log("Enemy name = " + enemy.name.toLowerCase());
-      delete room.npcs[enemy.name.toLowerCase()];
-      db.updateItem(room.id, ['npcs'], [room.npcs], 'rooms', ()=>{
-        console.log("Removed enemy from room - " + JSON.stringify(room.npcs));
-        setTimeout(function() {
-          respawnEnemy(enemy, room)
-        }, 30000);
-      });
-    } else {
-      message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
-      db.updateItem(enemy.id, ['aggro'], ['nobody'], 'entities', () => {});
-=======
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
       if (enemy.respawn != null) {
         delete room.enemies[enemy.name.toLowerCase()];
@@ -189,7 +144,6 @@ class AttackCommand extends commando.Command {
       }
     } else {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
->>>>>>> dbf68e69f0e83985752383882f3d7be0eea13d06
 
       // respawn player
       db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => {console.log("Player health restored")});

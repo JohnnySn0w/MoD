@@ -13,18 +13,11 @@
         "inventory": {
             "keys": [
 
-<<<<<<< HEAD
-        ],
-        "weapon": [],
-        "equipment": [],
-        "gold": 50,
-=======
             ],
             "weapon": null,
             "armor": null,
             "gold": 0
         },
->>>>>>> dbf68e69f0e83985752383882f3d7be0eea13d06
         "progress": {
             "npc": {
                 "0": "0",
@@ -47,12 +40,6 @@
             "npc":{}
         },
         "id":"214624397409910785",
-<<<<<<< HEAD
-        "inventory":[],
-        "weapon": [],
-        "equipment": [],
-        "gold": 50
-=======
         "inventory": {
             "key": [
 
@@ -61,7 +48,6 @@
             "armor": null,
             "gold": 0
         }
->>>>>>> dbf68e69f0e83985752383882f3d7be0eea13d06
     },
     {
         "strength":7,
@@ -74,12 +60,6 @@
             "npc":{}
         },
         "id":"198279866284507136",
-<<<<<<< HEAD
-        "inventory":[],
-        "weapon": [],
-        "equipment": [],
-		"gold": 50
-=======
         "inventory": {
             "key": [
 
@@ -88,6 +68,5 @@
             "armor": null,
             "gold": 0
         }
->>>>>>> dbf68e69f0e83985752383882f3d7be0eea13d06
     }
 ]
