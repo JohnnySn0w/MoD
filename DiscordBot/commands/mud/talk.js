@@ -106,7 +106,7 @@ class TalkCommand extends commando.Command {
           response = response + `\n[--You have ${player.inventory.gold} gold--] `;
           for (var i = 0; i < npc.goods.length; i++) {
             // if the player already has the item, then don't offer it to them
-            if (!player.inventory.keys[npc.goods[i].id]) {
+            if (!player.inventory.keys.includes(npc.goods[i].id)) {
               response = response + '\n [' + i + '] ' + npc.goods[i].item + ' - ' + npc.goods[i].cost + ' gold';
             }
             else {
@@ -177,31 +177,27 @@ class TalkCommand extends commando.Command {
   }
 
   // Adjusts the players conversational progress with the npc
-  makeProgress(player, person, playerResponse, message) { 
-    let currentProgress = player.progress.npc[person.id];
+  makeProgress(player, npc, playerResponse, message) { 
+    let currentProgress = player.progress.npc[npc.id];
     let progression = currentProgress;
 
-	  if (!(person.goods.length > 0) || progression == '0') {
-	    for (let i = 0; i < person.responses[currentProgress].prompts.length; i++) {			
+	  if (!(npc.goods.length > 0) || progression == '0') {
+	    for (let i = 0; i < npc.responses[currentProgress].prompts.length; i++) {			
 		    if (i.toString() === playerResponse) {
-		      progression = person.responses[currentProgress].prompts[i].progression;
+		      progression = npc.responses[currentProgress].prompts[i].progression;
 		      break;
 		    }
 	    }
 	  }
     else {
-      //let itemID = person.goods[Object.keys(person.goods)[playerResponse]];
-      if (this.checkGold(player, person, playerResponse)) {
-        progression = 'success';
-        if (person.goods[playerResponse].soldOut) {
+      //let itemID = npc.goods[Object.keys(npc.goods)[playerResponse]];
+      if (this.checkGold(player, npc, playerResponse)) {
+        if (player.inventory.keys.includes(npc.goods[playerResponse].id)) {
           progression = 'soldout';
         }
         else {
-          //TODO THIS IS BREAKING WHYYYYYY
-          console.log(JSON.stringify(person.goods[playerResponse].id));
-          console.log(playerResponse);
-          db.getItem(person.goods[playerResponse].id, 'items', (data) => this.buyItem(player, person, data));
-          //this.buyItem(player, person, person.goods[playerResponse]);
+          db.getItem(npc.goods[playerResponse].id, 'items', (data) => this.buyItem(player, npc.goods[playerResponse].cost, data));
+          progression = 'success';
         }
       } else {
         progression = 'failure';
@@ -209,17 +205,17 @@ class TalkCommand extends commando.Command {
     }
 
     // push the progression to the database
-    player.progress.npc[person.id] = progression;
+    player.progress.npc[npc.id] = progression;
     db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
   }
 
-  checkGold(player, person, choice) { // checks price and returns if player can afford it
-    let itemCost = person.goods[choice].cost;
+  checkGold(player, npc, choice) { // checks price and returns if player can afford it
+    let itemCost = npc.goods[choice].cost;
     if (player.inventory.gold < itemCost) { return false;} 
     else { return true; }
   }
 
-  buyItem(player, person, data) {
+  buyItem(player, cost, data) {
     //player.inventory[player.inventory.length]= item.id; // Idk how we're doing inventory but rn, im just pushing the item's id
     // add to player inventory
     //db.updateItem(player.id, ['inventory'], [item.id], 'players', () => {});
@@ -237,8 +233,10 @@ class TalkCommand extends commando.Command {
       return;
     }
 
+    console.log(JSON.stringify(player.inventory));
+
     // take gold from player inventory
-    player.inventory.gold = player.inventory.gold - item.cost;
+    player.inventory.gold = player.inventory.gold - cost;
     db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
   }
 }
