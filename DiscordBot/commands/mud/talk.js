@@ -95,7 +95,7 @@ class TalkCommand extends commando.Command {
       if (npc.responses[playerProgress]) {
         response = npc.responses[playerProgress].reply;
         // determine if the player is in a shopkeep menu
-        if (playerProgress == "0" || !(npc.goods.length > 0)) {
+        if (playerProgress !== "list" & playerProgress !== "success" & playerProgress !== "failure" & playerProgress !== "soldout") {
           // create the dialogue tree for the player
           for (var i = 0; i < npc.responses[playerProgress].prompts.length; i++) {
             response = response + '\n' + npc.responses[playerProgress].prompts[i].prompt;
@@ -103,10 +103,14 @@ class TalkCommand extends commando.Command {
           }
         } else {
           // if the player is in a shopkeep menu, list the goods and the player's gold
-          response = response + `\n[[You have ${player.inventory.gold} gold.]]`;
+          response = response + `\n[--You have ${player.inventory.gold} gold--] `;
           for (var i = 0; i < npc.goods.length; i++) {
-            if(!npc.goods[i].soldOut) { //if its not sold out, list it! :^)
-              response = response + '\n [' + i + '] ' +  npc.goods[i].item + ' - ' + npc.goods[i].cost + ' gold';
+            // if the player already has the item, then don't offer it to them
+            if (!player.inventory.keys[npc.goods[i].id]) {
+              response = response + '\n [' + i + '] ' + npc.goods[i].item + ' - ' + npc.goods[i].cost + ' gold';
+            }
+            else {
+              response = response + '\n [' + i + '] ' + npc.goods[i].item + ' - SOLD OUT';
             }
             responseNum = responseNum + 1;
           }
@@ -134,6 +138,7 @@ class TalkCommand extends commando.Command {
   replyToPlayer(player, message, npc, response, responseNum, room, stop) {
     let responded = false;
     let progress = player.progress.npc[npc.id];
+
     if (npc.responses !== undefined) {
       message.reply(`${npc.name} says: ${response}`);
 
@@ -144,24 +149,16 @@ class TalkCommand extends commando.Command {
 
         collector.on('collect', m => {
           responded = true;
-          // stops collector
-          if ((npc.goods.length > 0) && progress != '0')
-          {
-            if (npc.goods[m.content].soldOut) {
-              return;
-            } else {
-              collector.stop();
-            }
-          } else { collector.stop(); }            
+          collector.stop();
+          
           if (m.content.includes('?talk')) {
             let newResponse = 'Oh ok bye';
             this.replyToPlayer(player, message, npc, newResponse, 1, room, true);
-          } else {    
+          } else {
             this.makeProgress(player, npc, m.content, message);
             let [newResponse, newResponseNum] = this.determineResponse(npc, player);
             this.replyToPlayer(player, message, npc, newResponse, newResponseNum, room, false);
           }
-          
         });
 
         collector.on('end', () => {
@@ -196,7 +193,16 @@ class TalkCommand extends commando.Command {
       //let itemID = person.goods[Object.keys(person.goods)[playerResponse]];
       if (this.checkGold(player, person, playerResponse)) {
         progression = 'success';
-        this.buyItem(player, person, person.goods[playerResponse]);
+        if (person.goods[playerResponse].soldOut) {
+          progression = 'soldout';
+        }
+        else {
+          //TODO THIS IS BREAKING WHYYYYYY
+          console.log(JSON.stringify(person.goods[playerResponse].id));
+          console.log(playerResponse);
+          db.getItem(person.goods[playerResponse].id, 'items', (data) => this.buyItem(player, person, data));
+          //this.buyItem(player, person, person.goods[playerResponse]);
+        }
       } else {
         progression = 'failure';
       }
@@ -207,28 +213,33 @@ class TalkCommand extends commando.Command {
     db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
   }
 
-  checkGold(player, person, choice)
-  { // checks price and returns if player can afford it
+  checkGold(player, person, choice) { // checks price and returns if player can afford it
     let itemCost = person.goods[choice].cost;
     if (player.inventory.gold < itemCost) { return false;} 
     else { return true; }
   }
 
-  buyItem(player, person, item)
-  {
-    if (!item.soldOut)
-    {
-      //player.inventory[player.inventory.length]= item.id; // Idk how we're doing inventory but rn, im just pushing the item's id
-      // add to player inventory
-      db.updateItem(player.id, ['inventory'], [item.id], 'players', () => {});
-      // take gold from player inventory
-      player.inventory.gold = player.inventory.gold - item.cost;
-      db.updateItem(player.id, ['gold'], [player.inventory.gold], 'players', () => {});
-      // set item to sold out in npc goods section
-      // TODO: repopulate after a period of time?
-      item.soldOut = true;
-      db.updateItem(person.id, ['goods'], [person.goods], 'npcs', () => {});
+  buyItem(player, person, data) {
+    //player.inventory[player.inventory.length]= item.id; // Idk how we're doing inventory but rn, im just pushing the item's id
+    // add to player inventory
+    //db.updateItem(player.id, ['inventory'], [item.id], 'players', () => {});
+    let item = JSON.parse(data.body).Item;
+    
+    // update player inventory depending on the item they bought
+    if (item.type === "key")
+      player.inventory.keys.push(item.id);
+    else if (item.type === "weapon")
+      player.inventory.weapon = item.id;
+    else if (item.type === "armor")
+      player.inventory.armor = item.id;
+    else {
+      console.log("Item is not a grabbable.");
+      return;
     }
+
+    // take gold from player inventory
+    player.inventory.gold = player.inventory.gold - item.cost;
+    db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
   }
 }
 
