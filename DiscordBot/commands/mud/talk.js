@@ -38,7 +38,7 @@ class TalkCommand extends commando.Command {
     }
     else {
       // otherwise, get the room object that the player is in
-      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, npc, player, data));
+      db.getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, npc, player, data));
     }
   }
 

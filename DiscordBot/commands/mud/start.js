@@ -27,7 +27,7 @@ class StartCommand extends commando.Command {
 
     if (player === undefined) {
       // if the player doesn't exist in the database, check which room they're in
-      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data));
+      db.getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, data));
     }
     else {
       // otherwise, the player is already a part of the database
