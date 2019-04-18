@@ -37,7 +37,7 @@ class LookCommand extends commando.Command {
     }
     else {
       // get the room object that the player is in
-      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, player, data, args));
+      db.getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, player, data, args));
     }
   }
 
