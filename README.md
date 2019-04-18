@@ -30,7 +30,7 @@ This is the basic framework for a dungeon, and serves as a short example of what
 - Talk – chat it up with an npc
 
 ### Prospective future features:
-- Automated generation of channels for game rooms
+- Automated generation of channels for game rooms from database entries
 - Custom player descriptions for RP
 - Change nickname for RP
 - Player housing
