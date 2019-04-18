@@ -167,6 +167,7 @@ class AttackCommand extends commando.Command {
       message.member.send("Level up!\n You're now at level " + player.currentLevel + ".\n" + "Experience: " + player.experience);
     }
   }
+  // loot
   rollLoot(message, player, enemy) {
     let picked_up = false;
     let loot_num = Math.floor(Math.random() * enemy.loot.length) + 1 ; // generating a random number between 1 and 5 for loot drop
@@ -188,7 +189,8 @@ class AttackCommand extends commando.Command {
       }
       else {
         message.member.send(`You have picked up the 50 gold. Added to your inventory`);
-       // db.updateItem(player.id, ['gold'], [player.gold = player.gold + 50], 'players', ()=>{}); // theoretically, this will add some gold to your bank account
+        
+        db.updateItem(player.id, ['gold'], [player.inventory.gold = player.inventory.gold + 50], 'players', ()=>{}); // theoretically, this will add some gold to your bank account
       }
     });
   }
