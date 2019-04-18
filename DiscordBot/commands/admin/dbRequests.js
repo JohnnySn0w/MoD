@@ -80,7 +80,6 @@ class DB extends commando.Command {
       // sending it the dumbDynamoRoom JSON object, and an anonymous function 
       // which is later exectued as a callback
       db.saveItem(dumbDynamoRoom, 'rooms', (data) => this.replies(message, data, 'save'));
-      db.saveItem(dumbDynamoRoom2, 'rooms', (data) => this.replies(message, data, 'save'));
       if(!DEBUG) {
         message.delete();
       }
@@ -116,46 +115,20 @@ class DB extends commando.Command {
 // is in the format of a JSON object, which is slightly different from a regular
 // js object
 const dumbDynamoRoom = {
-  'id': 'entry-room',
-  'discordID': '520340145342513155',
-  'roleid': '568218853902123029',
+  'name': 'room',
+  'id': '532297083089321995',
+  'roleid': '525358056788328448',
   'description': 'bluh bluh huge room',
   'exits': {
-    'north': 'room-after-entry'
+    'north': '520340145342513155'
   },
-  'items': {
-    'pillars': '3'
-  },
-  'npcs': {
-    'old-man': '1',
-    'little-boy': '2',
-    'shopkeep': '3'
-  },
-  'enemies': {
-    'goblin': '0',
-    'goblin-warrior': '1'
-  }
-};
+  'items': [
 
-const dumbDynamoRoom2 = {
-  'id': 'room-after-entry',
-  'discordID': '532297083089321995',
-  'roleid': '568219616871186437',
-  'description': 'bluh bluh huge second room',
-  'exits': {
-    'south': 'entry-room'
-  },
-  'items': {
-    'pillars': '3'
-  },
+  ],
   'npcs': {
-    'old-man': '1',
-    'little-boy': '2',
-    'shopkeep': '3'
-  },
-  'enemies': {
     'goblin': '0',
-    'goblin-warrior': '1'
+    'old-man': '1',
+    'little-boy': '2'
   }
 };
 

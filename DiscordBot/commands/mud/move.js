@@ -37,7 +37,7 @@ class MoveCommand extends commando.Command {
     }
     else {
       // get the room object that the player is in
-      db.getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, player, data, direction, true));
+      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, player, data, direction, true));
     }
   }
 
@@ -58,9 +58,9 @@ class MoveCommand extends commando.Command {
       }
     } else {
       // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
-      message.channel.send(`${player.name} moved ${direction}`);
+      message.channel.send(`${player.name} moved to <#${room.id}>`);
       message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(e => console.error(e));
-      this.client.channels.get(room.discordID).send(`${player.name} has entered.`);
+      this.client.channels.get(room.id).send(`${player.name} has entered.`);
     }
   }
 
