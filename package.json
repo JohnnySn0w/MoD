@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "nodemon --max-old-space-size=2048 ./DiscordBot/index.js",
-    "test": "node --prof ./DiscordBot/index.js",
+    "test": "nodemon  --prof --max-old-space-size=2048 ./DiscordBot/index.js",
     "watch": "jest --watch"
   },
   "repository": {
