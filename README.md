@@ -16,7 +16,7 @@ ___
 ## Features thus far:
 
 ### Basic demo dungeon
-This is the basic framework for a dungeon, and serves as a short example of what can be done at a simple level.
+- This is the basic framework for a dungeon, and serves as a short example of what can be done at a simple level.
 
 ### Administrative commands
 - db – allows for simple queries to the database, as well as functionality for on-the-fly creation of game elements
