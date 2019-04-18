@@ -51,7 +51,7 @@ class DB extends commando.Command {
   replies(message, data, type) {
     this.logger(data);
     if (type === 'get') {
-      message.reply(`got: ${data.body}`);
+      message.reply(`got: \`\`\`JSON\n${data.body}\`\`\``);
     }
     if (type === 'save') {
       message.reply('saved');
@@ -80,7 +80,6 @@ class DB extends commando.Command {
       // sending it the dumbDynamoRoom JSON object, and an anonymous function 
       // which is later exectued as a callback
       db.saveItem(dumbDynamoRoom, 'rooms', (data) => this.replies(message, data, 'save'));
-      db.saveItem(dumbDynamoRoom2, 'rooms', (data) => this.replies(message, data, 'save'));
       if(!DEBUG) {
         message.delete();
       }
@@ -137,27 +136,6 @@ const dumbDynamoRoom = {
   }
 };
 
-const dumbDynamoRoom2 = {
-  'id': 'room-after-entry',
-  'discordID': '532297083089321995',
-  'roleid': '568219616871186437',
-  'description': 'bluh bluh huge second room',
-  'exits': {
-    'south': 'entry-room'
-  },
-  'items': {
-    'pillars': '3'
-  },
-  'npcs': {
-    'old-man': '1',
-    'little-boy': '2',
-    'shopkeep': '3'
-  },
-  'enemies': {
-    'goblin': '0',
-    'goblin-warrior': '1'
-  }
-};
 
 const gobbie = {
   'strength':3,

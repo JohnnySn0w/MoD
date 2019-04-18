@@ -20,10 +20,6 @@ class MoveCommand extends commando.Command {
   }
 
   async run(message, {direction}) {
-    // delete the user's command if not debugging
-    if (!DEBUG)
-      message.delete();
-
     db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, direction));
   }
 
@@ -60,7 +56,13 @@ class MoveCommand extends commando.Command {
       // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
       message.channel.send(`${player.name} moved ${direction}`);
       message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(e => console.error(e));
-      this.client.channels.get(room.discordID).send(`${player.name} has entered.`);
+      const roomy = this.client.channels.find('name', room.id);
+      roomy.send(`${player.name} has entered.`);
+      
+      // delete the user's command if not debugging
+      if (!DEBUG) {
+        message.delete();
+      }
     }
   }
 
@@ -78,6 +80,11 @@ class MoveCommand extends commando.Command {
     else {
       // otherwise, alert the player of the lack of exits
       message.channel.send(`${player.name} has lost their sense of direction`);
+
+      // delete the user's command if not debugging
+      if (!DEBUG) {
+        message.delete();
+      }
     }
   }
 }
