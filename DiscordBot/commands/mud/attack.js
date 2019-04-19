@@ -174,6 +174,9 @@ class AttackCommand extends commando.Command {
     let picked_up = false;
     let loot_num = Math.floor(Math.random() * enemy.loot.length) + 1 ; // generating a random number between 1 and 5 for loot drop
     message.member.send(`After defeating ${enemy.name} you picked up ${enemy.loot[loot_num]}. It was added to your inventory.`);
+    player.inventory.gold = player.inventory.gold + 50;
+    db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
+    console.log(player.inventory);
     //console.log(db.getItem(message.member.id, 'players'));
     // message.member.send(`[0] Pick up ${enemy.loot[loot_num]}`);  // need to add these items to the item schema so they can be tangible
 
