@@ -39,7 +39,7 @@ class AttackCommand extends commando.Command {
       message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
     } else {
       // get the room object that the player is in
-      db.getItem(message.channel.id, 'rooms', (data) => this.checkRoom(message, data, args, player));
+      db.getItem(message.channel.name, 'rooms', (data) => this.checkRoom(message, data, args, player));
     }
   }
 
@@ -172,12 +172,25 @@ class AttackCommand extends commando.Command {
 
     // leveling
     if (player.experience >= player.nextLevelExperience) {
-      db.updateItem(player.id, ['currentLevel'], [player.currentLevel = player.currentLevel + 1], 'players', ()=>{});
-      db.updateItem(player.id, ['nextLevelExperience'], [player.currentLevel + (player.nextLevelExperience * player.currentLevel)], 'players', ()=>{});
-      db.updateItem(player.id, ['strength'], [player.strength + player.currentLevel], 'players', ()=>{});
-      db.updateItem(player.id, ['defense'], [player.defense + player.currentLevel], 'players', ()=>{});
+      db.updateItem(
+        player.id,
+        [
+          'currentLevel',
+          'nextLevelExperience',
+          'strength',
+          'defense'
+        ],
+        [
+          player.currentLevel = player.currentLevel + 1,
+          player.currentLevel + (player.nextLevelExperience * player.currentLevel),
+          player.strength + player.currentLevel,
+          player.defense + player.currentLevel
+        ],
+        'players',
+        ()=>{}
+      );
       message.channel.send(`${player.name} leveled up!`);
-      message.member.send("Level up!\n You're now at level " + player.currentLevel + ".\n" + "Experience: " + player.experience);
+      message.member.send(`Level up!\nYou're now at level ${player.currentLevel}.\nExperience: ${player.experience}`);
     }
   }
 }
