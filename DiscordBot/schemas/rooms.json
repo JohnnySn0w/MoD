@@ -16,7 +16,8 @@
             "shopkeep": "3"
         },
         "enemies": {
-            "goblin": "0"
+            "goblin": "0",
+            "goblin-warrior": "1"
         }
     },
     {

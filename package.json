@@ -4,10 +4,8 @@
   "description": "mud on discord",
   "main": "./DiscordBot/index.js",
   "dependencies": {
-    "chai": "^4.2.0",
     "discord.js": "^11.4.2",
     "discord.js-commando": "^0.10.0",
-    "jest": "^23.6.0",
     "yarn": "^1.12.3"
   },
   "devDependencies": {
@@ -18,7 +16,7 @@
   },
   "scripts": {
     "start": "nodemon --max-old-space-size=2048 ./DiscordBot/index.js",
-    "test": "jest",
+    "test": "nodemon  --prof --max-old-space-size=2048 ./DiscordBot/index.js",
     "watch": "jest --watch"
   },
   "repository": {
