@@ -116,6 +116,8 @@ class AttackCommand extends commando.Command {
       if (damage > 0) {
         player.health = player.health - damage;
         message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage.toString()} damage.`);
+        // health needs to update in case a player gets worried and checks their stats mid-battle
+        db.updateItem(player.id, ['health'], [player.health], 'players', ()=>{console.log("Player health and busy updated")});
       } else {
         message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
       }
@@ -167,30 +169,36 @@ class AttackCommand extends commando.Command {
       message.member.send("Level up!\n You're now at level " + player.currentLevel + ".\n" + "Experience: " + player.experience);
     }
   }
+  // loot
   rollLoot(message, player, enemy) {
     let picked_up = false;
     let loot_num = Math.floor(Math.random() * enemy.loot.length) + 1 ; // generating a random number between 1 and 5 for loot drop
-    message.member.send(`After defeating ${enemy.name} you can loot ${enemy.loot[loot_num]}`);
-    message.member.send(`[0] Pick up ${enemy.loot[loot_num]}`);  // need to add these items to the item schema so they can be tangible
+    message.member.send(`After defeating ${enemy.name} you picked up ${enemy.loot[loot_num]}. It was added to your inventory.`);
+    player.inventory.gold = player.inventory.gold + 50;
+    db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
+    console.log(player.inventory);
+    //console.log(db.getItem(message.member.id, 'players'));
+    // message.member.send(`[0] Pick up ${enemy.loot[loot_num]}`);  // need to add these items to the item schema so they can be tangible
 
 
-    const filter = m => ((m.content == 0) && (Number.isInteger(Number(m.content)))); //only accepts responses in key and only from the person who started convo
-    const collector = message.channel.createMessageCollector(filter, {time: 20000});
+    // const filter = m => ((m.content == 0) && (Number.isInteger(Number(m.content)))); //only accepts responses in key and only from the person who started convo
+    // const collector = message.channel.createMessageCollector(filter, {time: 20000});
   
-    collector.on('collect', m => {
-      picked_up = true;
-      collector.stop();            
-    });
+    // collector.on('collect', m => {
+    //   picked_up = true;
+    //   collector.stop();            
+    // });
 
-    collector.on('end', () => {
-      if (!picked_up) {
-        message.member.send(`You decide to leave ${enemy.loot[loot_num]} on the ground. What need have you for it anyway?`);
-      }
-      else {
-        message.member.send(`You have picked up the 50 gold. Added to your inventory`);
-       // db.updateItem(player.id, ['gold'], [player.gold = player.gold + 50], 'players', ()=>{}); // theoretically, this will add some gold to your bank account
-      }
-    });
+    // collector.on('end', () => {
+    //   if (!picked_up) {
+    //     message.member.send(`You decide to leave ${enemy.loot[loot_num]} on the ground. What need have you for it anyway?`);
+    //   }
+    //   else {
+    //     message.member.send(`You have picked up the 50 gold. Added to your inventory`);
+        
+    //     //db.updateItem(player.id, ['gold'], [player.inventory.gold = player.inventory.gold + 50], 'players', ()=>{}); // theoretically, this will add some gold to your bank account
+    //   }
+    // });
   }
 }
 

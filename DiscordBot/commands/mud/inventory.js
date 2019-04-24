@@ -2,13 +2,13 @@ const {DEBUG} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
-class StatsCommand extends commando.Command {
+class InventoryCommand extends commando.Command {
   constructor(client) {
     super(client, {
-      name: 'stats',
+      name: 'inventory',
       group: 'mud',
-      memberName: 'stats',
-      description: 'Shows player stats for the player who calls for them'      
+      memberName: 'inventory',
+      description: 'Shows player inventory in a PM to the player.'      
     });
   }
 
@@ -31,12 +31,8 @@ class StatsCommand extends commando.Command {
         }
         else {
             // otherwise, direct message the player with their health, strength, and defense            
-            message.member.send("Health: " + player.health + "\n" + "Level: " + player.currentLevel + "\n" + "Strength: " + player.strength + "\n" + "Defense: " + player.defense + "\n" + "Experience: " + player.experience);
-            console.log(player);
-            // also send a warning if the player's health is low
-            if (player.health > 0 && player.health < 11) {
-                message.member.send("You're on death's door, my friend.");
-            }
+            message.member.send("Inventory:" +  "\n" + "\n" + "Gold:" + player.inventory.gold + "\n" + "Weapon: " + player.inventory.weapon + "\n" + "Armor: " + player.inventory.armor + "\n" + "Items: " + player.inventory.keys);
+            console.log(player);            
         }
     }
   }
@@ -44,4 +40,4 @@ class StatsCommand extends commando.Command {
 
     
 
-module.exports = StatsCommand;
+module.exports = InventoryCommand;
