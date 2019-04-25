@@ -204,20 +204,17 @@
             {
                 "item": "ALEVE",
                 "id": "6",
-                "cost": 10,
-                "soldOut": false
+                "cost": 10
             },
             {
                 "item": "Garbage Sword",
                 "id": "4",
-                "cost": 1000,
-                "soldOut": false
+                "cost": 1000
             },
             {
                 "item": "Leather Cap",
                 "id": "5",
-                "cost": 25,
-                "soldOut": false
+                "cost": 25
             }
         ]
     }

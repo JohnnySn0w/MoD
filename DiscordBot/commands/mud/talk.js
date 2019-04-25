@@ -75,127 +75,156 @@ class TalkCommand extends commando.Command {
   getProgress(message, player, room, data) {
     const npc = JSON.parse(data.body).Item;
 
+    // if the npc doesn't exist, print it
     if (npc === undefined) {
       message.channel.send(`${player.name} is conversing with unseen forces.`);
     } else {
-      const [response, responseNum] = this.determineResponse(npc, player);
-      this.replyToPlayer(player, message, npc, response, responseNum, room, false);
+      // otherwise, grab the npc's response and number of dialogue options
+      const [npcResponse, playerResponseCount] = this.determineResponse(npc, player);
+      this.replyToPlayer(player, message, npc, npcResponse, playerResponseCount, room, false);
     }
   }
 
   // creates the npcs response and prompts based on players progress
   determineResponse(npc, player) {
-    let response;
-    let responseNum = 0;
+    let npcResponse;
+    let playerResponseCount = 0;
 
     // find player's progress with this npc
     let playerProgress = player.progress.npc[npc.id];
+
     if (playerProgress) {
+
       // ensure that the npc has an actual response for that progress
       if (npc.responses[playerProgress]) {
-        response = npc.responses[playerProgress].reply;
+        npcResponse = npc.responses[playerProgress].reply;
+        
         // determine if the player is in a shopkeep menu
         if (playerProgress !== "list" & playerProgress !== "success" & playerProgress !== "failure" & playerProgress !== "soldout") {
+
           // create the dialogue tree for the player
           for (var i = 0; i < npc.responses[playerProgress].prompts.length; i++) {
-            response = response + '\n' + npc.responses[playerProgress].prompts[i].prompt;
-            responseNum = responseNum + 1;
+            npcResponse = npcResponse + '\n' + npc.responses[playerProgress].prompts[i].prompt;
+            // numOfResponses = numOfResponses + 1;
           }
+
+          playerResponseCount = npc.responses[playerProgress].prompts.length;
+          
         } else {
+
           // if the player is in a shopkeep menu, list the goods and the player's gold
-          response = response + `\n[--You have ${player.inventory.gold} gold--] `;
+          npcResponse = npcResponse + `\n[--You have ${player.inventory.gold} gold--] `;
           for (var i = 0; i < npc.goods.length; i++) {
-            // if the player already has the item, then don't offer it to them
-            if (!player.inventory.keys.includes(npc.goods[i].id)) {
-              response = response + '\n [' + i + '] ' + npc.goods[i].item + ' - ' + npc.goods[i].cost + ' gold';
+            npcResponse = npcResponse + '\n [' + i + '] ' + npc.goods[i].item + ' - '
+
+            // if the player already has the item and it's a key item, then don't offer it to them
+            if (player.inventory.keys.includes(npc.goods[i].id)) {
+              npcResponse = npcResponse + 'SOLD OUT';
+            } else {
+              npcResponse = npcResponse + npc.goods[i].cost + ' gold';
             }
-            else {
-              response = response + '\n [' + i + '] ' + npc.goods[i].item + ' - SOLD OUT';
-            }
-            responseNum = responseNum + 1;
+            // numOfResponses = numOfResponses + 1;
           }
+
+          playerResponseCount = npc.goods.length;
         }
+
       } else {
-        message.channel.send(`${player.name} replied to ${npc.name} in a strange way.`);
+        // if there's no npc response that matches the player's progress...
+        message.channel.send(`${player.name} talks to ${npc.name} in a strange way.`);
       }
+
     } else {
       // if the player hasn't talked to this NPC before, create the player's progress in their object
       player.progress.npc[npc.id] = '0';
-      response = npc.responses['0'].reply;
+      npcResponse = npc.responses['0'].reply;
 
       // create the dialoge tree for the player
       for (let i = 0; i < npc.responses['0'].prompts.length; i++) {
-        response = `${response}\n${npc.responses['0'].prompts[i].prompt}`;
-        responseNum = responseNum + 1;
+        npcResponse = `${npcResponse}\n${npc.responses['0'].prompts[i].prompt}`;
       }
+
+      playerResponseCount = npc.responses['0'].prompts.length;
     }
     
     // return the npc's response and the number of replies the player can give to the npc
-    return [response, responseNum];
+    return [npcResponse, playerResponseCount];
   }
 
-  // respond to the npc's response
-  replyToPlayer(player, message, npc, response, responseNum, room, stop) {
+  // have the npc reply to the player
+  replyToPlayer(player, message, npc, npcResponse, playerResponseCount, room, stop) {
     let responded = false;
-    let progress = player.progress.npc[npc.id];
 
+    // ensure that the npc has a dialogue tree
     if (npc.responses !== undefined) {
-      message.reply(`${npc.name} says: ${response}`);
+      message.reply(`${npc.name} says: ${npcResponse}`);
 
       if (!stop) {
-        // responses change to using length
-        const filter = m => (((m.content < responseNum) && (Number.isInteger(Number(m.content)))) || (m.content.includes('?talk'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
+        // if the player is still talking to the npc, create a collector for the player's responses
+        const filter = m => (((m.content < playerResponseCount) && (Number.isInteger(Number(m.content)))) || (m.content.includes('?talk'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
         const collector = message.channel.createMessageCollector(filter, {time: 20000});
 
+        // if the player responses...
         collector.on('collect', m => {
           responded = true;
+          // stop the collector or else we'll have infinite collectors!!!
           collector.stop();
           
+          // kill the conversation if the player is trying to talk to another NPC
           if (m.content.includes('?talk')) {
-            let newResponse = 'Oh ok bye';
-            this.replyToPlayer(player, message, npc, newResponse, 1, room, true);
+            let newNpcResponse = 'Oh ok bye';
+            this.replyToPlayer(player, message, npc, newNpcResponse, 1, room, true);
           } else {
-            this.makeProgress(player, npc, m.content, message);
-            let [newResponse, newResponseNum] = this.determineResponse(npc, player);
-            this.replyToPlayer(player, message, npc, newResponse, newResponseNum, room, false);
+            // depending on the player's response, edit the player's progress with this NPC
+            this.makeProgress(player, npc, m.content);
+            // recursively call this function every time the player interacts with the npc for this one dialogue instance
+            let [newNpcResponse, newPlayerResponseCount] = this.determineResponse(npc, player);
+            this.replyToPlayer(player, message, npc, newNpcResponse, newPlayerResponseCount, room, false);
           }
         });
 
+        // if the collector times out
         collector.on('end', () => {
+          // if the player never responded then alert the player that the NPC is no longer listening
           if (!responded) {
             message.channel.send(`${npc.name} walked away from ${player.name}`);
-            if (npc.goods.length > 0){ // let shopkeeps reset back to their first state everytime...
+            
+            // reset the shopkeeper NPC back to its default state
+            if (npc.goods.length > 0){
               player.progress.npc[npc.id] = '0';
               db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
             }
           }
         });
       }
+
     } else {
+      // if the npc has no responses...
       message.channel.send(`${npc.name} has nothing to say.`);
     }
   }
-
-  // Adjusts the players conversational progress with the npc
-  makeProgress(player, npc, playerResponse, message) { 
+  
+  makeProgress(player, npc, playerResponse) {
+    // adjusts the players conversational progress with the npc
     let currentProgress = player.progress.npc[npc.id];
     let progression = currentProgress;
 
+    // if the npc isn't a shopkeeper or the player's progression with the shopkeeper is zero...
 	  if (!(npc.goods.length > 0) || progression == '0') {
+      // iterate through the npc's list of responses for the one that the player submitted
 	    for (let i = 0; i < npc.responses[currentProgress].prompts.length; i++) {			
 		    if (i.toString() === playerResponse) {
 		      progression = npc.responses[currentProgress].prompts[i].progression;
 		      break;
 		    }
 	    }
-	  }
-    else {
-      //let itemID = npc.goods[Object.keys(npc.goods)[playerResponse]];
+	  } else {
+      // if the player is buying an item, check to make sure they have enough gold
       if (this.checkGold(player, npc, playerResponse)) {
+        // check to make sure the item isn't "sold out"
         if (player.inventory.keys.includes(npc.goods[playerResponse].id)) {
           progression = 'soldout';
-        }
-        else {
+        } else {
           db.getItem(npc.goods[playerResponse].id, 'items', (data) => this.buyItem(player, npc.goods[playerResponse].cost, data));
           progression = 'success';
         }
@@ -209,26 +238,39 @@ class TalkCommand extends commando.Command {
     db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
   }
 
-  checkGold(player, npc, choice) { // checks price and returns if player can afford it
-    let itemCost = npc.goods[choice].cost;
-    if (player.inventory.gold < itemCost) { return false;} 
-    else { return true; }
+  checkGold(player, npc, choice) {
+    // checks the price of the item and returns if player can afford it
+    if (player.inventory.gold < npc.goods[choice].cost)
+      return false;
+    else
+      return true;
   }
 
   buyItem(player, cost, data) {
-    //player.inventory[player.inventory.length]= item.id; // Idk how we're doing inventory but rn, im just pushing the item's id
-    // add to player inventory
-    //db.updateItem(player.id, ['inventory'], [item.id], 'players', () => {});
     let item = JSON.parse(data.body).Item;
     
-    // update player inventory depending on the item they bought
-    if (item.type === "key")
-      player.inventory.keys.push(item.id);
-    else if (item.type === "weapon")
-      player.inventory.weapon = item.id;
-    else if (item.type === "armor")
-      player.inventory.armor = item.id;
-    else {
+    // if the item is a key item, add it to the player's list of keys
+    if (item.type === "key") {
+      player.inventory[item.id] = {
+        'name': item.name,
+        'used': false
+      }
+    // if the item is a weapon or armor...
+    } else if (item.type === "weapon" || item.type === "armor") {
+      // check to see if the player already has that item
+      if (player.inventory.items.includes(item.id)) {
+        // if so, bump the item's amount
+        player.inventory.items[item.id].amount += 1;
+      } else {
+        // if not, add the item to the player's inventory
+        player.inventory[item.id] = {
+          'name': item.name,
+          'type': item.type,
+          'equipped': false,
+          'amount': 1
+        }
+      }
+    } else {
       console.log("Item is not a grabbable.");
       return;
     }
@@ -237,6 +279,7 @@ class TalkCommand extends commando.Command {
 
     // take gold from player inventory
     player.inventory.gold = player.inventory.gold - cost;
+    // update the player's inventory
     db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
   }
 }

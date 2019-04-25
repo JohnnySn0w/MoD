@@ -1,6 +1,6 @@
 [
     {
-        "name": "John",
+        "name": "Default Dan",
         "id": "0",
         "currentLevel": 0,
         "health": 100,
@@ -11,12 +11,25 @@
         "nextLevelExperience":100,
         "busy": false,
         "inventory": {
-            "keys": [
-
-            ],
-            "weapon": null,
-            "armor": null,
-            "gold": 0
+            "keys": {
+                "0": {
+                    "name": "something",
+                    "used": false
+                }
+            },
+            "items": {
+                "0": {
+                    "name": "something else",
+                    "type": "weapon",
+                    "equipped": false,
+                    "amount": 1
+                }
+            },
+            "gold": 50
+        },
+        "equipment": {
+            "weapon": 0,
+            "armor": 0
         },
         "progress": {
             "npc": {
@@ -24,49 +37,6 @@
                 "1": "0",
                 "2": "0"
             }
-        }
-    },
-    {
-        "strength":7,
-        "currentLevel":1,
-        "defense":5,
-        "busy":false,
-        "name":"☃JohnnySn0w☃",
-        "health":100,
-        "maxhealth":100,
-        "experience":0,
-        "nextLevelExperience":100,
-        "progress": {
-            "npc":{}
-        },
-        "id":"214624397409910785",
-        "inventory": {
-            "key": [
-
-            ],
-            "weapon": null,
-            "armor": null,
-            "gold": 0
-        }
-    },
-    {
-        "strength":7,
-        "level":1,
-        "defense":5,
-        "busy":false,
-        "name":"coolguy",
-        "health":100,
-        "progress": {
-            "npc":{}
-        },
-        "id":"198279866284507136",
-        "inventory": {
-            "key": [
-
-            ],
-            "weapon": null,
-            "armor": null,
-            "gold": 0
         }
     }
 ]

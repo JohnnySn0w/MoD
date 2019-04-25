@@ -53,12 +53,15 @@ class StartCommand extends commando.Command {
         'experience': 0,
         'nextLevelExperience': 100,
         'inventory': {
-          'keys': [
-
-          ],
-          'weapon': null,
-          'armor': null,
-          'gold': 0
+          'keys': {
+          },
+          'items': {
+          },
+          'gold': 50
+        },
+        'equipment': {
+            'weapon': 0,
+            'armor': 0
         },
         'busy': false,
         'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
