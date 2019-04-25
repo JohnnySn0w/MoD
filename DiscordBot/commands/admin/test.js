@@ -255,13 +255,8 @@ function addPlayerBack(message) {
         "nextLevelExperience":100,
         "inventory": {
             "keys": {
-                "0": false
             },
             "items": {
-                "5": {
-                    "name": "itemName",
-                    "equipped": false
-                }
             },
             "gold": 50
         },

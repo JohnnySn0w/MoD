@@ -118,7 +118,7 @@ class TalkCommand extends commando.Command {
             npcResponse = npcResponse + '\n [' + i + '] ' + npc.goods[i].item + ' - '
 
             // if the player already has the item and it's a key item, then don't offer it to them
-            if (player.inventory.keys.includes(npc.goods[i].id)) {
+            if (player.inventory.keys[npc.goods[i].id]) {
               npcResponse = npcResponse + 'SOLD OUT';
             } else {
               npcResponse = npcResponse + npc.goods[i].cost + ' gold';
@@ -222,7 +222,7 @@ class TalkCommand extends commando.Command {
       // if the player is buying an item, check to make sure they have enough gold
       if (this.checkGold(player, npc, playerResponse)) {
         // check to make sure the item isn't "sold out"
-        if (player.inventory.keys.includes(npc.goods[playerResponse].id)) {
+        if (player.inventory.keys[npc.goods[playerResponse].id]) {
           progression = 'soldout';
         } else {
           db.getItem(npc.goods[playerResponse].id, 'items', (data) => this.buyItem(player, npc.goods[playerResponse].cost, data));
@@ -251,19 +251,19 @@ class TalkCommand extends commando.Command {
     
     // if the item is a key item, add it to the player's list of keys
     if (item.type === "key") {
-      player.inventory[item.id] = {
+      player.inventory.keys[item.id] = {
         'name': item.name,
         'used': false
       }
     // if the item is a weapon or armor...
     } else if (item.type === "weapon" || item.type === "armor") {
       // check to see if the player already has that item
-      if (player.inventory.items.includes(item.id)) {
+      if (player.inventory.items[item.id]) {
         // if so, bump the item's amount
-        player.inventory.items[item.id].amount += 1;
+        player.inventory.items[item.id].amount = player.inventory.items[item.id].amount + 1;
       } else {
         // if not, add the item to the player's inventory
-        player.inventory[item.id] = {
+        player.inventory.items[item.id] = {
           'name': item.name,
           'type': item.type,
           'equipped': false,
