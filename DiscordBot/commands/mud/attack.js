@@ -169,37 +169,58 @@ class AttackCommand extends commando.Command {
       message.member.send("Level up!\n You're now at level " + player.currentLevel + ".\n" + "Experience: " + player.experience);
     }
   }
-  // loot
+
+  // loot functionality!
   rollLoot(message, player, enemy) {
     let picked_up = false;
-    let loot_num = Math.floor(Math.random() * enemy.loot.length) + 1 ; // generating a random number between 1 and 5 for loot drop
-    message.member.send(`After defeating ${enemy.name} you picked up ${enemy.loot[loot_num]}. It was added to your inventory.`);
-    player.inventory.gold = player.inventory.gold + 50;
+    let loot_num = Math.floor(Math.random() * (enemy.loot.length + 1)); // generating a random number in the given range for loot drop 
+
+    // go through enemy's drop table by comparing loot roll to loot IDs
+    for (let index = 0; index < (enemy.loot.length); index++) {
+      // success! you've looted!    
+      if (loot_num == enemy.loot[index].id) 
+      {
+        message.member.send(`After defeating ${enemy.name} you picked up a ${enemy.loot[index].name}. It was added to your inventory.`);
+        // handling gold drops
+        if (enemy.loot[index].type == null)
+        {
+          if (enemy.loot[index].name == "Small bag of gold")
+          {
+            player.inventory.gold = player.inventory.gold + 50;
+          }
+          else if (enemy.loot[index].name == "Medium bag of gold")
+          {
+            player.inventory.gold = player.inventory.gold + 100;
+          }
+          else if (enemy.loot[index].name == "Large bag of gold")
+          {
+            player.inventory.gold = player.inventory.gold + 200;
+          }
+        }
+        // handle armor and weapons
+        else 
+        {          
+          console.log("working on it");
+          // add something to look for the looted item in the items table
+          // then add something to add it to player inventory
+              
+        }
+      if (loot_num == 0)
+      {
+        // just in case random screws up, then you get screwed too
+        message.member.send(`After defeating ${enemy.name} you moved on. You could find nothing to take from the slain creature.`);
+        break;
+      }
+
+          
+    }  
+    // update db item with changes from above
     db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
-    console.log(player.inventory);
-    //console.log(db.getItem(message.member.id, 'players'));
-    // message.member.send(`[0] Pick up ${enemy.loot[loot_num]}`);  // need to add these items to the item schema so they can be tangible
-
-
-    // const filter = m => ((m.content == 0) && (Number.isInteger(Number(m.content)))); //only accepts responses in key and only from the person who started convo
-    // const collector = message.channel.createMessageCollector(filter, {time: 20000});
-  
-    // collector.on('collect', m => {
-    //   picked_up = true;
-    //   collector.stop();            
-    // });
-
-    // collector.on('end', () => {
-    //   if (!picked_up) {
-    //     message.member.send(`You decide to leave ${enemy.loot[loot_num]} on the ground. What need have you for it anyway?`);
-    //   }
-    //   else {
-    //     message.member.send(`You have picked up the 50 gold. Added to your inventory`);
-        
-    //     //db.updateItem(player.id, ['gold'], [player.inventory.gold = player.inventory.gold + 50], 'players', ()=>{}); // theoretically, this will add some gold to your bank account
-    //   }
-    // });
+    // console.log(player.inventory);
+    // console.log(loot_num.toString());
+    // console.log(enemy.loot);
   }
+}
 }
 
 function respawnEnemy(enemy, room) {

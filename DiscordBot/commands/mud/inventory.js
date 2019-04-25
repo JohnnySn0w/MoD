@@ -30,8 +30,26 @@ class InventoryCommand extends commando.Command {
             message.member.send("You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.");
         }
         else {
-            // otherwise, direct message the player with their health, strength, and defense            
-            message.member.send("Inventory:" +  "\n" + "\n" + "Gold:" + player.inventory.gold + "\n" + "Weapon: " + player.inventory.weapon + "\n" + "Armor: " + player.inventory.armor + "\n" + "Items: " + player.inventory.keys);
+            // otherwise, direct message the player with their health, strength, and defense
+            let weapon = player.inventory.weapon;
+            let armor = player.inventory.armor;
+            let itemkeys = player.inventory.keys;
+            
+            // check to keep the DM from saying null. Instead, if there's nothing, say "None"
+            if (weapon == null)
+            {
+              weapon = "None";
+            }
+            if (armor == null)
+            {
+              armor = "None";
+            }
+            if (itemkeys == null)
+            {
+              itemkeys = "None";
+            }
+            // DM the player
+            message.member.send("Inventory:" +  "\n" + "\n" + "Gold:" + player.inventory.gold + "\n" + "Weapon: " + weapon + "\n" + "Armor: " + armor + "\n" + "Items: " + itemkeys);
             console.log(player);            
         }
     }

@@ -8,6 +8,26 @@
         "defense": 2,
         "description": "A green, humanoid monster stands around with a small club in his hand.",
         "loot": [
+            {   
+                "id": "1",  
+                "name": "Small bag of gold",
+                "type": null       
+            },
+            {   
+                "id": "2", 
+                "name": "Short Sword",
+                "type": "weapon"         
+            },
+            {   
+                "id": "3",
+                "name": "Medium bag of gold",
+                "type": null        
+            },
+            {   
+                "id": "4",  
+                "name": "Basic Shield",
+                "type": "armor"        
+            }
         ],
         "respawn": null
     },
@@ -20,6 +40,26 @@
         "defense": 6,
         "description": "An large, green humanoid that has been in quite a few scraps already. She wields a large axe.",
         "loot": [
+            {   
+                "id": "1",
+                "name": "Medium bag of gold",
+                "type": null        
+            },
+            {   
+                "id": "2",
+                "name": "Reinforced Shield",
+                "type": "armor"        
+            },
+            {   
+                "id": "3",
+                "name": "Small bag of gold",
+                "type": null        
+            },
+            {   
+                "id": "4",
+                "name": "Average Sword",
+                "type": "weapon"        
+            }             
         ],
         "respawn": 10
     }
