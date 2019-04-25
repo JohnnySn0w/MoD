@@ -95,6 +95,7 @@ class AttackCommand extends commando.Command {
       //roll a number from 1-12 for damage
       let roll = Math.floor(Math.random() * 12) + 1;
       // calculate player damage on enemy and update value using weapon
+      let damage = 0
       if(player.weapon == null){
         let damage = player.strength; 
       }
