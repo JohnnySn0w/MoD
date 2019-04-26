@@ -9,24 +9,28 @@
         "description": "A green, humanoid monster stands around with a small club in his hand.",
         "loot": [
             {   
-                "id": "1",  
+                "itemid": "1",  
                 "name": "Small bag of gold",
-                "type": null       
+                "type": null,
+                "id": null       
             },
             {   
-                "id": "2", 
+                "id": "7", 
                 "name": "Short Sword",
-                "type": "weapon"         
+                "type": "weapon",
+                "itemid": "2"         
             },
             {   
-                "id": "3",
+                "itemid": "3",
                 "name": "Medium bag of gold",
-                "type": null        
+                "type": null,
+                "id": null         
             },
             {   
-                "id": "4",  
+                "id": "8",  
                 "name": "Basic Shield",
-                "type": "armor"        
+                "type": "armor",
+                "itemid": "4"        
             }
         ],
         "respawn": null
@@ -43,22 +47,22 @@
             {   
                 "id": "1",
                 "name": "Medium bag of gold",
-                "type": null        
+                "type": null                        
+            },
+            {   
+                "id": "9",
+                "name": "Reinforced Shield",
+                "type": "armor"                         
             },
             {   
                 "id": "2",
-                "name": "Reinforced Shield",
-                "type": "armor"        
-            },
-            {   
-                "id": "3",
                 "name": "Small bag of gold",
-                "type": null        
+                "type": null                         
             },
             {   
-                "id": "4",
+                "id": "10",
                 "name": "Average Sword",
-                "type": "weapon"        
+                "type": "weapon"                      
             }             
         ],
         "respawn": 10
