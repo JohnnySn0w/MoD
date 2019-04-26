@@ -176,10 +176,12 @@ class TalkCommand extends commando.Command {
             this.replyToPlayer(player, message, npc, newNpcResponse, 1, room, true);
           } else {
             // depending on the player's response, edit the player's progress with this NPC
-            this.makeProgress(player, npc, m.content);
-            // recursively call this function every time the player interacts with the npc for this one dialogue instance
-            let [newNpcResponse, newPlayerResponseCount] = this.determineResponse(npc, player);
-            this.replyToPlayer(player, message, npc, newNpcResponse, newPlayerResponseCount, room, false);
+            let buyingItem = this.makeProgress(player, npc, m.content, message, room);
+            // recursively call this function every time the player interacts with the npc and doesn't buy an item successfully
+            if (!buyingItem) {
+              let [newNpcResponse, newPlayerResponseCount] = this.determineResponse(npc, player);
+              this.replyToPlayer(player, message, npc, newNpcResponse, newPlayerResponseCount, room, false);
+            }
           }
         });
 
@@ -204,10 +206,11 @@ class TalkCommand extends commando.Command {
     }
   }
   
-  makeProgress(player, npc, playerResponse) {
+  makeProgress(player, npc, playerResponse, message, room) {
     // adjusts the players conversational progress with the npc
     let currentProgress = player.progress.npc[npc.id];
     let progression = currentProgress;
+    let buyingItem = false;
 
     // if the npc isn't a shopkeeper or the player's progression with the shopkeeper is zero...
 	  if (!(npc.goods.length > 0) || progression == '0') {
@@ -220,13 +223,14 @@ class TalkCommand extends commando.Command {
 	    }
 	  } else {
       // if the player is buying an item, check to make sure they have enough gold
-      if (this.checkGold(player, npc, playerResponse)) {
+      if (player.inventory.gold >= npc.goods[playerResponse].cost) {
         // check to make sure the item isn't "sold out"
         if (player.inventory.keys[npc.goods[playerResponse].id]) {
           progression = 'soldout';
         } else {
-          db.getItem(npc.goods[playerResponse].id, 'items', (data) => this.buyItem(player, npc.goods[playerResponse].cost, data));
+          db.getItem(npc.goods[playerResponse].id, 'items', (data) => this.buyItem(player, npc.goods[playerResponse].cost, data, npc, message, room));
           progression = 'success';
+          buyingItem = true;
         }
       } else {
         progression = 'failure';
@@ -236,17 +240,11 @@ class TalkCommand extends commando.Command {
     // push the progression to the database
     player.progress.npc[npc.id] = progression;
     db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
+
+    return buyingItem;
   }
 
-  checkGold(player, npc, choice) {
-    // checks the price of the item and returns if player can afford it
-    if (player.inventory.gold < npc.goods[choice].cost)
-      return false;
-    else
-      return true;
-  }
-
-  buyItem(player, cost, data) {
+  buyItem(player, cost, data, npc, message, room) {
     let item = JSON.parse(data.body).Item;
     
     // if the item is a key item, add it to the player's list of keys
@@ -281,6 +279,10 @@ class TalkCommand extends commando.Command {
     player.inventory.gold = player.inventory.gold - cost;
     // update the player's inventory
     db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
+
+    // call the reply function after buying an item since we need to update the player's gold and inventory beforehand
+    let [newNpcResponse, newPlayerResponseCount] = this.determineResponse(npc, player);
+    this.replyToPlayer(player, message, npc, newNpcResponse, newPlayerResponseCount, room, false);
   }
 }
 
