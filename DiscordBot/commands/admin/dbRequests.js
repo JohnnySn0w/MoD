@@ -51,7 +51,7 @@ class DB extends commando.Command {
   replies(message, data, type) {
     this.logger(data);
     if (type === 'get') {
-      message.reply(`got: ${data.body}`);
+      message.reply(`got: \`\`\`JSON\n${data.body}\`\`\``);
     }
     if (type === 'save') {
       message.reply('saved');
@@ -115,22 +115,27 @@ class DB extends commando.Command {
 // is in the format of a JSON object, which is slightly different from a regular
 // js object
 const dumbDynamoRoom = {
-  'name': 'room',
-  'id': '532297083089321995',
-  'roleid': '525358056788328448',
+  'id': 'entry-room',
+  'discordID': '520340145342513155',
+  'roleid': '568218853902123029',
   'description': 'bluh bluh huge room',
   'exits': {
-    'north': '520340145342513155'
+    'north': 'room-after-entry'
   },
-  'items': [
-
-  ],
+  'items': {
+    'pillars': '3'
+  },
   'npcs': {
-    'goblin': '0',
     'old-man': '1',
-    'little-boy': '2'
+    'little-boy': '2',
+    'shopkeep': '3'
+  },
+  'enemies': {
+    'goblin': '0',
+    'goblin-warrior': '1'
   }
 };
+
 
 const gobbie = {
   'strength':3,

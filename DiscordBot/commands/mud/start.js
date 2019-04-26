@@ -27,7 +27,7 @@ class StartCommand extends commando.Command {
 
     if (player === undefined) {
       // if the player doesn't exist in the database, check which room they're in
-      db.getItem(message.channel.id, 'rooms', (data) => this.getRoom(message, data));
+      db.getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, data));
     }
     else {
       // otherwise, the player is already a part of the database
@@ -40,30 +40,29 @@ class StartCommand extends commando.Command {
     var body = JSON.parse(data.body);
     var room = body.Item;
 
-        if (room === undefined) {
-            // if the player is not in a MUD room, create a new player object to push to the db
-            var newPlayer = {
-                'name': message.member.user.username,
-                'id': message.member.id,
-                'health': 100,
-                'maxhealth': 100,
-                'currentLevel': 1,
-                'strength': 7,
-                'defense': 5,
-                'experience': 0,
-                'nextLevelExperience': 100,
-                'inventory': {
-                  'keys': [
+    if (room === undefined) {
+      // if the player is not in a MUD room, create a new player object to push to the db
+      var newPlayer = {
+        'name': message.member.user.username,
+        'id': message.member.id,
+        'health': 100,
+        'maxhealth': 100,
+        'currentLevel': 1,
+        'strength': 7,
+        'defense': 5,
+        'experience': 0,
+        'nextLevelExperience': 100,
+        'inventory': {
+          'keys': [
 
-                  ],
-                  'weapon': null,
-                  'armor': null,
-                  'gold': 0
-                },
-                'busy': false,
-                'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
-            }
-
+          ],
+          'weapon': null,
+          'armor': null,
+          'gold': 0
+        },
+        'busy': false,
+        'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
+      };
       db.saveItem(newPlayer, 'players', () => this.setRoles(message));
     }
     else {
