@@ -13,23 +13,31 @@
         "inventory": {
             "keys": {
                 "0": {
-                    "name": "something",
+                    "name": "bronze key",
                     "used": false
                 }
             },
             "items": {
-                "0": {
-                    "name": "something else",
+                "1": {
+                    "name": "sword",
                     "type": "weapon",
                     "equipped": false,
+                    "stats": 2,
+                    "amount": 1
+                },
+                "2": {
+                    "name": "shield",
+                    "type": "armor",
+                    "equipped": false,
+                    "stats": 3,
                     "amount": 1
                 }
             },
             "gold": 50
         },
         "equipment": {
-            "weapon": 0,
-            "armor": 0
+            "weapon": "1",
+            "armor": "2"
         },
         "progress": {
             "npc": {

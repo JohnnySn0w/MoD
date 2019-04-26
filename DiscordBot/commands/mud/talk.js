@@ -265,6 +265,7 @@ class TalkCommand extends commando.Command {
           'name': item.name,
           'type': item.type,
           'equipped': false,
+          'stats': item.stats,
           'amount': 1
         }
       }
