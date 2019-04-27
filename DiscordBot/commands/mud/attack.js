@@ -63,12 +63,6 @@ class AttackCommand extends commando.Command {
     }
   }
 
-  cleanArgs(args) {
-    // ignore the argument's capitalization
-    args.object = args.object.toLowerCase();
-    return args;
-  }
-
   checkHostile(message, player, data, room) {
     const enemy = JSON.parse(data.body).Item;
 
@@ -84,9 +78,17 @@ class AttackCommand extends commando.Command {
           this.combatLoop(message, player, enemy, room);
         });
       }
+    } else if(enemy){
+      message.channel.send(`${player.name} glares with murderous intent towards ${enemy.name}.`);
     } else {
       message.channel.send(`${player.name} tries to attack the air.`);
     }
+  }
+
+  cleanArgs(args) {
+    // ignore the argument's capitalization
+    args.object = args.object.toLowerCase();
+    return args;
   }
 
   combatLoop(message, player, enemy, room) {
@@ -130,9 +132,12 @@ class AttackCommand extends commando.Command {
 
       //calculate enemy damage on agro target and update value
       damage = enemy.strength - player.defense; //for the following lines replace player with agro target
+
       if (damage > 0) {
         player.health = player.health - damage;
         message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage.toString()} damage.`);
+        // health needs to update in case a player gets worried and checks their stats mid-battle
+        db.updateItem(player.id, ['health'], [player.health], 'players', ()=>{console.log("Player health and busy updated")});
       } else {
         message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
       }
@@ -144,6 +149,9 @@ class AttackCommand extends commando.Command {
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
 
       //TODO: loot roll here
+      this.rollLoot(message, player, enemy);
+
+      //message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string');
       /* TODO: move this delete to the end of the loot roll so 
       we don't delete the enemy before distributing their loot */
 
@@ -194,13 +202,88 @@ class AttackCommand extends commando.Command {
       message.member.send(`Level up!\nYou're now at level ${player.currentLevel}.\nExperience: ${player.experience}`);
     }
   }
+
+  // loot functionality!
+  rollLoot(message, player, enemy) {
+    let loot_num = Math.floor(Math.random() * (enemy.loot.length + 1)); // generating a random number in the given range for loot drop 
+
+    // go through enemy's drop table by comparing loot roll to loot IDs
+    for (let index = 0; index < (enemy.loot.length); index++) {
+      // success! you've looted!    
+      if (loot_num == enemy.loot[index].itemid) 
+      {
+        message.member.send(`After defeating ${enemy.name} you picked up a ${enemy.loot[index].name}. It was added to your inventory.`);
+        // handling gold drops
+        if (enemy.loot[index].type == null)
+        {
+          if (enemy.loot[index].name == "Small bag of gold")
+          {
+            player.inventory.gold = player.inventory.gold + 50;
+          }
+          else if (enemy.loot[index].name == "Medium bag of gold")
+          {
+            player.inventory.gold = player.inventory.gold + 100;
+          }
+          else if (enemy.loot[index].name == "Large bag of gold")
+          {
+            player.inventory.gold = player.inventory.gold + 200;
+          }
+          // update db item with changes from above
+          db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
+        }
+        // handle armor and weapon drops
+        else 
+        {          
+          //console.log("working on it");
+          console.log(enemy.loot[index].id);
+          // add something to look for the looted item in the items table
+          db.getItem(enemy.loot[index].id, 'items', (data) => this.addItem(player, data));
+              
+        }
+      if (loot_num == 0)
+      {
+        // just in case random screws up, then you get screwed too
+        message.member.send(`After defeating ${enemy.name} you moved on. You could find nothing to take from the slain creature.`);
+        break;
+      }
+
+          
+    }      
+    // console.log(player.inventory);
+    // console.log(loot_num.toString());
+    // console.log(enemy.loot);
+  }
+}
+  addItem(player, data) {
+    //player.inventory[player.inventory.length]= item.id; // Idk how we're doing inventory but rn, im just pushing the item's id
+    // add to player inventory
+    //db.updateItem(player.id, ['inventory'], [item.id], 'players', () => {});
+    let item = JSON.parse(data.body).Item;
+    console.log(item);
+    
+    // update player inventory depending on the item they got
+    if (item.type === "key")
+      player.inventory.keys.push(item.name);
+    else if (item.type === "weapon")
+      player.inventory.keys.push(item.name);
+    else if (item.type === "armor")
+      player.inventory.keys.push(item.name);
+    else {
+      console.log("Item is not a grabbable.");
+      return;
+    }
+
+    // update db item with changes from above
+    db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
+
+    // console.log(JSON.stringify(player.inventory));
+  }
 }
 
 function respawnEnemy(enemy, room) {
-  room.enemies[enemy.name.toLowerCase()] = enemy.id;
-  db.updateItem(room.id, ['enemies'], [room.enemies], 'rooms', ()=>{
+  room.npcs[enemy.name.toLowerCase()] = enemy.id;
+  db.updateItem(room.id, ['npcs'], [room.npcs], 'rooms', ()=>{
     console.log(`${enemy.name} re-added`);
   });
 }
-
 module.exports = AttackCommand;
