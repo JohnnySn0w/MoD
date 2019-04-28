@@ -91,36 +91,37 @@ class AttackCommand extends commando.Command {
     return args;
   }
 
+  calculateDamage(attacker, victim, roll, weaponMod = 0) {
+      // calculate player damage on enemy and update value using weapon
+    let damage = attacker.strength + weaponMod;
+    if(roll >= 10){
+      damage *= 2;
+    }
+    //calculate damage using enemy defense
+    damage -= victim.defense;
+    return damage;
+  }
+
   combatLoop(message, player, enemy, room) {
     // commence the battle to the death
     while (player.health > 0 && enemy.health > 0) {
-      //roll a number from 1-12 for damage
       let roll = Math.floor(Math.random() * 12) + 1;
-      // calculate player damage on enemy and update value using weapon
-      let damage = 0
-      if(player.weapon == null){
-        let damage = player.strength; 
-      }
-      else{
-        let damage = player.strength + player.weapon.stats;
-      }
-      if (roll >= 6) {
-        //10-12 is a critical hit
-        if(roll >= 10){
-          damage *= 2;
+      //roll 6 or higher for hit
+      if(roll >= 6){
+        if(player.weapon === null){
+          let damage = calculateDamage(player, enemy, roll);
+        } else{
+          let damage = calculateDamage(player, enemy, roll, player.weapon.stats);
         }
-        //calculate damage using enemy defense
-        damage -= enemy.defense;
-        //make sure player isn't doing negative damage
-        if(damage > 0){
-          enemy.health = enemy.health - damage;
-          message.channel.send(`${player.name} hit ${enemy.name} for ${damage.toString()} damage.`);
-        }
-        else{
-          message.channel.send(`${player.name} did no damage to ${enemy.name}`);
-        }
-        // increment experience counter; can vary depending on the enemy later
-        xp = xp + 5;
+          //make sure player isn't doing negative damage
+          if(damage > 0){
+            enemy.health = enemy.health - damage;
+            message.channel.send(`${player.name} hit ${enemy.name} for ${damage.toString()} damage.`);
+          } else{
+            message.channel.send(`${player.name} did no damage to ${enemy.name}`);
+          }
+          // increment experience counter; can vary depending on the enemy later
+          xp = xp + 5;
       } else {
         message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
       }
@@ -131,7 +132,8 @@ class AttackCommand extends commando.Command {
       }
 
       //calculate enemy damage on agro target and update value
-      damage = enemy.strength - player.defense; //for the following lines replace player with agro target
+      roll = Math.floor(Math.random() * 12) + 1;
+      damage = calculateDamage(enemy, player, roll)
 
       if (damage > 0) {
         player.health = player.health - damage;
