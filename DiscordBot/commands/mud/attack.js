@@ -128,12 +128,7 @@ class AttackCommand extends commando.Command {
       db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{console.log("Player health and busy updated")});
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
 
-      //TODO: loot roll here
       this.rollLoot(message, player, enemy);
-
-      //message.member.send('After defeating ', ${enemy.name}, ', you can loot', ' placeholder loot string');
-      /* TODO: move this delete to the end of the loot roll so 
-      we don't delete the enemy before distributing their loot */
 
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
       if (enemy.respawn != null) {
@@ -185,61 +180,42 @@ class AttackCommand extends commando.Command {
 
   // loot functionality!
   rollLoot(message, player, enemy) {
-    let loot_num = Math.floor(Math.random() * (enemy.loot.length + 1)); // generating a random number in the given range for loot drop 
+    let possibleLoot = [];
 
-    // go through enemy's drop table by comparing loot roll to loot IDs
-    for (let index = 0; index < (enemy.loot.length); index++) {
-      // success! you've looted!    
-      if (loot_num == enemy.loot[index].itemid) 
-      {
-        message.member.send(`After defeating ${enemy.name} you picked up a ${enemy.loot[index].name}. It was added to your inventory.`);
-        // handling gold drops
-        if (enemy.loot[index].type == null)
-        {
-          if (enemy.loot[index].name == "Small bag of gold")
-          {
-            player.inventory.gold = player.inventory.gold + 50;
-          }
-          else if (enemy.loot[index].name == "Medium bag of gold")
-          {
-            player.inventory.gold = player.inventory.gold + 100;
-          }
-          else if (enemy.loot[index].name == "Large bag of gold")
-          {
-            player.inventory.gold = player.inventory.gold + 200;
-          }
-          // update db item with changes from above
-          db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
-        }
-        // handle armor and weapon drops
-        else 
-        {          
-          //console.log("working on it");
-          console.log(enemy.loot[index].id);
-          // add something to look for the looted item in the items table
-          db.getItem(enemy.loot[index].id, 'items', (data) => this.addItem(player, data));
-              
-        }
-      if (loot_num == 0)
-      {
-        // just in case random screws up, then you get screwed too
-        message.member.send(`After defeating ${enemy.name} you moved on. You could find nothing to take from the slain creature.`);
-        break;
+    // perform a loot roll on every item in the enemy's loot array
+    for (let lootIndex = 0; lootIndex < enemy.loot.length; lootIndex++) {
+      let lootChance = Math.floor(Math.random() * 100);
+      let loot = enemy.loot[lootIndex];
+
+      // add the successfully rolled items to the possible loot array
+      if (lootChance <= loot.rarity) {
+        possibleLoot.push(loot);
       }
+    }
 
-          
-    }      
-    // console.log(player.inventory);
-    // console.log(loot_num.toString());
-    // console.log(enemy.loot);
-  }
+    if (possibleLoot.length != 0) {
+      // pick a possible loot item randomly
+      let loot = possibleLoot[Math.floor(Math.random() * (possibleLoot.length-1))];
+      console.log("Got loot! - " + JSON.stringify(loot));
+
+      // if it's gold, add it to the player's inventory direction
+      if (loot.type === "gold") {
+        player.inventory.gold = player.inventory.gold + loot.amount;
+        db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
+        message.member.send(`After defeating ${enemy.name} you picked up ${loot.amount} gold. It was added to your inventory.`);
+      // else, grab the item from the item table and add it to the player's inventory properly
+      } else {
+        db.getItem(loot.id, 'items', (data) => this.addItem(player, data, message, enemy));
+      }
+    } else {
+      console.log("No loot.");
+      // the player won nothing
+      message.member.send(`There was nothing on the ${enemy.name}\'s body.`);
+    }
 }
-  addItem(player, data) {
-    //player.inventory[player.inventory.length]= item.id; // Idk how we're doing inventory but rn, im just pushing the item's id
-    // add to player inventory
-    //db.updateItem(player.id, ['inventory'], [item.id], 'players', () => {});
+
+addItem(player, data, message, enemy) {
     let item = JSON.parse(data.body).Item;
-    console.log(item);
     
     // update player inventory depending on the item they got
     if (item.type === "key")
@@ -253,17 +229,18 @@ class AttackCommand extends commando.Command {
       return;
     }
 
+    message.member.send(`After defeating ${enemy.name} you picked up a ${item.name}. It was added to your inventory.`);
+
     // update db item with changes from above
     db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
-
-    // console.log(JSON.stringify(player.inventory));
   }
 }
 
 function respawnEnemy(enemy, room) {
-  room.npcs[enemy.name.toLowerCase()] = enemy.id;
-  db.updateItem(room.id, ['npcs'], [room.npcs], 'rooms', ()=>{
+  room.enemies[enemy.name.toLowerCase()] = enemy.id;
+  db.updateItem(room.id, ['enemies'], [room.enemies], 'rooms', ()=>{
     console.log(`${enemy.name} re-added`);
   });
 }
+
 module.exports = AttackCommand;
