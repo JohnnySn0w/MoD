@@ -25,48 +25,5 @@
                 "2": "0"
             }
         }
-    },
-    {
-        "strength":7,
-        "currentLevel":1,
-        "defense":5,
-        "busy":false,
-        "name":"☃JohnnySn0w☃",
-        "health":100,
-        "maxhealth":100,
-        "experience":0,
-        "nextLevelExperience":100,
-        "progress": {
-            "npc":{}
-        },
-        "id":"214624397409910785",
-        "inventory": {
-            "key": [
-
-            ],
-            "weapon": null,
-            "armor": null,
-            "gold": 0
-        }
-    },
-    {
-        "strength":7,
-        "level":1,
-        "defense":5,
-        "busy":false,
-        "name":"coolguy",
-        "health":100,
-        "progress": {
-            "npc":{}
-        },
-        "id":"198279866284507136",
-        "inventory": {
-            "key": [
-
-            ],
-            "weapon": null,
-            "armor": null,
-            "gold": 0
-        }
     }
 ]
