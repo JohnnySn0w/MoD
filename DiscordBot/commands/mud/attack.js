@@ -133,9 +133,9 @@ class AttackCommand extends commando.Command {
 
       //calculate enemy damage on agro target and update value
       roll = Math.floor(Math.random() * 12) + 1;
-      damage = calculateDamage(enemy, player, roll)
 
-      if (damage > 0) {
+      if (roll >= 6) {
+        damage = calculateDamage(enemy, player, roll)
         player.health = player.health - damage;
         message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage.toString()} damage.`);
         // health needs to update in case a player gets worried and checks their stats mid-battle
