@@ -167,8 +167,8 @@ class AttackCommand extends commando.Command {
         [
           player.experience,
           player.currentLevel + 1,
-          Math.floor(player.nextLevelExperience * 1.5),
-          player.strength + player.currentLevel, //this gives the players factiorial str and def
+          player.nextLevelExperience + Math.floor(player.nextLevelExperience * 1.1),
+          player.strength + player.currentLevel, //this gives the players factorial additions to str and def
           player.defense + player.currentLevel
         ],
         'players',
