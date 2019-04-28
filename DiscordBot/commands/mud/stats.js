@@ -25,21 +25,23 @@ class StatsCommand extends commando.Command {
     var body = JSON.parse(data.body);
     var player = body.Item;
 
-    if (player === undefined) {
-      // if the player isn't in the database already, send them a notice that they need to "?start" the game
-      message.member.send('You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.');
+        if (player === undefined) {
+            // if the player isn't in the database already, send them a notice that they need to "?start" the game
+            message.member.send("You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.");
+        }
+        else {
+            // otherwise, direct message the player with their health, strength, and defense            
+            message.member.send("Stats:" + "\n" + "\n" + "Health: " + player.health + "\n" + "Level: " + player.currentLevel + "\n" + "Strength: " + player.strength + "\n" + "Defense: " + player.defense + "\n" + "Experience: " + player.experience + "\n" + "---------------------------");
+            console.log(player);
+            // also send a warning if the player's health is low
+            if (player.health > 0 && player.health < 11) {
+                message.member.send("You're on death's door, my friend.");
+            }
+        }
     }
-    else {
-      // otherwise, direct message the player with their health, strength, and defense            
-      message.member.send('Health: ' + player.health + '\n' + 'Level: ' + player.currentLevel + '\n' + 'Strength: ' + player.strength + '\n' + 'Defense: ' + player.defense + '\n' + 'Experience: ' + player.experience);
-      // also send a warning if the player's health is low
-      if (player.health > 0 && player.health < 11) {
-        message.member.send('You\'re on death\'s door, my friend.');
-      }
-    }
-
   }
-}
+        
+
     
 
 module.exports = StatsCommand;

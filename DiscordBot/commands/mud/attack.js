@@ -63,12 +63,6 @@ class AttackCommand extends commando.Command {
     }
   }
 
-  cleanArgs(args) {
-    // ignore the argument's capitalization
-    args.object = args.object.toLowerCase();
-    return args;
-  }
-
   checkHostile(message, player, data, room) {
     const enemy = JSON.parse(data.body).Item;
 
@@ -84,9 +78,17 @@ class AttackCommand extends commando.Command {
           this.combatLoop(message, player, enemy, room);
         });
       }
+    } else if(enemy){
+      message.channel.send(`${player.name} glares with murderous intent towards ${enemy.name}.`);
     } else {
       message.channel.send(`${player.name} tries to attack the air.`);
     }
+  }
+
+  cleanArgs(args) {
+    // ignore the argument's capitalization
+    args.object = args.object.toLowerCase();
+    return args;
   }
 
   combatLoop(message, player, enemy, room) {
@@ -110,9 +112,12 @@ class AttackCommand extends commando.Command {
 
       //calculate enemy damage on agro target and update value
       damage = enemy.strength - player.defense; //for the following lines replace player with agro target
+
       if (damage > 0) {
         player.health = player.health - damage;
         message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage.toString()} damage.`);
+        // health needs to update in case a player gets worried and checks their stats mid-battle
+        db.updateItem(player.id, ['health'], [player.health], 'players', ()=>{console.log("Player health and busy updated")});
       } else {
         message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
       }
@@ -123,9 +128,7 @@ class AttackCommand extends commando.Command {
       db.updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', ()=>{console.log("Player health and busy updated")});
       message.channel.send(`${player.name} defeated the ${enemy.name}.`);
 
-      //TODO: loot roll here
-      /* TODO: move this delete to the end of the loot roll so 
-      we don't delete the enemy before distributing their loot */
+      this.rollLoot(message, player, enemy);
 
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
       if (enemy.respawn != null) {
@@ -173,6 +176,63 @@ class AttackCommand extends commando.Command {
       message.channel.send(`${player.name} leveled up!`);
       message.member.send(`Level up!\nYou're now at level ${player.currentLevel}.\nExperience: ${player.experience}`);
     }
+  }
+
+  // loot functionality!
+  rollLoot(message, player, enemy) {
+    let possibleLoot = [];
+
+    // perform a loot roll on every item in the enemy's loot array
+    for (let lootIndex = 0; lootIndex < enemy.loot.length; lootIndex++) {
+      let lootChance = Math.floor(Math.random() * 100);
+      let loot = enemy.loot[lootIndex];
+
+      // add the successfully rolled items to the possible loot array
+      if (lootChance <= loot.rarity) {
+        possibleLoot.push(loot);
+      }
+    }
+
+    if (possibleLoot.length != 0) {
+      // pick a possible loot item randomly
+      let loot = possibleLoot[Math.floor(Math.random() * (possibleLoot.length-1))];
+      console.log("Got loot! - " + JSON.stringify(loot));
+
+      // if it's gold, add it to the player's inventory direction
+      if (loot.type === "gold") {
+        player.inventory.gold = player.inventory.gold + loot.amount;
+        db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
+        message.member.send(`After defeating ${enemy.name} you picked up ${loot.amount} gold. It was added to your inventory.`);
+      // else, grab the item from the item table and add it to the player's inventory properly
+      } else {
+        db.getItem(loot.id, 'items', (data) => this.addItem(player, data, message, enemy));
+      }
+    } else {
+      console.log("No loot.");
+      // the player won nothing
+      message.member.send(`There was nothing on the ${enemy.name}\'s body.`);
+    }
+}
+
+addItem(player, data, message, enemy) {
+    let item = JSON.parse(data.body).Item;
+    
+    // update player inventory depending on the item they got
+    if (item.type === "key")
+      player.inventory.keys.push(item.name);
+    else if (item.type === "weapon")
+      player.inventory.keys.push(item.name);
+    else if (item.type === "armor")
+      player.inventory.keys.push(item.name);
+    else {
+      console.log("Item is not a grabbable.");
+      return;
+    }
+
+    message.member.send(`After defeating ${enemy.name} you picked up a ${item.name}. It was added to your inventory.`);
+
+    // update db item with changes from above
+    db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
   }
 }
 
