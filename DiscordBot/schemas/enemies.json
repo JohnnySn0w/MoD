@@ -8,34 +8,25 @@
         "defense": 2,
         "description": "A green, humanoid monster stands around with a small club in his hand.",
         "loot": [
-            {
-                "type": "gold",
-                "amount": 10,
-                "rarity": 50
-            },
-            {
-                "type": "gold",
-                "amount": 50,
-                "rarity": 10
+            {    
+                "name": "Small Bag of Gold",
+                "type": null,
+                "id": "11"       
             },
             {   
                 "id": "7", 
                 "name": "Short Sword",
-                "type": "weapon",
-                "amount": 1,
-                "rarity": 30
-            },
-            {
-                "type": "gold",
-                "amount": 100,
-                "rarity": 5
+                "type": "weapon"        
             },
             {   
-                "id": "8",
+                "name": "Medium Bag of Gold",
+                "type": null,
+                "id": "12"         
+            },
+            {   
+                "id": "8",  
                 "name": "Basic Shield",
-                "type": "armor",
-                "amount": 1,
-                "rarity": 30
+                "type": "armor"      
             }
         ],
         "respawn": null
@@ -50,28 +41,28 @@
         "description": "An large, green humanoid that has been in quite a few scraps already. She wields a large axe.",
         "loot": [
             {   
-                "type": "gold",
-                "amount": 50,
-                "rarity": 10                      
+                "itemid": "1",
+                "name": "Medium bag of gold",
+                "type": null,
+                "id": "12"                         
             },
-            {   
+            { 
+                "itemid": "2",  
                 "id": "9",
                 "name": "Reinforced Shield",
-                "type": "armor",
-                "amount": 1,
-                "rarity": 15                      
+                "type": "armor"                         
             },
-            {   
-                "type": "gold",
-                "amount": 10,
-                "rarity": 50                        
+            { 
+                "itemid": "3",  
+                "id": "11",
+                "name": "Small bag of gold",
+                "type": null                         
             },
-            {   
+            { 
+                "itemid": "4",  
                 "id": "10",
                 "name": "Average Sword",
-                "type": "weapon",
-                "amount": 1,
-                "rarity": 15               
+                "type": "weapon"                      
             }             
         ],
         "respawn": 10
