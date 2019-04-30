@@ -11,7 +11,7 @@
   "devDependencies": {
     "aws-sdk": "^2.373.0",
     "nodemon": "^1.18.9",
-    "serverless": "^1.41.0",
+    "serverless": "^1.41.1",
     "serverless-dynamodb-local": "^0.2.35"
   },
   "scripts": {
