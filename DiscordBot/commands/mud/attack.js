@@ -89,26 +89,48 @@ class AttackCommand extends commando.Command {
     return args;
   }
 
+  calculateDamage(attacker, victim, weaponMod = 0, armorMod = 0) {
+    // calculate player damage on enemy and update value using weapon
+    let roll = Math.floor(Math.random() * attacker.strength / 2);
+    //roll is now for base damage
+    let damage = roll + attacker.strength + weaponMod; 
+    // subtract the victim's defense and armor from the total damage
+    damage = damage - victim.defense - armorMod;
+    return damage;
+  }
+
   combatLoop(message, player, enemy, room) {
     // commence the battle to the death
     // experience counter
     let xp = 0;
     while (player.health > 0 && enemy.health > 0) {
-      // calculate player damage on enemy and update value
-      let damage = player.strength - enemy.defense;
+      let damage = 0;
+      if (player.inventory.weapon == null) {
+        damage = this.calculateDamage(player, enemy);
+      } else {
+        damage = this.calculateDamage(player, enemy, player.weapon.stats);
+      }
+
+      // if the player does "negative damage", they missed
       if (damage > 0) {
         enemy.health = enemy.health - damage;
         message.channel.send(`${player.name} hit ${enemy.name} for ${damage} damage.`);
-        // increment experience counter; can vary depending on the enemy later
-        xp = xp + 5;
+        // increment experience counter based on the damage dealt
+        xp = xp + damage;
       } else {
         message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
       }
 
-      //prevents enemy attacking if dead
-      if(enemy.health > 0) {
-        //calculate enemy damage on agro target and update value
-        damage = enemy.strength - player.defense; //for the following lines replace player with agro target
+      // prevents enemy attacking if dead
+      if (enemy.health > 0) {
+        // calculate enemy damage on agro target and update value
+        let damage = 0;
+        if (player.inventory.armor == null) {
+          damage = this.calculateDamage(enemy, player);
+        } else {
+          damage = this.calculateDamage(enemy, player, 0, player.armor.stats);
+        }
+
         if (damage > 0) {
           player.health = player.health - damage;
           message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage} damage.`);
