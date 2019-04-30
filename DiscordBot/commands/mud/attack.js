@@ -109,7 +109,9 @@ class AttackCommand extends commando.Command {
     });
     collector.on('end', m => {
       m = m.array()[0];
-      m.content = m.content.toLowerCase();
+      if (m && m.content) {
+        m.content = m.content.toLowerCase();
+      }
       if (!responded) {
         message.channel.send(`${player.name} sauntered away from ${enemy.name}, as if in a daze`);
         db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
