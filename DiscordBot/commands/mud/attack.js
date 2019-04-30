@@ -9,7 +9,7 @@ class AttackCommand extends commando.Command {
       name: 'attack',
       group: 'mud',
       memberName: 'attack',
-      description: 'Handles combat',
+      description: `?attack <target> and then afterwards, supply a type of attack within 10 seconds. Valid keywords after initiation: weapon, magic, run`,
       args: [
         {
           key: 'object',
