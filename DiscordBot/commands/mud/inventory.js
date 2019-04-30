@@ -51,7 +51,7 @@ class InventoryCommand extends commando.Command {
         }
 
         if (Object.keys(keys).length == 0) {
-          keys = "Empty";
+          keyList = "Empty";
         } else {
           for (var key in keys) {
             console.log(JSON.stringify(key));
@@ -60,7 +60,7 @@ class InventoryCommand extends commando.Command {
         }
 
         if (Object.keys(items).length == 0) {
-          items = "Empty";
+          itemList = "Empty";
         } else {
           for (var item in items) {
             console.log(JSON.stringify(item));
