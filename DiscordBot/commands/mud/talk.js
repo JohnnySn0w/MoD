@@ -1,4 +1,4 @@
-const {DEBUG} = require('../../globals.js');
+const globals = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -21,55 +21,27 @@ class TalkCommand extends commando.Command {
 
   async run(message, {npc}) {
     // get the player object so that we know the player's progress with this NPC
-    db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, npc, data));
+    //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, npc, data));
+    globals.bigCheck(message, npc, this.getNPC.bind(this));
     // delete the user's command if not debugging
-    if (!DEBUG){
+    if (!globals.DEBUG){
       message.delete();
     }
   }
 
-  getPlayer(message, npc, data) {
-    // grab the actual player object
-    let player = JSON.parse(data.body).Item;
-
-    if (player === undefined) {
-      // if we couldn't find the player, they haven't started yet
-      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
-    }
-    else {
-      // otherwise, get the room object that the player is in
-      db.getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, npc, player, data));
-    }
-  }
-
-  getRoom(message, entity, player, data) {
-    // grab the actual player object
-    const room = JSON.parse(data.body).Item;
-    entity = this.cleanArgs(entity);
-
-    if (room === undefined) {
-      message.member.send('You are not in a MUD related room.');
+  getNPC(message, npc, player, room) {
+    if (room.npcs[npc]) {
+      db.getItem(room.npcs[npc], 'npcs', (data) => this.getProgress(message, player, room, data));
     } else {
-      // determine if the player is talking to an NPC
-      if (room.npcs[entity]) {
-        db.getItem(room.npcs[entity], 'npcs', (data) => this.getProgress(message, player, room, data));
+      // if not an npc, determine if the player is talking to an enemy
+      if (room.enemies[entity]) {
+        // if an enemy, then mention that the player can't talk to the enemy
+        message.channel.send(`The ${entity} would rather a fight than a chat.`);
       } else {
-        // if not an npc, determine if the player is talking to an enemy
-        if (room.enemies[entity]) {
-          // if an enemy, then mention that the player can't talk to the enemy
-          message.channel.send(`The ${entity} would rather a fight than a chat.`);
-        } else {
-          // if not an enemy either, they're talking to no one
-          message.channel.send(`${player.name} is conversing with no one.`);
-        }
+        // if not an enemy either, they're talking to no one
+        message.channel.send(`${player.name} is conversing with no one.`);
       }
     }
-  }
-
-  cleanArgs(npc) {
-    // ignore the argument's capitalization
-    npc = npc.toLowerCase();
-    return npc;
   }
 
   getProgress(message, player, room, data) {
