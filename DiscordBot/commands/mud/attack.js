@@ -110,6 +110,7 @@ class AttackCommand extends commando.Command {
       m = m.array()[0];
       if (!responded) {
         message.channel.send(`${player.name} sauntered away from ${enemy.name}, as if in a daze`);
+        db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
         this.leveling(xp, player, message);
         this.postCombat(enemy, message, player, room);
       } else {
@@ -130,11 +131,12 @@ class AttackCommand extends commando.Command {
           }
         } else if (m.content.includes('run')){
           message.channel.send(`${player.name} ran away from ${enemy.name}`);
+          db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
           this.leveling(xp, player, message);
           this.postCombat(enemy, message, player, room);
           return null;
         } else if (m.content.includes('magic')){
-          message.channel.send(`${player.name} is shoutin' nonsense`);
+          message.channel.send(`${player.name} is shouting nonsense`);
         } else{
           //in the future, we can add a magic system here
           message.member.send('That ain\'t a valid attack type pardner');
