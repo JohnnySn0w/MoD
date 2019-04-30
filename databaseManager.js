@@ -18,23 +18,23 @@ module.exports.initializateDynamoClient = newDynamo => {
   dynamo = newDynamo;
 };
 
-module.exports.saveItem = (item, table) => {
+module.exports.saveItem = async (item, table) => {
   const params = {
     TableName: table,
     Item: item
   };
 
-  return dynamo.put(params).promise().then(() => {
+  try {
+    await dynamo.put(params).promise();
     return item.itemId;
-  })
-    .catch((oof) => 
-    {
-      console.error(oof);
-      return oof.statusCode;
-    });
+  }
+  catch (oof) {
+    console.error(oof);
+    return oof.statusCode;
+  }
 };
 
-module.exports.getItem = (itemId, table) => {
+module.exports.getItem = async (itemId, table) => {
   const params = {
     Key: {
       id: itemId
@@ -42,14 +42,14 @@ module.exports.getItem = (itemId, table) => {
     TableName: table
   };
 
-  return dynamo.get(params).promise().then(result => {
+  try {
+    const result = await dynamo.get(params).promise();
     return result;
-  })
-    .catch((oof) => 
-    {
-      console.error('ERROR:', oof);
-      return oof.statusCode;
-    });
+  }
+  catch (oof) {
+    console.error('ERROR:', oof);
+    return oof.statusCode;
+  }
 };
 
 //this shouldn't need to be used, if you're updating an entry, use updateItem
@@ -81,7 +81,7 @@ function setAttribValues(paramsValues) {
 }
 
 
-module.exports.updateItem = (itemId, paramsNames, paramsValues, table) => {
+module.exports.updateItem = async (itemId, paramsNames, paramsValues, table) => {
   const params = {
     TableName: table,
     Key: {
@@ -93,12 +93,12 @@ module.exports.updateItem = (itemId, paramsNames, paramsValues, table) => {
     ReturnValues: 'ALL_NEW'
   };
 
-  return dynamo.update(params).promise().then(response => {
+  try {
+    const response = await dynamo.update(params).promise();
     return response.Attributes;
-  })
-    .catch((oof) => 
-    {
-      console.error(oof);
-      return oof.statusCode;
-    });
+  }
+  catch (oof) {
+    console.error(oof);
+    return oof.statusCode;
+  }
 };

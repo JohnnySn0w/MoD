@@ -47,5 +47,33 @@
 		"description": "It's old and worn but it'll keep you safer than nothing.",
         "type": "armor",
         "stats": 1
+    },
+    {
+		"name": "Short Sword",
+		"id": "7",
+		"description": "A small sword, somewhere between a shank and a dagger.",
+        "type": "weapon",
+        "stats": 4
+    },
+    {
+		"name": "Basic Shield",
+		"id": "8",
+		"description": "A wooden shield.",
+        "type": "armor",
+        "stats": 2
+    },
+    {
+		"name": "Reinforced Shield",
+		"id": "9",
+		"description": "A wooden shield, but with some metal reinforcement.",
+        "type": "armor",
+        "stats": 5
+    },
+    {
+		"name": "Average Sword",
+		"id": "10",
+		"description": "It's what you think of when you think of a sword. Pretty all right.",
+        "type": "weapon",
+        "stats": 6
 	}
 ]
