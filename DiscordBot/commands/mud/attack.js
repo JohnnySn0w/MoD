@@ -141,14 +141,15 @@ class AttackCommand extends commando.Command {
     }
   }
 
-  async combatLoop(message, player, enemy, room, xp = 0, endBattle = false) {
+  combatLoop(message, player, enemy, room, xp = 0, endBattle = false) {
     // experience counter
     if (!endBattle) {
-      [ player, enemy, endBattle, xp ] = await this.playerChoice(message, player, enemy, xp);
+      console.log('battleongoing');
+      [ player, enemy, endBattle, xp ] = this.playerChoice(message, player, enemy, xp);
       //prevents enemy attacking if dead
       if(enemy.health > 0) {
         //calculate enemy damage and update value
-        [ player, enemy, endBattle ] = await this.enemyAttack(message, player, enemy);
+        [ player, enemy, endBattle ] = this.enemyAttack(message, player, enemy);
         this.combatLoop(message, player, enemy, room, xp, endBattle);
       } else {
         endBattle = true;
