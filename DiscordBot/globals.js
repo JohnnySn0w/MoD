@@ -1,7 +1,15 @@
 const db = require('../dbhandler');
+const DEBUG = true;
 
+function deleteMessage(message) {
+// delete the user's command if not debugging
+  if (!DEBUG) {
+    message.delete();
+  }
+}
 module.exports = { 
-	DEBUG: true
+	DEBUG,
+  deleteMessage
 };
 
 function playerCheck(args, data, callback, message) {
@@ -16,12 +24,6 @@ function roomCheck(args, player, message, data, callback) {
   if (room === undefined) {
     message.member.send('You are not in a MUD related room.');
   } else {
-    /*return {
-      "message": message, 
-      "args": args,
-      "player": player,
-      "room": room
-    }*/
     callback(message, args, player, room);
   }
 }

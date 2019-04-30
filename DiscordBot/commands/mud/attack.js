@@ -1,4 +1,4 @@
-const {DEBUG, bigCheck} = require('../../globals.js');
+const { deleteMessage, bigCheck } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -9,7 +9,7 @@ class AttackCommand extends commando.Command {
       name: 'attack',
       group: 'mud',
       memberName: 'attack',
-      description: 'Handles combat',
+      description: `?attack <target> and then afterwards, supply a type of attack within 10 seconds. Valid keywords after initiation: weapon, magic, run`,
       args: [
         {
           key: 'object',
@@ -21,13 +21,8 @@ class AttackCommand extends commando.Command {
   }
 
   async run(message, args) {
-    // delete the user's command if not debugging
-    if (!DEBUG) {
-      message.delete();
-    }
-    //console.log(args);
     bigCheck(message, args.object, this.getEnemy.bind(this));
-    //db.getItem(message.member.id, 'players', (data) => this.checkPlayer(message, data, args));
+    deleteMessage(message);
   }
 
 getEnemy(message, entity, player, room) {
@@ -37,7 +32,7 @@ getEnemy(message, entity, player, room) {
       } else if (room.npcs[entity]) {
         message.channel.send(`${player.name} glares with murderous intent towards ${entity}.`);
       } else {
-        message.channel.send(`${player.name} glares with murderous intent towards no one in particular.`);
+        message.channel.send(`${player.name} is feeling stabby.`);
       }
     }
     else {
@@ -57,6 +52,7 @@ getEnemy(message, entity, player, room) {
         // make the player too busy to do anything else
         db.updateItem(player.id, ['busy'], [true], 'players', ()=>{
           console.log('Player is busy');
+          message.channel.send(`${player.name} has engaged ${enemy.name} in combat!`);
           this.combatLoop(message, player, enemy, room);
         });
       }
@@ -83,58 +79,114 @@ getEnemy(message, entity, player, room) {
     return damage;
   }
 
-  combatLoop(message, player, enemy, room) {
-    // commence the battle to the death
-    // experience counter
-    let xp = 0;
-    while (player.health > 0 && enemy.health > 0) {
-      let damage = 0;
-      if (player.inventory.weapon == null) {
-        damage = this.calculateDamage(player, enemy);
-      } else {
-        damage = this.calculateDamage(player, enemy, player.weapon.stats);
+  // lets the player make a decision per round of combat
+  playerChoice(message, player, enemy, room, xp) {
+    let responded = false;
+    //only accepts responses in key and only from the person who started convo
+    const filter = m => m.author.id === message.author.id;
+    const collector = message.channel.createMessageCollector(filter, {time: 10000});
+    // calculate player damage on enemy and update value
+    collector.on('collect', () => {
+      responded = true;
+      collector.stop();
+    });
+    collector.on('end', m => {
+      m = m.array()[0];
+      if (m && m.content) {
+        m.content = m.content.toLowerCase();
       }
-
-      // if the player does "negative damage", they missed
-      if (damage > 0) {
-        enemy.health = enemy.health - damage;
-        message.channel.send(`${player.name} hit ${enemy.name} for ${damage} damage.`);
-        // increment experience counter based on the damage dealt
-        xp = xp + damage;
+      if (!responded) {
+        message.channel.send(`${player.name} sauntered away from ${enemy.name}, as if in a daze`);
+        db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
+        this.leveling(xp, player, message);
+        this.postCombat(enemy, message, player, room);
       } else {
-        message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
-      }
-
-      // prevents enemy attacking if dead
-      if (enemy.health > 0) {
-        // calculate enemy damage on agro target and update value
-        let damage = 0;
-        if (player.inventory.armor == null) {
-          damage = this.calculateDamage(enemy, player);
+        if (m.content.includes('weapon')) {
+          deleteMessage(m);
+          let damage = 0;
+          if (player.equipment.weapon == null) {
+            damage = this.calculateDamage(player, enemy);
+          } else {
+            let weaponMod = player.inventory.items[player.equipment.weapon].stats;
+            damage = this.calculateDamage(player, enemy, weaponMod);
+          }
+          if (damage > 0) {
+            enemy.health = enemy.health - damage;
+            message.channel.send(`${player.name} hit ${enemy.name} for ${damage} damage.`);
+            // increment experience counter; can vary depending on the enemy later
+            xp = xp + 5;
+          } else {
+            message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
+          }
+        } else if (m.content.includes('run')){
+          deleteMessage(m);
+          message.channel.send(`${player.name} ran away from ${enemy.name}`);
+          db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
+          this.leveling(xp, player, message);
+          this.postCombat(enemy, message, player, room);
+          return null;
+        } else if (m.content.includes('magic')){
+          deleteMessage(m);
+          message.channel.send(`${player.name} is shouting nonsense`);
         } else {
-          damage = this.calculateDamage(enemy, player, 0, player.armor.stats);
+          deleteMessage(m);
+          //in the future, we can add a magic system here
+          message.member.send('That ain\'t a valid attack type pardner');
+          message.channel.send(`${player.name} is flailing around`);
         }
-
-        if (damage > 0) {
-          player.health = player.health - damage;
-          message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage} damage.`);
+        //prevents enemy attacking if dead
+        if(enemy.health > 0) {
+          //calculate enemy damage and update value
+          this.enemyAttack(message, player, enemy, room, xp);
         } else {
-          message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
+          this.leveling(xp, player, message);
+          this.postCombat(enemy, message, player, room);
         }
-      } else {
-        message.channel.send(`${player.name} defeated the ${enemy.name}.`);
       }
-    }
-    db.updateItem(player.id, ['busy'], [false], 'players', () => console.log('Player no longer busy'));
-    this.postCombat(enemy, message, player, room, xp);
+    });
   }
 
-  postCombat(enemy, message, player, room, xp) {
-    if(enemy.health <= 0) {
+  enemyAttack(message, player, enemy, room, xp) {
+    let damage = 0;
+    if (player.equipment.armor == null) {
+      damage = this.calculateDamage(enemy, player);
+    } else {
+      let armorMod = player.inventory.items[player.equipment.armor].stats;
+      damage = this.calculateDamage(enemy, player, 0, armorMod);
+    }
+    if (damage > 0) {
+      player.health = player.health - damage;
+      message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage} damage.`);
+    } else {
+      message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
+    }
+    
+    if (player.health < 1){
+      this.postCombat(enemy, message, player, room);
+    } else {
+      this.combatLoop(message, player, enemy, room, xp);
+    }
+  }
+
+  combatLoop(message, player, enemy, room, xp = 0) {
+    // experience counter
+    if (player.health > 0 && enemy.health > 0) {
+      this.playerChoice(message, player, enemy, room, xp);
+    } else {
+      this.postCombat(enemy, message, player, room);
+    }
+  }
+
+  postCombat(enemy, message, player, room) {
+    // Player no longer busy
+    db.updateItem(player.id, ['busy'], [false], 'players', () =>{});
+    if(enemy.health < 1) {
       // update the player health and enemy aggro state and notify the room
-      console.log('updating player health');
+      setTimeout(() => {
+        message.channel.send(`${player.name} defeated the ${enemy.name}.`);
+      }, 100);
+      // updating player health
       db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
-      this.rollLoot(message, player, enemy);
 
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
       if (enemy.respawn != null) {
@@ -145,25 +197,34 @@ getEnemy(message, entity, player, room) {
           }, (enemy.respawn * 1000));
         });
       }
-    } else {
+      this.rollLoot(message, player, enemy);
+    } else if (player.health < 1) {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
-
-      // respawn player
-      db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => console.log('Player health restored'));
-      message.member.setRoles([message.guild.roles.find(role => role.name === 'entry-room')]).catch(console.error);
-      var channel = this.client.channels.find(channel => channel.name === 'entry-room');
-      channel.send(`${player.name} is reborn, ready to fight again!`);
+      this.respawn(player, message);
+    } else {
+      return null;
     }
-    this.leveling(xp, player, message);
+  }
+
+  respawn(player, message) {
+    // respawn player
+    db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => console.log('Player health restored'));
+    message.member.setRoles([message.guild.roles.find(role => role.name === 'entry-room')]).catch(console.error);
+    var channel = this.client.channels.find(channel => channel.name === 'entry-room');
+    channel.send(`${player.name} is reborn, ready to fight again!`);
   }
 
   leveling(xp, player, message) {
     // leveling
-    player.experience = player.experience + xp;
+    player.experience += xp;
     if (player.experience >= player.nextLevelExperience) {
+      player.maxhealth += 5;
+      player.currentLevel += 1;
       db.updateItem(
         player.id,
         [
+          'health',
+          'maxhealth',
           'experience',
           'currentLevel',
           'nextLevelExperience',
@@ -171,10 +232,12 @@ getEnemy(message, entity, player, room) {
           'defense'
         ],
         [
+          player.maxhealth,
+          player.maxhealth,
           player.experience,
-          player.currentLevel + 1,
+          player.currentLevel,
           player.nextLevelExperience + Math.floor(player.nextLevelExperience * 1.1),
-          player.strength + player.currentLevel, //this gives the players factorial additions to str and def
+          player.strength + player.currentLevel, //this gives the players n factorial additions to str and def
           player.defense + player.currentLevel
         ],
         'players',
@@ -206,11 +269,11 @@ getEnemy(message, entity, player, room) {
     if (possibleLoot.length != 0) {
       // pick a possible loot item randomly
       let loot = possibleLoot[Math.floor(Math.random() * (possibleLoot.length-1))];
-      console.log(`Got loot! - ${JSON.stringify(loot)}`);
+      //console.log(`Got loot! - ${JSON.stringify(loot)}`);
 
       // if it's gold, add it to the player's inventory direction
       if (loot.type === 'gold') {
-        player.inventory.gold = player.inventory.gold + loot.amount;
+        player.inventory.gold += loot.amount;
         db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
         message.member.send(`After defeating ${enemy.name} you picked up ${loot.amount} gold.`);
       // else, grab the item from the item table and add it to the player's inventory properly
@@ -218,7 +281,7 @@ getEnemy(message, entity, player, room) {
         db.getItem(loot.id, 'items', (data) => this.addItem(player, data, message, enemy));
       }
     } else {
-      console.log('No loot.');
+      //console.log('No loot.');
       // the player won nothing
       message.member.send(`There was nothing on the ${enemy.name}'s body.`);
     }
@@ -227,17 +290,34 @@ getEnemy(message, entity, player, room) {
   addItem(player, data, message, enemy) {
     let item = JSON.parse(data.body).Item;
     
-    // update player inventory depending on the item they got
-    if (item.type === 'key')
-      player.inventory.keys.push(item.name);
-    else if (item.type === 'weapon')
-      player.inventory.keys.push(item.name);
-    else if (item.type === 'armor')
-      player.inventory.keys.push(item.name);
-    else {
-      console.log('Item is not a grabbable.');
+    // if the item is a key item, add it to the player's list of keys
+    if (item.type === "key") {
+      player.inventory.keys[item.id] = {
+        'name': item.name,
+        'used': false
+      }
+    // if the item is a weapon or armor...
+    } else if (item.type === "weapon" || item.type === "armor") {
+      // check to see if the player already has that item
+      if (player.inventory.items[item.id]) {
+        // if so, bump the item's amount
+        player.inventory.items[item.id].amount = player.inventory.items[item.id].amount + 1;
+      } else {
+        // if not, add the item to the player's inventory
+        player.inventory.items[item.id] = {
+          'name': item.name,
+          'type': item.type,
+          'equipped': false,
+          'stats': item.stats,
+          'amount': 1
+        }
+      }
+    } else {
+      console.log("Item is not a grabbable.");
       return;
     }
+
+    console.log(JSON.stringify(player.inventory));
 
     message.member.send(`After defeating ${enemy.name} you picked up a ${item.name}.`);
 
