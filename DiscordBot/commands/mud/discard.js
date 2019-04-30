@@ -34,6 +34,15 @@ class DiscardCommand extends commando.Command {
         }
     }
   }
+  /* plan:
+       - parse the args given so that we can get the given words into a single string (ex. 'Short' 'Sword' becomes 'Short Sword')
+       - compare this string to what's in player inventory to see if we have the item 
+       - if we have it, we then see if it's been assigned to a weapon or armor slot.
+          - if it has, we update player attributes by subtracting the strength or defense value of the item from the player's
+          - the slot is then made null
+       - ultimately, we delete the item from player inventory
+       - of course, if we don't have the item, we don't do any of this
+  */
         
 
     
