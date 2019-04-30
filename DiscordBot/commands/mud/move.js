@@ -56,7 +56,7 @@ class MoveCommand extends commando.Command {
       // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
       message.channel.send(`${player.name} moved ${direction}`);
       message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(e => console.error(e));
-      const roomy = this.client.channels.find('name', room.id);
+      const roomy = this.client.channels.find(channel => channel.name === room.id);
       roomy.send(`${player.name} has entered.`);
       
       // delete the user's command if not debugging
