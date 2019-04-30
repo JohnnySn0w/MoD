@@ -104,14 +104,16 @@ class AttackCommand extends commando.Command {
     // experience counter
     let xp = 0;
     while (player.health > 0 && enemy.health > 0) {
-      let damage = this.calculateDamage(player, enemy);
+      let damage;
       if(player.inventory.weapon != null){
         damage = this.calculateDamage(player, enemy, player.weapon.stats);
-      } 
+      }else{
+        damage = this.calculateDamage(player, enemy);
+      }
           //make sure player isn't doing negative damage
       if(damage > 0){
         enemy.health = enemy.health - damage;
-        message.channel.send(`${player.name} hit ${enemy.name} for ${damage.toString()} damage.`);
+        message.channel.send(`${player.name} hit ${enemy.name} for ${damage} damage.`);
       } else{
         message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
       }
