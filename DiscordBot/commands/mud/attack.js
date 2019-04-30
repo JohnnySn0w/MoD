@@ -127,21 +127,6 @@ class AttackCommand extends commando.Command {
       }
 
       //prevents enemy attacking if dead
-<<<<<<< HEAD
-      if(enemy.health <= 0) {
-        break;
-      }
-
-      //calculate enemy damage on agro target and update value
-      roll = Math.floor(Math.random() * 12) + 1;
-
-      if (roll >= 6) {
-        this.damage = this.calculateDamage(enemy, player, roll);
-        player.health = player.health - damage;
-        message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage.toString()} damage.`);
-        // health needs to update in case a player gets worried and checks their stats mid-battle
-        db.updateItem(player.id, ['health'], [player.health], 'players', ()=>{console.log("Player health and busy updated")});
-=======
       if(enemy.health > 0) {
         //calculate enemy damage on agro target and update value
         damage = enemy.strength - player.defense; //for the following lines replace player with agro target
@@ -151,7 +136,6 @@ class AttackCommand extends commando.Command {
         } else {
           message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
         }
->>>>>>> abf2eb76917b701752f0857e9df4048a16f751c7
       } else {
         message.channel.send(`${player.name} defeated the ${enemy.name}.`);
       }
