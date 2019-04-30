@@ -1,6 +1,6 @@
 [
     {
-        "name": "John",
+        "name": "Default Dan",
         "id": "0",
         "currentLevel": 0,
         "health": 100,
@@ -11,12 +11,33 @@
         "nextLevelExperience":100,
         "busy": false,
         "inventory": {
-            "keys": [
-
-            ],
-            "weapon": null,
-            "armor": null,
-            "gold": 0
+            "keys": {
+                "0": {
+                    "name": "bronze key",
+                    "used": false
+                }
+            },
+            "items": {
+                "1": {
+                    "name": "sword",
+                    "type": "weapon",
+                    "equipped": false,
+                    "stats": 2,
+                    "amount": 1
+                },
+                "2": {
+                    "name": "shield",
+                    "type": "armor",
+                    "equipped": false,
+                    "stats": 3,
+                    "amount": 1
+                }
+            },
+            "gold": 50
+        },
+        "equipment": {
+            "weapon": "1",
+            "armor": "2"
         },
         "progress": {
             "npc": {
