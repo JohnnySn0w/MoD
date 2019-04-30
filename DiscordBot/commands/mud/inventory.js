@@ -69,8 +69,7 @@ class InventoryCommand extends commando.Command {
         }
 
         // DM the player
-        message.member.send(`\`\`\`javascript\n${player.name}ʼs Inventory\nGold: ${player.inventory.gold}\nWeapon: ${weapon}\nArmor: ${armor}\n\nKey Items: ${keyList}\n\nItems: ${itemList}\`\`\``);
-        console.log(player);            
+        message.member.send(`\`\`\`javascript\n${player.name}ʼs Inventory\nGold: ${player.inventory.gold}\nWeapon: ${weapon}\nArmor: ${armor}\n\nKey Items: ${keyList}\n\nItems: ${itemList}\`\`\``);            
     }
   }
 }

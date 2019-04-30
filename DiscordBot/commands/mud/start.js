@@ -60,8 +60,8 @@ class StartCommand extends commando.Command {
           'gold': 50
         },
         'equipment': {
-            'weapon': null,
-            'armor': null
+          'weapon': null,
+          'armor': null
         },
         'busy': false,
         'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
@@ -76,7 +76,7 @@ class StartCommand extends commando.Command {
 
   setRoles(message) {
     // once the player data is stored on the database, reassign the player's room permissions to the entry room
-    var entryRoomRole = message.guild.roles.find(role => role.name === 'entry-room');
+    const entryRoomRole = message.guild.roles.find(role => role.name === 'entry-room');
     message.reply('Welcome to the MUD! Your journey starts in the above text channels. Good luck!');
     message.member.setRoles([entryRoomRole]).catch(e => console.error(e));
   }
