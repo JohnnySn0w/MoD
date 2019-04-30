@@ -33,12 +33,17 @@ class AttackCommand extends commando.Command {
   }
 
   getEnemy(message, entity, player, room) {
-    if (room.enemies[entity]) {
-      db.getItem(room.enemies[entity], 'enemies', (data) => this.checkHostile(message, player, data, room));
-    } else if (room.npcs[entity]) {
-      message.channel.send(`${player.name} glares with murderous intent towards ${entity}.`);
-    } else {
-      message.channel.send(`${player.name} glares with murderous intent towards no one in particular.`);
+    if (!player.busy) {
+      if (room.enemies[entity]) {
+        db.getItem(room.enemies[entity], 'enemies', (data) => this.checkHostile(message, player, data, room));
+      } else if (room.npcs[entity]) {
+        message.channel.send(`${player.name} glares with murderous intent towards ${entity}.`);
+      } else {
+        message.channel.send(`${player.name} glares with murderous intent towards no one in particular.`);
+      }
+    }
+    else {
+      message.channel.send(`${player.name} is too busy for battle!!!!`);
     }
   }
 

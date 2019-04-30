@@ -29,27 +29,26 @@ class MoveCommand extends commando.Command {
   }
 
   getRoom(message, player, room, direction, firstRetrieval) {
-    if (firstRetrieval) {
-      // otherwise, clean up the direction passed, and move the player into the next room
-      this.movePlayer(message, player, direction, room);
-    } else {
-      // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
-      message.channel.send(`${player.name} moved ${direction}`);
-      message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(e => console.error(e));
-      const roomy = this.client.channels.find('name', room.id);
-      roomy.send(`${player.name} has entered.`);
+    if (!player.busy) {
+      if (firstRetrieval) {
+        // otherwise, clean up the direction passed, and move the player into the next room
+        this.movePlayer(message, player, direction, room);
+      } else {
+        // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
+        message.channel.send(`${player.name} moved ${direction}`);
+        message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(e => console.error(e));
+        const roomy = this.client.channels.find('name', room.id);
+        roomy.send(`${player.name} has entered.`);
       
-      // delete the user's command if not debugging
-      if (!globals.DEBUG) {
-        message.delete();
+        // delete the user's command if not debugging
+        if (!globals.DEBUG) {
+          message.delete();
+        }
       }
+    } 
+    else {
+      message.channel.send(`${player.name} is too busy to move`);
     }
-  }
-
-  cleanArgs(direction) {
-    // ignore the argument's capitalization
-    direction = direction.toLowerCase();
-    return direction;
   }
 
   movePlayer(message, player, direction, room) {

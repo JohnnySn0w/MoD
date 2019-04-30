@@ -30,17 +30,22 @@ class TalkCommand extends commando.Command {
   }
 
   getNPC(message, npc, player, room) {
-    if (room.npcs[npc]) {
-      db.getItem(room.npcs[npc], 'npcs', (data) => this.getProgress(message, player, room, data));
-    } else {
-      // if not an npc, determine if the player is talking to an enemy
-      if (room.enemies[entity]) {
-        // if an enemy, then mention that the player can't talk to the enemy
-        message.channel.send(`The ${entity} would rather a fight than a chat.`);
+    if (!player.busy) {
+      if (room.npcs[npc]) {
+        db.getItem(room.npcs[npc], 'npcs', (data) => this.getProgress(message, player, room, data));
       } else {
-        // if not an enemy either, they're talking to no one
-        message.channel.send(`${player.name} is conversing with no one.`);
+        // if not an npc, determine if the player is talking to an enemy
+        if (room.enemies[entity]) {
+          // if an enemy, then mention that the player can't talk to the enemy
+          message.channel.send(`The ${entity} would rather a fight than a chat.`);
+        } else {
+          // if not an enemy either, they're talking to no one
+          message.channel.send(`${player.name} is conversing with no one.`);
+        }
       }
+    }
+    else {
+      message.channel.send(`${player.name} is too busy for chit chat`);
     }
   }
 
@@ -115,6 +120,7 @@ class TalkCommand extends commando.Command {
       message.reply(`${npc.name} says: ${response}`);
 
       if (!stop) {
+        db.updateItem(player.id, ['busy'], [true], 'players', ()=>{ console.log("yes busy!"); });
         // responses change to using length
         const filter = m => (((m.content < responseNum) && (Number.isInteger(Number(m.content)))) || (m.content.includes('?talk'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
         const collector = message.channel.createMessageCollector(filter, {time: 20000});
@@ -124,6 +130,7 @@ class TalkCommand extends commando.Command {
           collector.stop();
           
           if (m.content.includes('?talk')) {
+            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
             let newResponse = 'Oh ok bye';
             this.replyToPlayer(player, message, npc, newResponse, 1, room, true);
           } else {
@@ -140,6 +147,7 @@ class TalkCommand extends commando.Command {
               player.progress.npc[npc.id] = '0';
               db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
             }
+            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
           }
         });
       }
