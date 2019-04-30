@@ -85,16 +85,16 @@ class AttackCommand extends commando.Command {
     return args;
   }
 
+  // lets the player make a decision per round of combat
   playerChoice(message, player, enemy, xp) {
     let responded = false;
     let endBattle = false;
     //only accepts responses in key and only from the person who started convo
     const filter = m => m.author.id === message.author.id;
     const collector = message.channel.createMessageCollector(filter, {time: 15000});
+    console.log("collector on");
     // calculate player damage on enemy and update value
     collector.on('collect', m => {
-      console.log(`got ${m}`);
-
       responded = true;
       collector.stop();
       if (m.content.includes('weapon')) {
@@ -121,43 +121,45 @@ class AttackCommand extends commando.Command {
         message.channel.send(`${player.name} ran away from ${enemy.name}`);
       }
     });
-    console.log('returning vals');
     return [ player, enemy, endBattle, xp ];
   }
 
-  async combatLoop(message, player, enemy, room) {
-    // experience counter
-    console.log('stating loop');
-    let xp = 0;
+  enemyAttack(message, player, enemy) {
+    console.log('enemy attack');
     let endBattle = false;
-    let damage;
-    do {
-      console.log('while loop');
+    let damage = enemy.strength - player.defense; //for the following lines replace player with agro target
+    if (damage > 0) {
+      player.health = player.health - damage;
+      message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage} damage.`);
+    } else {
+      message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
+    }
+    if (player.health < 1){
+      return [ player, enemy, endBattle = true ];
+    } else {
+      return [ player, enemy, endBattle ];
+    }
+  }
+
+  async combatLoop(message, player, enemy, room, xp = 0, endBattle = false) {
+    // experience counter
+    if (!endBattle) {
       [ player, enemy, endBattle, xp ] = await this.playerChoice(message, player, enemy, xp);
-      console.log('returned fine');
       //prevents enemy attacking if dead
       if(enemy.health > 0) {
-        //calculate enemy damage on agro target and update value
-        damage = enemy.strength - player.defense; //for the following lines replace player with agro target
-        if (damage > 0) {
-          player.health = player.health - damage;
-          message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage} damage.`);
-        } else {
-          message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
-        }
-        if (player.health < 1){
-          endBattle = true;
-        }
+        //calculate enemy damage and update value
+        [ player, enemy, endBattle ] = await this.enemyAttack(message, player, enemy);
+        this.combatLoop(message, player, enemy, room, xp, endBattle);
       } else {
         endBattle = true;
         message.channel.send(`${player.name} defeated the ${enemy.name}.`);
-        console.log('Player no longer busy');
-        db.updateItem(player.id, ['busy'], [false], 'players', () =>{});
-        this.postCombat(enemy, message, player, room);
         this.leveling(xp, player, message);
-        this.rollLoot(message, player, enemy);
       }
-    } while (!endBattle);
+    } else {
+      console.log('Player no longer busy');
+      db.updateItem(player.id, ['busy'], [false], 'players', () =>{});
+      this.postCombat(enemy, message, player, room);
+    }
   }
 
   postCombat(enemy, message, player, room) {
@@ -175,6 +177,7 @@ class AttackCommand extends commando.Command {
           }, (enemy.respawn * 1000));
         });
       }
+      this.rollLoot(message, player, enemy);
     } else {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
 
@@ -186,7 +189,7 @@ class AttackCommand extends commando.Command {
     }
   }
 
-  async leveling(xp, player, message) {
+  leveling(xp, player, message) {
     // leveling
     player.experience = player.experience + xp;
     if (player.experience >= player.nextLevelExperience) {
