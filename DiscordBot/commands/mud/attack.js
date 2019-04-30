@@ -119,10 +119,11 @@ class AttackCommand extends commando.Command {
         if (m.content.includes('weapon')) {
           deleteMessage(m);
           let damage = 0;
-          if (player.inventory.weapon == null) {
+          if (player.equipment.weapon == null) {
             damage = this.calculateDamage(player, enemy);
           } else {
-            damage = this.calculateDamage(player, enemy, player.weapon.stats);
+            let weaponMod = player.inventory.items[player.equipment.weapon].stats;
+            damage = this.calculateDamage(player, enemy, weaponMod);
           }
           if (damage > 0) {
             enemy.health = enemy.health - damage;
@@ -162,10 +163,11 @@ class AttackCommand extends commando.Command {
 
   enemyAttack(message, player, enemy, room, xp) {
     let damage = 0;
-    if (player.inventory.armor == null) {
+    if (player.equipment.armor == null) {
       damage = this.calculateDamage(enemy, player);
     } else {
-      damage = this.calculateDamage(enemy, player, 0, player.armor.stats);
+      let armorMod = player.inventory.items[player.equipment.armor].stats;
+      damage = this.calculateDamage(enemy, player, 0, armorMod);
     }
     if (damage > 0) {
       player.health = player.health - damage;
@@ -302,17 +304,34 @@ class AttackCommand extends commando.Command {
   addItem(player, data, message, enemy) {
     let item = JSON.parse(data.body).Item;
     
-    // update player inventory depending on the item they got
-    if (item.type === 'key')
-      player.inventory.keys.push(item.name);
-    else if (item.type === 'weapon')
-      player.inventory.keys.push(item.name);
-    else if (item.type === 'armor')
-      player.inventory.keys.push(item.name);
-    else {
-      console.log('Item is not a grabbable.');
+    // if the item is a key item, add it to the player's list of keys
+    if (item.type === "key") {
+      player.inventory.keys[item.id] = {
+        'name': item.name,
+        'used': false
+      }
+    // if the item is a weapon or armor...
+    } else if (item.type === "weapon" || item.type === "armor") {
+      // check to see if the player already has that item
+      if (player.inventory.items[item.id]) {
+        // if so, bump the item's amount
+        player.inventory.items[item.id].amount = player.inventory.items[item.id].amount + 1;
+      } else {
+        // if not, add the item to the player's inventory
+        player.inventory.items[item.id] = {
+          'name': item.name,
+          'type': item.type,
+          'equipped': false,
+          'stats': item.stats,
+          'amount': 1
+        }
+      }
+    } else {
+      console.log("Item is not a grabbable.");
       return;
     }
+
+    console.log(JSON.stringify(player.inventory));
 
     message.member.send(`After defeating ${enemy.name} you picked up a ${item.name}.`);
 
