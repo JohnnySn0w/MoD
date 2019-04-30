@@ -106,17 +106,17 @@ class AttackCommand extends commando.Command {
     // commence the battle to the death
     while (player.health > 0 && enemy.health > 0) {
       let roll = Math.floor(Math.random() * 12) + 1;
+      let damage = 0;
       //roll 6 or higher for hit
       if(roll >= 6){
-        if(player.weapon === null){
-          let damage = calculateDamage(player, enemy, roll);
-        } else{
-          let damage = calculateDamage(player, enemy, roll, player.weapon.stats);
-        }
+        this.damage = this.calculateDamage(player, enemy, roll);
+        if(player.inventory.weapon != null){
+          this.damage = this.calculateDamage(player, enemy, roll, player.weapon.stats);
+        } 
           //make sure player isn't doing negative damage
-          if(damage > 0){
-            enemy.health = enemy.health - damage;
-            message.channel.send(`${player.name} hit ${enemy.name} for ${damage.toString()} damage.`);
+          if(this.damage > 0){
+            enemy.health = enemy.health - this.damage;
+            message.channel.send(`${player.name} hit ${enemy.name} for ${this.damage.toString()} damage.`);
           } else{
             message.channel.send(`${player.name} did no damage to ${enemy.name}`);
           }
@@ -135,7 +135,7 @@ class AttackCommand extends commando.Command {
       roll = Math.floor(Math.random() * 12) + 1;
 
       if (roll >= 6) {
-        damage = calculateDamage(enemy, player, roll)
+        this.damage = this.calculateDamage(enemy, player, roll);
         player.health = player.health - damage;
         message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage.toString()} damage.`);
         // health needs to update in case a player gets worried and checks their stats mid-battle
