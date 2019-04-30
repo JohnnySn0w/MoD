@@ -91,13 +91,13 @@ class AttackCommand extends commando.Command {
 
   calculateDamage(attacker, victim, roll, weaponMod = 0) {
       // calculate player damage on enemy and update value using weapon
-    let damage = attacker.strength + weaponMod;
+    let calcDamage = attacker.strength + weaponMod;
     if(roll >= 10){
-      damage *= 2;
+      calcDamage *= 2;
     }
     //calculate damage using enemy defense
-    damage -= victim.defense;
-    return damage;
+    calcDamage -= victim.defense;
+    return calcDamage;
   }
 
   combatLoop(message, player, enemy, room) {
@@ -109,14 +109,14 @@ class AttackCommand extends commando.Command {
       let damage = 0;
       //roll 6 or higher for hit
       if(roll >= 6){
-        this.damage = this.calculateDamage(player, enemy, roll);
+        damage = this.calculateDamage(player, enemy, roll);
         if(player.inventory.weapon != null){
-          this.damage = this.calculateDamage(player, enemy, roll, player.weapon.stats);
+          damage = this.calculateDamage(player, enemy, roll, player.weapon.stats);
         } 
           //make sure player isn't doing negative damage
-          if(this.damage > 0){
-            enemy.health = enemy.health - this.damage;
-            message.channel.send(`${player.name} hit ${enemy.name} for ${this.damage.toString()} damage.`);
+          if(damage > 0){
+            enemy.health = enemy.health - damage;
+            message.channel.send(`${player.name} hit ${enemy.name} for ${damage.toString()} damage.`);
           } else{
             message.channel.send(`${player.name} did no damage to ${enemy.name}`);
           }
@@ -129,10 +129,15 @@ class AttackCommand extends commando.Command {
       //prevents enemy attacking if dead
       if(enemy.health > 0) {
         //calculate enemy damage on agro target and update value
-        damage = enemy.strength - player.defense; //for the following lines replace player with agro target
-        if (damage > 0) {
-          player.health = player.health - damage;
-          message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage} damage.`);
+        let roll = Math.floor(Math.random() * 12) + 1;
+        if (roll >= 6) {
+          damage = this.calculateDamage(enemy, player, roll); //for the following lines replace player with agro target
+          if(damage > 0){
+            player.health = player.health - damage;
+            message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage} damage.`);
+          } else{
+            message.channel.send(`${enemy.name} did no damage to  ${player.name}.`);
+          }
         } else {
           message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
         }
