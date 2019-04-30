@@ -7,10 +7,6 @@ function deleteMessage(message) {
     message.delete();
   }
 }
-module.exports = { 
-	DEBUG,
-  deleteMessage
-};
 
 function playerCheck(args, data, callback, message) {
   let player = JSON.parse(data.body).Item;
@@ -28,7 +24,12 @@ function roomCheck(args, player, message, data, callback) {
   }
 }
 
-module.exports.bigCheck = (message, args, callback) => {
+function bigCheck(message, args, callback) {
   args = args.toLowerCase();
   db.getItem(message.member.id, 'players', (data) => playerCheck(args, data, callback, message));
+};
+
+module.exports = { 
+	DEBUG,
+  deleteMessage, bigCheck
 };
