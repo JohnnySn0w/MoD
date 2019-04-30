@@ -92,42 +92,44 @@ class AttackCommand extends commando.Command {
     const filter = m => m.author.id === message.author.id;
     const collector = message.channel.createMessageCollector(filter, {time: 10000});
     // calculate player damage on enemy and update value
-    collector.on('collect', m => {
+    collector.on('collect', () => {
       responded = true;
       collector.stop();
-      if (m.content.includes('weapon')) {
-        let damage = player.strength - enemy.defense;
-        if (damage > 0) {
-          enemy.health = enemy.health - damage;
-          message.channel.send(`${player.name} hit ${enemy.name} for ${damage} damage.`);
-          // increment experience counter; can vary depending on the enemy later
-          xp = xp + 5;
-        } else {
-          message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
-        }
-      } else if (m.content.includes('run')){
-        message.channel.send(`${player.name} ran away from ${enemy.name}`);
-        this.leveling(xp, player, message);
-        this.postCombat(enemy, message, player, room);
-        return null;
-      } else {
-        //in the future, we can add a magic system here
-        message.member.send('That ain\'t a valid attack type pardner');
-        message.channel.send(`${player.name} is flailing around`);
-      }
     });
-    collector.on('end', () => {
+    collector.on('end', m => {
+      m = m.array()[0];
       if (!responded) {
         message.channel.send(`${player.name} sauntered away from ${enemy.name}, as if in a daze`);
         this.leveling(xp, player, message);
         this.postCombat(enemy, message, player, room);
       } else {
+        if (m.content.includes('weapon')) {
+          let damage = player.strength - enemy.defense;
+          if (damage > 0) {
+            enemy.health = enemy.health - damage;
+            message.channel.send(`${player.name} hit ${enemy.name} for ${damage} damage.`);
+            // increment experience counter; can vary depending on the enemy later
+            xp = xp + 5;
+          } else {
+            message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
+          }
+        } else if (m.content.includes('run')){
+          message.channel.send(`${player.name} ran away from ${enemy.name}`);
+          this.leveling(xp, player, message);
+          this.postCombat(enemy, message, player, room);
+          return null;
+        } else if (m.content.includes('magic')){
+          message.channel.send(`${player.name} is shoutin' nonsense`);
+        } else{
+          //in the future, we can add a magic system here
+          message.member.send('That ain\'t a valid attack type pardner');
+          message.channel.send(`${player.name} is flailing around`);
+        }
         //prevents enemy attacking if dead
         if(enemy.health > 0) {
           //calculate enemy damage and update value
           this.enemyAttack(message, player, enemy, room, xp);
         } else {
-          message.channel.send(`${player.name} defeated the ${enemy.name}.`);
           this.leveling(xp, player, message);
           this.postCombat(enemy, message, player, room);
         }
@@ -136,7 +138,6 @@ class AttackCommand extends commando.Command {
   }
 
   enemyAttack(message, player, enemy, room, xp) {
-    console.log('enemy attack');
     let damage = enemy.strength - player.defense; //for the following lines replace player with agro target
     if (damage > 0) {
       player.health = player.health - damage;
@@ -155,7 +156,6 @@ class AttackCommand extends commando.Command {
   combatLoop(message, player, enemy, room, xp = 0) {
     // experience counter
     if (player.health > 0 && enemy.health > 0) {
-      console.log('battleongoing');
       this.playerChoice(message, player, enemy, room, xp);
     } else {
       this.postCombat(enemy, message, player, room);
@@ -163,11 +163,14 @@ class AttackCommand extends commando.Command {
   }
 
   postCombat(enemy, message, player, room) {
-    console.log('Player no longer busy');
+    // Player no longer busy
     db.updateItem(player.id, ['busy'], [false], 'players', () =>{});
-    if(enemy.health <= 0) {
+    if(enemy.health < 1) {
       // update the player health and enemy aggro state and notify the room
-      console.log('updating player health');
+      setTimeout(() => {
+        message.channel.send(`${player.name} defeated the ${enemy.name}.`);
+      }, 100);
+      // updating player health
       db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
 
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
@@ -245,7 +248,7 @@ class AttackCommand extends commando.Command {
     if (possibleLoot.length != 0) {
       // pick a possible loot item randomly
       let loot = possibleLoot[Math.floor(Math.random() * (possibleLoot.length-1))];
-      console.log(`Got loot! - ${JSON.stringify(loot)}`);
+      //console.log(`Got loot! - ${JSON.stringify(loot)}`);
 
       // if it's gold, add it to the player's inventory direction
       if (loot.type === 'gold') {
@@ -257,7 +260,7 @@ class AttackCommand extends commando.Command {
         db.getItem(loot.id, 'items', (data) => this.addItem(player, data, message, enemy));
       }
     } else {
-      console.log('No loot.');
+      //console.log('No loot.');
       // the player won nothing
       message.member.send(`There was nothing on the ${enemy.name}'s body.`);
     }
