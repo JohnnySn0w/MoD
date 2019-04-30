@@ -12,7 +12,7 @@ class DiscardCommand extends commando.Command {
     });
   }
 
-  async run(message) {
+  async run(message, arge) {
     db.getItem(message.member.id, 'players', (data) => this.getPlayer(data, message));
     // delete the user's command if not debugging
     if (!DEBUG) {
@@ -30,8 +30,29 @@ class DiscardCommand extends commando.Command {
             message.member.send("You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.");
         }
         else {
-            // otherwise, do stuff here        
+            discardItem(player, data, args);       
         }
+    }
+    discardItem(player, data, args) {
+      //so to discard, we need to make sure tehy picked a number in the range
+      if(player.inventory[args]){ // check if the item exists
+        if(player.inventory[args].type === "weapon" || player.inventory[args].type === "armor"){// checking if the item is an equipment
+          //then if it's an equipped item, we need to midify the appropriate stats before discarding the item
+          // so something like
+          /* if(item.equipped){
+            update appropriate stat (strength or defense)
+            then remove the item
+          }
+          */
+        } 
+        else //not an equipment
+        {
+          //just discard the item
+        }
+      }
+      else{
+        //item doesn't exist at index [args]
+      }  
     }
   }
         
