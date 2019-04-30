@@ -1,4 +1,4 @@
-const globals = require('../../globals.js');
+const {DEBUG, bigCheck} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -22,11 +22,11 @@ class AttackCommand extends commando.Command {
 
   async run(message, args) {
     // delete the user's command if not debugging
-    if (!globals.DEBUG) {
+    if (!DEBUG) {
       message.delete();
     }
     //console.log(args);
-    globals.bigCheck(message, args.object, this.getEnemy.bind(this));
+    bigCheck(message, args.object, this.getEnemy.bind(this));
     //db.getItem(message.member.id, 'players', (data) => this.checkPlayer(message, data, args));
   }
 

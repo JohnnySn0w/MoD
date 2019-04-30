@@ -1,4 +1,4 @@
-const globals = require('../../globals.js');
+const {DEBUG, bigCheck} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -21,7 +21,7 @@ class MoveCommand extends commando.Command {
 
   async run(message, {direction}) {
     //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, direction));
-    globals.bigCheck(message, direction, this.setRetrieval.bind(this));
+    bigCheck(message, direction, this.setRetrieval.bind(this));
   }
 
   setRetrieval(message, direction, player, room) {

@@ -1,4 +1,4 @@
-const globals = require('../../globals.js');
+const {DEBUG, bigCheck} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -22,9 +22,9 @@ class TalkCommand extends commando.Command {
   async run(message, {npc}) {
     // get the player object so that we know the player's progress with this NPC
     //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, npc, data));
-    globals.bigCheck(message, npc, this.getNPC.bind(this));
+    bigCheck(message, npc, this.getNPC.bind(this));
     // delete the user's command if not debugging
-    if (!globals.DEBUG){
+    if (!DEBUG){
       message.delete();
     }
   }

@@ -1,4 +1,4 @@
-const globals = require('../../globals.js');
+const {DEBUG, bigCheck} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -21,10 +21,10 @@ class LookCommand extends commando.Command {
 
   async run(message, args) {
     // delete the user's command if not debugging
-    if (!globals.DEBUG)
+    if (!DEBUG)
       message.delete();
 
-    globals.bigCheck(message, args.object, this.getRoom.bind(this));
+    bigCheck(message, args.object, this.getRoom.bind(this));
     //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, args));
   }
 
