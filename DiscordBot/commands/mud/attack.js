@@ -229,11 +229,14 @@ class AttackCommand extends commando.Command {
 
   leveling(xp, player, message) {
     // leveling
-    player.experience = player.experience + xp;
+    player.experience += xp;
     if (player.experience >= player.nextLevelExperience) {
+      player.maxhealth +=5;
       db.updateItem(
         player.id,
         [
+          'health',
+          'maxhealth',
           'experience',
           'currentLevel',
           'nextLevelExperience',
@@ -241,10 +244,12 @@ class AttackCommand extends commando.Command {
           'defense'
         ],
         [
+          player.maxhealth,
+          player.maxhealth,
           player.experience,
           player.currentLevel + 1,
           player.nextLevelExperience + Math.floor(player.nextLevelExperience * 1.1),
-          player.strength + player.currentLevel, //this gives the players factorial additions to str and def
+          player.strength + player.currentLevel, //this gives the players n factorial additions to str and def
           player.defense + player.currentLevel
         ],
         'players',
@@ -280,7 +285,7 @@ class AttackCommand extends commando.Command {
 
       // if it's gold, add it to the player's inventory direction
       if (loot.type === 'gold') {
-        player.inventory.gold = player.inventory.gold + loot.amount;
+        player.inventory.gold += loot.amount;
         db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
         message.member.send(`After defeating ${enemy.name} you picked up ${loot.amount} gold.`);
       // else, grab the item from the item table and add it to the player's inventory properly
