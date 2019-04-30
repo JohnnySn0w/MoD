@@ -69,6 +69,7 @@ class AttackCommand extends commando.Command {
         // make the player too busy to do anything else
         db.updateItem(player.id, ['busy'], [true], 'players', ()=>{
           console.log('Player is busy');
+          message.channel.send(`${player.name} has engaged ${enemy.name} in combat!`);
           this.combatLoop(message, player, enemy, room);
         });
       }
@@ -108,6 +109,7 @@ class AttackCommand extends commando.Command {
     });
     collector.on('end', m => {
       m = m.array()[0];
+      m.content = m.content.toLowerCase();
       if (!responded) {
         message.channel.send(`${player.name} sauntered away from ${enemy.name}, as if in a daze`);
         db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
@@ -115,6 +117,7 @@ class AttackCommand extends commando.Command {
         this.postCombat(enemy, message, player, room);
       } else {
         if (m.content.includes('weapon')) {
+          deleteMessage(m);
           let damage = 0;
           if (player.inventory.weapon == null) {
             damage = this.calculateDamage(player, enemy);
@@ -130,14 +133,17 @@ class AttackCommand extends commando.Command {
             message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
           }
         } else if (m.content.includes('run')){
+          deleteMessage(m);
           message.channel.send(`${player.name} ran away from ${enemy.name}`);
           db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
           this.leveling(xp, player, message);
           this.postCombat(enemy, message, player, room);
           return null;
         } else if (m.content.includes('magic')){
+          deleteMessage(m);
           message.channel.send(`${player.name} is shouting nonsense`);
-        } else{
+        } else {
+          deleteMessage(m);
           //in the future, we can add a magic system here
           message.member.send('That ain\'t a valid attack type pardner');
           message.channel.send(`${player.name} is flailing around`);
