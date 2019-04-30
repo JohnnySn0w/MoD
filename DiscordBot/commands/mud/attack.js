@@ -231,7 +231,8 @@ class AttackCommand extends commando.Command {
     // leveling
     player.experience += xp;
     if (player.experience >= player.nextLevelExperience) {
-      player.maxhealth +=5;
+      player.maxhealth += 5;
+      player.currentLevel += 1;
       db.updateItem(
         player.id,
         [
@@ -247,7 +248,7 @@ class AttackCommand extends commando.Command {
           player.maxhealth,
           player.maxhealth,
           player.experience,
-          player.currentLevel + 1,
+          player.currentLevel,
           player.nextLevelExperience + Math.floor(player.nextLevelExperience * 1.1),
           player.strength + player.currentLevel, //this gives the players n factorial additions to str and def
           player.defense + player.currentLevel
