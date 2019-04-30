@@ -33,7 +33,6 @@ class StatsCommand extends commando.Command {
             // otherwise, direct message the player with their health, strength, and defense            
             message.member.send(
               `\`\`\`javascript\n${player.name}ʼs Player Stats\nHealth: ${player.health}/${player.maxhealth}\nLevel: ${player.currentLevel}\nStrength: ${player.strength}\nDefense: ${player.defense}\nCurrent Experience: ${player.experience}/${Math.floor(player.nextLevelExperience)}\n\`\`\``);
-            console.log(player);
             // also send a warning if the player's health is low
             if (player.health > 0 && player.health < 11) {
                 message.member.send("You're on death's door, my friend.");
