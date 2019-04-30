@@ -126,7 +126,7 @@ class AttackCommand extends commando.Command {
         // calculate enemy damage on agro target and update value
         let damage = 0;
         if (player.inventory.armor == null) {
-          damage = this.calculateDamage(player, enemy);
+          damage = this.calculateDamage(enemy, player);
         } else {
           damage = this.calculateDamage(enemy, player, 0, player.armor.stats);
         }
