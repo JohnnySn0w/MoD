@@ -49,7 +49,7 @@ class InventoryCommand extends commando.Command {
               itemkeys = "None";
             }
             // DM the player
-            message.member.send("Inventory:" +  "\n" + "\n" + "Gold: " + player.inventory.gold + "\n" + "Weapon: " + weapon + "\n" + "Armor: " + armor + "\n" + "Items: " + itemkeys + "\n" + "---------------------------");
+            message.member.send(`\`\`\`javascript\n${player.name}ʼs Inventory\nGold: ${player.inventory.gold}\nWeapon: ${weapon}\nArmor: ${armor}\nItems: ${itemkeys}\n\`\`\``);
             console.log(player);            
         }
     }
