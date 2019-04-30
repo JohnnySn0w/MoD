@@ -60,8 +60,8 @@ class StartCommand extends commando.Command {
           'gold': 50
         },
         'equipment': {
-            'weapon': 0,
-            'armor': 0
+            'weapon': null,
+            'armor': null
         },
         'busy': false,
         'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)

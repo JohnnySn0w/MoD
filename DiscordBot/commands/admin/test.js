@@ -261,8 +261,8 @@ function addPlayerBack(message) {
             "gold": 50
         },
         "equipment": {
-            "weapon": 0,
-            "armor": 0
+            "weapon": null,
+            "armor": null
         },
         'progress': {'npc':{}}, // progress is added dynamically with each new npc encounter now :^)
         'busy': false
