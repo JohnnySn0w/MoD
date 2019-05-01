@@ -1,4 +1,4 @@
-const {DEBUG} = require('../../globals.js');
+const {deleteMessage, bigCheck} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -20,47 +20,24 @@ class LookCommand extends commando.Command {
   }
 
   async run(message, args) {
-    // delete the user's command if not debugging
-    if (!DEBUG)
-      message.delete();
-
-    db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, args));
+    bigCheck(message, args.object, this.getRoom.bind(this));
+    deleteMessage(message);
   }
 
-  getPlayer(message, data, args) {
-    // grab the actual room object
-    var body = JSON.parse(data.body);
-    var player = body.Item;
-
-    if (player === undefined) {
-      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
-    }
-    else {
-      // get the room object that the player is in
-      db.getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, player, data, args));
-    }
-  }
-
-  getRoom(message, player, data, args) {
-    // grab the actual room object
-    var body = JSON.parse(data.body);
-    var room = body.Item;
-
-    args = this.cleanArgs(args);
-
+  getRoom(message, args, player, room) {
     var object;
-    if (args.object === 'room' || args.object === 'here') {
+    if (args === 'room' || args === 'here') {
       this.replyToPlayer(message, player, true, room);
     }
     else {
       // otherwise, the player is looking at an item, which we need to determine
-      object = this.determineItem(args.object, room);
+      object = this.determineItem(args, room);
       if (object === undefined) {
         // if the object doesn't exist, then the player is looking at an NPC, enemy, or nothing
-        object = this.determineNPC(args.object, room);
+        object = this.determineNPC(args, room);
         if (object === undefined) {
           // if the object still doesn't exist, then the player is looking at an enemy or nothing
-          object = this.determineEnemy(args.object, room);
+          object = this.determineEnemy(args, room);
           if (object === undefined) {
             // the player is not looking at anything
             message.channel.send(`${player.name} stares into space.`);
@@ -74,12 +51,6 @@ class LookCommand extends commando.Command {
         db.getItem(object, 'items', (data) => this.replyToPlayer(message, player, false, room, data));
       }
     }
-  }
-
-  cleanArgs(args) {
-    // ignore the argument's capitalization
-    args.object = args.object.toLowerCase();
-    return args;
   }
 
   determineItem(searchName, room) {

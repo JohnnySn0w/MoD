@@ -1,3 +1,4 @@
+const db = require('../dbhandler');
 const DEBUG = true;
 
 function deleteMessage(message) {
@@ -7,7 +8,33 @@ function deleteMessage(message) {
   }
 }
 
+function playerCheck(args, data, callback, message) {
+  let player = JSON.parse(data.body).Item;
+  
+  if (player === undefined) {
+    message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
+  } else {
+    db.getItem(message.channel.name, 'rooms', (moreData) => roomCheck(args, player, message, moreData, callback))
+  }
+}
+
+function roomCheck(args, player, message, data, callback) {
+  // grab the actual player object
+  const room = JSON.parse(data.body).Item;
+
+  if (room === undefined) {
+    message.member.send('You are not in a MUD related room.');
+  } else {
+    callback(message, args, player, room);
+  }
+}
+
+function bigCheck(message, args, callback) {
+  args = args.toLowerCase();
+  db.getItem(message.member.id, 'players', (data) => playerCheck(args, data, callback, message));
+};
+
 module.exports = { 
-  DEBUG,
-  deleteMessage
+	DEBUG,
+  deleteMessage, bigCheck
 };

@@ -1,4 +1,4 @@
-const { deleteMessage } = require('../../globals.js');
+const { deleteMessage, bigCheck } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -21,32 +21,12 @@ class AttackCommand extends commando.Command {
   }
 
   async run(message, args) {
-    db.getItem(message.member.id, 'players', (data) => this.checkPlayer(message, data, args));
+    bigCheck(message, args.object, this.getEnemy.bind(this));
     deleteMessage(message);
   }
 
-  checkPlayer(message, data, args) {
-    // grab the actual player object
-    var player = JSON.parse(data.body).Item;
-
-    if (player === undefined) {
-      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
-    } else {
-      // get the room object that the player is in
-      db.getItem(message.channel.name, 'rooms', (data) => this.checkRoom(message, data, args, player));
-    }
-  }
-
-  checkRoom(message, data, args, player) {
-    const room = JSON.parse(data.body).Item;
-    const entity = this.cleanArgs(args).object;
-
-    // check if the player is in a MUD-room
-    if (room === undefined) {
-      message.member.send('You\'re not in of the MUD-related rooms.');
-    }
-    else {
-      // determine if the entity is an enemy, npc, or invalid object
+  getEnemy(message, entity, player, room) {
+    if (!player.busy) {
       if (room.enemies[entity]) {
         db.getItem(room.enemies[entity], 'enemies', (data) => this.checkHostile(message, player, data, room));
       } else if (room.npcs[entity]) {
@@ -54,6 +34,9 @@ class AttackCommand extends commando.Command {
       } else {
         message.channel.send(`${player.name} is feeling stabby.`);
       }
+    }
+    else {
+      message.channel.send(`${player.name} is too busy for battle!`);
     }
   }
 
@@ -326,7 +309,8 @@ class AttackCommand extends commando.Command {
           'type': item.type,
           'equipped': false,
           'stats': item.stats,
-          'amount': 1
+          'amount': 1,
+          'id': item.id
         }
       }
     } else {

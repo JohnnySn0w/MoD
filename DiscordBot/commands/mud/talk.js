@@ -1,4 +1,4 @@
-const {DEBUG} = require('../../globals.js');
+const {deleteMessage, bigCheck} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -21,36 +21,13 @@ class TalkCommand extends commando.Command {
 
   async run(message, {npc}) {
     // get the player object so that we know the player's progress with this NPC
-    db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, npc, data));
-    // delete the user's command if not debugging
-    if (!DEBUG){
-      message.delete();
-    }
+    //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, npc, data));
+    bigCheck(message, npc, this.getNPC.bind(this));
+    deleteMessage(message);
   }
 
-  getPlayer(message, npc, data) {
-    // grab the actual player object
-    let player = JSON.parse(data.body).Item;
-
-    if (player === undefined) {
-      // if we couldn't find the player, they haven't started yet
-      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
-    }
-    else {
-      // otherwise, get the room object that the player is in
-      db.getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, npc, player, data));
-    }
-  }
-
-  getRoom(message, entity, player, data) {
-    // grab the actual player object
-    const room = JSON.parse(data.body).Item;
-    entity = this.cleanArgs(entity);
-
-    if (room === undefined) {
-      message.member.send('You are not in a MUD related room.');
-    } else {
-      // determine if the player is talking to an NPC
+  getNPC(message, entity, player, room) {
+    if (!player.busy) {
       if (room.npcs[entity]) {
         db.getItem(room.npcs[entity], 'npcs', (data) => this.getProgress(message, player, room, data));
       } else {
@@ -64,12 +41,9 @@ class TalkCommand extends commando.Command {
         }
       }
     }
-  }
-
-  cleanArgs(npc) {
-    // ignore the argument's capitalization
-    npc = npc.toLowerCase();
-    return npc;
+    else {
+      message.channel.send(`${player.name} is too busy for chit chat!`);
+    }
   }
 
   getProgress(message, player, room, data) {
@@ -160,8 +134,9 @@ class TalkCommand extends commando.Command {
       message.reply(`${npc.name} says: ${npcResponse}`);
 
       if (!stop) {
-        // if the player is still talking to the npc, create a collector for the player's responses
-        const filter = m => (((m.content < playerResponseCount) && (Number.isInteger(Number(m.content)))) || (m.content.includes('?talk'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
+        db.updateItem(player.id, ['busy'], [true], 'players', ()=>{ console.log("yes busy!"); });
+        // responses change to using length
+        const filter = m => (((m.content < playerResponseCount) && (Number.isInteger(Number(m.content)))) || (m.content.includes('leave'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
         const collector = message.channel.createMessageCollector(filter, {time: 20000});
 
         // if the player responses...
@@ -171,7 +146,8 @@ class TalkCommand extends commando.Command {
           collector.stop();
           
           // kill the conversation if the player is trying to talk to another NPC
-          if (m.content.includes('?talk')) {
+          if (m.content.includes('leave')) {
+            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
             let newNpcResponse = 'Oh ok bye';
             this.replyToPlayer(player, message, npc, newNpcResponse, 1, room, true);
           } else {
@@ -196,6 +172,7 @@ class TalkCommand extends commando.Command {
               player.progress.npc[npc.id] = '0';
               db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
             }
+            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
           }
         });
       }
@@ -266,7 +243,8 @@ class TalkCommand extends commando.Command {
           'type': item.type,
           'equipped': false,
           'stats': item.stats,
-          'amount': 1
+          'amount': 1,
+          'id': item.id
         }
       }
     } else {

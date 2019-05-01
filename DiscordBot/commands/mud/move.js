@@ -1,4 +1,4 @@
-const {DEBUG} = require('../../globals.js');
+const {deleteMessage, bigCheck} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -20,57 +20,34 @@ class MoveCommand extends commando.Command {
   }
 
   async run(message, {direction}) {
-    db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, direction));
+    //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, direction));
+    bigCheck(message, direction, this.setRetrieval.bind(this));
+    deleteMessage(message);
   }
 
-  getPlayer(message, data, direction) {
-    // grab the actual room object
-    var body = JSON.parse(data.body);
-    var player = body.Item;
-
-    if (player === undefined) {
-      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
-    }
-    else {
-      // get the room object that the player is in
-      db.getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, player, data, direction, true));
-    }
+  setRetrieval(message, direction, player, room) {
+    this.getRoom(message, player, room, direction, true);
   }
 
-  getRoom(message, player, data, direction, firstRetrieval) {
-    // grab the actual room object
-    const body = JSON.parse(data.body);
-    const room = body.Item;
-
-    if (firstRetrieval) {
-      // if we're grabbing the room that the player is currently in, then we need to make sure it's a MUD sanctioned room
-      if (room === undefined) {
-        // if they're not in a MUD room, alert them of this
-        message.member.send('You\'re not in of the MUD-related rooms.');                
-      } else {
+  getRoom(message, player, room, direction, firstRetrieval) {
+    if (!player.busy) {
+      if (firstRetrieval) {
         // otherwise, clean up the direction passed, and move the player into the next room
-        direction = this.cleanArgs(direction);
         this.movePlayer(message, player, direction, room);
+      } else {
+        // grab the actual room object since we did another dynamo call to get it
+        const actualRoom = JSON.parse(room.body).Item;
+
+        // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
+        message.channel.send(`${player.name} moved ${direction}`);
+        const roomRole = message.guild.roles.find(role => role.name === actualRoom.id);
+        message.member.setRoles([roomRole]).catch(e => console.error(e));
+        const roomy = this.client.channels.find(channel => channel.name === actualRoom.id);
+        roomy.send(`${player.name} has entered.`);
       }
     } else {
-      // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
-      message.channel.send(`${player.name} moved ${direction}`);
-      const roomRole = message.guild.roles.find(role => role.name === room.id);
-      message.member.setRoles([roomRole]).catch(e => console.error(e));
-      const roomy = this.client.channels.find(channel => channel.name === room.id);
-      roomy.send(`${player.name} has entered.`);
-      
-      // delete the user's command if not debugging
-      if (!DEBUG) {
-        message.delete();
-      }
+      message.channel.send(`${player.name} is too busy to move!`);
     }
-  }
-
-  cleanArgs(direction) {
-    // ignore the argument's capitalization
-    direction = direction.toLowerCase();
-    return direction;
   }
 
   movePlayer(message, player, direction, room) {
@@ -81,11 +58,6 @@ class MoveCommand extends commando.Command {
     else {
       // otherwise, alert the player of the lack of exits
       message.channel.send(`${player.name} has lost their sense of direction`);
-
-      // delete the user's command if not debugging
-      if (!DEBUG) {
-        message.delete();
-      }
     }
   }
 }
