@@ -158,8 +158,8 @@
         "items": {
         },
         "npcs": {
-            "old-man": "1",
-            "little-boy": "2",
+            "old man": "1",
+            "little boy": "2",
             "shopkeep": "3"
         },
         "enemies": {
@@ -198,7 +198,7 @@
     },
     {
         "id": "ruins-hallway",
-        "description": "The hall breaks away and the passage fades to nothing but sky and trees. There's a small cave to the west, and then the remains of the hall deadend, cut off by boulders.",
+        "description": "The hall breaks away and the passage fades to nothing but sky and trees. There's a small cave to the west, and then the remains of the hall comes to a dead end, cut off by boulders.",
         "exits": {
             "north": "ruins-atrium",
             "west": "that-cave"

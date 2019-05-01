@@ -8,7 +8,7 @@ class StartCommand extends commando.Command {
       name: 'start',
       group: 'mud',
       memberName: 'start',
-      description: 'Sets the player on his or her journey into the MUD'
+      description: '`?start` will create your character, and let you play the game. '
     });
   }
 
@@ -73,7 +73,7 @@ class StartCommand extends commando.Command {
 
   setRoles(message) {
     // once the player data is stored on the database, reassign the player's room permissions to the entry room
-    const entryRoomRole = message.guild.roles.find(role => role.name === 'entry-room');
+    const entryRoomRole = message.guild.roles.find(role => role.name === 'a-journey-begins');
     message.reply('Welcome to the MUD! Your journey starts in the above text channels. Good luck!');
     message.member.setRoles([entryRoomRole]).catch(e => console.error(e));
   }

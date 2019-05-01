@@ -21,7 +21,7 @@ class MoveCommand extends commando.Command {
 
   async run(message, {direction}) {
     //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, direction));
-    bigCheck(message, direction, this.setRetrieval.bind(this));
+    bigCheck(message, this.setRetrieval.bind(this), direction);
     deleteMessage(message);
   }
 

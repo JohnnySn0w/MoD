@@ -1,4 +1,4 @@
-const { deleteMessage, bigCheck } = require('../../globals.js');
+const { deleteMessage, bigCheck, respawn } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -9,7 +9,7 @@ class AttackCommand extends commando.Command {
       name: 'attack',
       group: 'mud',
       memberName: 'attack',
-      description: `?attack <target> and then afterwards, supply a type of attack within 10 seconds. Valid keywords after initiation: weapon, magic, run`,
+      description: '\n```?attack <target> and then afterwards, supply a type of attack within 10 seconds. Valid keywords after initiation: weapon, magic, run```',
       args: [
         {
           key: 'object',
@@ -21,7 +21,7 @@ class AttackCommand extends commando.Command {
   }
 
   async run(message, args) {
-    bigCheck(message, args.object, this.getEnemy.bind(this));
+    bigCheck(message, this.getEnemy.bind(this), args.object);
     deleteMessage(message);
   }
 
@@ -208,18 +208,10 @@ class AttackCommand extends commando.Command {
       this.rollLoot(message, player, enemy);
     } else if (player.health < 1) {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
-      this.respawn(player, message);
+      respawn(player, message);
     } else {
       return null;
     }
-  }
-
-  respawn(player, message) {
-    // respawn player
-    db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => console.log('Player health restored'));
-    message.member.setRoles([message.guild.roles.find(role => role.name === 'entry-room')]).catch(console.error);
-    var channel = this.client.channels.find(channel => channel.name === 'entry-room');
-    channel.send(`${player.name} is reborn, ready to fight again!`);
   }
 
   leveling(xp, player, message) {

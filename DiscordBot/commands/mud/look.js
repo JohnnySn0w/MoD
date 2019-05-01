@@ -20,13 +20,13 @@ class LookCommand extends commando.Command {
   }
 
   async run(message, args) {
-    bigCheck(message, args.object, this.getRoom.bind(this));
+    bigCheck(message, this.getRoom.bind(this), args.object);
     deleteMessage(message);
   }
 
   getRoom(message, args, player, room) {
     var object;
-    if (args === 'room' || args === 'here') {
+    if (args === 'room' || args === 'here'|| args === 'around' || args === 'area') {
       this.replyToPlayer(message, player, true, room);
     }
     else {

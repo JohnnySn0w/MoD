@@ -95,7 +95,7 @@
                 ]
             },
             "6" : {
-                "reply": "We're in a cave you silly goose!!!",
+                "reply": "We're in a village square you silly goose!!!",
                 "prompts": [
                     {
                         "prompt": "[0] Say hello again", 
