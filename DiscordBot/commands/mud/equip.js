@@ -25,7 +25,7 @@ class EquipCommand extends commando.Command {
     var body = JSON.parse(data.body);
     var player = body.Item;
 
-    args = args.join(' '.replace(/"/g, ''));
+    args = args.toLowerCase().replace(/"/g, '');
 
         if (player === undefined) {
             // if the player isn't in the database already, send them a notice that they need to "?start" the game
@@ -33,16 +33,31 @@ class EquipCommand extends commando.Command {
         }
         else {
             // do something
-            console.log(args);
+            (player.inventory.keys).forEach(element => {
+              if (args == element.toLowerCase().replace(/"/g, '')) {
+                console.log("Match!");
+                // find item in items table
+                db.getItem(element, 'items', (data) => this.checkItem(message, player, data, args));
+                // check item type
+                // assign item name to appropriate slot
+                // update player stats based on item
+              } else {
+                console.log("Not a match!");
+              }
+              
+            });           
     }
+    
+  }
+  checkItem(message, player, data, args) {
+
   }
   /* plan:
       - parse the args given so that we can get the given words into a single string (ex. 'Short' 'Sword' becomes 'Short Sword')
       - compare this string to what's in player inventory to see if we have the item
       - if we have the item, we then check its type and assign the item to the appropriate slot (weapon or armor)
           - we also go find the item in the items table and update player attributes (strength, defense, etc.) based on given values
-      - of course, if we don't have that item, we don't do this
-      - I'm not gonna shift it to lowercase for now, but I may if things go sideways
+      - of course, if we don't have that item, we don't do this      
 
   */
   
