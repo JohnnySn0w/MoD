@@ -8,6 +8,7 @@ const move = require('../mud/move.js');
 const start = require('../mud/start.js');
 const stats = require('../mud/stats.js');
 const talk = require('../mud/talk.js');
+const inventory = require('../mud/inventory.js');
 
 class Test extends commando.Command {
     constructor(client) {
@@ -53,6 +54,9 @@ class Test extends commando.Command {
             case "attack":
                 testAttackCommand(message, this.client);
                 break;
+            case "inventory":
+                testInventoryCommand(message, this.client);
+                break;
             default:
                 if (!DEBUG)
                     message.delete();
@@ -89,7 +93,12 @@ class Test extends commando.Command {
                         setTimeout(function() {
                             message.channel.send("Testing Attack");                        
                             testAttackCommand(message, client);
-                            
+
+                            setTimeout(function() {
+                                message.channel.send("Testing Inventory");                        
+                                testInventoryCommand(message, client);
+                                
+                            }, 4000);
                         }, 4000);
                     }, 4000);
                 }, 4000);
@@ -240,6 +249,26 @@ function testTalkCommand(message, client) {
 
 function testAttackCommand(message, client) {
     message.channel.send("No testing implemented yet.");
+}
+
+function testInventoryCommand(message, client) {
+    // grab the inventory command and run it
+    var command = new inventory(client);
+    command.run(message);
+
+    // delete the player and then run the inventory command again
+    setTimeout(function() {
+        db.deleteItem(message.member.id, 'players', (data) => deleteData(data));
+
+        setTimeout(function() {
+            command.run(message);
+
+            // add the player back
+            setTimeout(function() {
+                addPlayerBack(message);
+            }, 500);
+        }, 500);
+    }, 500);
 }
 
 function addPlayerBack(message) {
