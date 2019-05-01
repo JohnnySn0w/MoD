@@ -54,7 +54,7 @@ class StartCommand extends commando.Command {
           },
           'items': {
           },
-          'gold': 50
+          'gold': 200
         },
         'equipment': {
           'weapon': null,

@@ -75,5 +75,26 @@
 		"description": "It's what you think of when you think of a sword. Pretty all right.",
         "type": "weapon",
         "stats": 6
-	}
+    },
+    {
+		"name": "Rabbit's Foot",
+		"id": "11",
+		"description": "The rabbit's foot is a mark of mastery, and a good luck charm to boot!",
+        "type": "key",
+        "stats": null
+    },
+    {
+		"name": "Holy Hand Grenade",
+		"id": "12",
+		"description": "An ornate grenade with a cross on it. Possibly holy.",
+        "type": "key",
+        "stats": 50
+    },
+    {
+        "name": "pile of rubble",
+        "id": "13",
+        "description": "There is small pile of rubble. Perhaps a grave marker?",
+        "type": null,
+        "stats": null
+    }
 ]

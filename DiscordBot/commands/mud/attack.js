@@ -128,6 +128,14 @@ class AttackCommand extends commando.Command {
         } else if (m.content.includes('magic')){
           deleteMessage(m);
           message.channel.send(`${player.name} is shouting nonsense`);
+        } else if (m.content.includes('throw') && m.content.includes('grenade') && enemy.name === 'That One Rabbit') {
+          if(player.inventory.keys[12]){
+            const damage = 50;
+            enemy.health = enemy.health - damage;
+            message.channel.send(`${player.name} throws the holy hand grenade at the ${enemy.name}. It explodes beautifully, leaving nothing behind, save a foot.`);
+          } else {
+            message.channel.send(`${player.name} throws nothing at the ${enemy.name}`);
+          }
         } else {
           deleteMessage(m);
           //in the future, we can add a magic system here
@@ -295,7 +303,7 @@ class AttackCommand extends commando.Command {
       player.inventory.keys[item.id] = {
         'name': item.name,
         'used': false
-      }
+      };
     // if the item is a weapon or armor...
     } else if (item.type === "weapon" || item.type === "armor") {
       // check to see if the player already has that item

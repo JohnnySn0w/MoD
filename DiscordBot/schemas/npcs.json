@@ -209,13 +209,67 @@
             {
                 "item": "Garbage Sword",
                 "id": "4",
-                "cost": 1000
+                "cost": 5
             },
             {
                 "item": "Leather Cap",
                 "id": "5",
                 "cost": 25
+            },
+            {
+                "item": "Holy Hand Grenade",
+                "id": "12",
+                "cost": 50
             }
+        ]
+    },
+    {
+        "name": "Tim",
+        "id": "4",
+        "level": 0,
+        "health": 10,
+        "strength": 3,
+        "defense": 1,
+        "description": "A man sits, cloaked in furs, wearing a silly hat with horns.",
+        "responses": {
+            "0": {
+                "reply": "Hello! My name is Tim.",
+                "prompts": [
+                    {
+                        "prompt": "[0] Ask how is he",
+                        "progression": "1"
+                    }
+                ]
+            },
+            "1": {
+                "reply": "Not too great! Just waiting on that rabbit to go away.",
+                "prompts": [
+                    {
+                        "prompt": "[0] Say hello again",
+                        "progression": "0"
+                    },
+                    {
+                        "prompt": "[1] Ask about the rabbit",
+                        "progression": "2"
+                    }
+                ]
+            },
+            "2": {
+                "reply": "That rabbit is so dangerous! Vicious little bastard kills anythingin range. If only I had a bomb...",
+                "prompts": [
+                    {
+                        "prompt": "[0] Say hello again",
+                        "progression": "0"
+                    },
+                    {
+                        "prompt": "[1] Ask how he is",
+                        "progression": "1"
+                    }
+                ]
+            }
+        },
+        "goods": [
+            
         ]
     }
 ]

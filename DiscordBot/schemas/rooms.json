@@ -170,7 +170,7 @@
         "description": "There's not much to see beyond the vine entrenched stone that sprawls in front of you, other than the interruptive stone of the mountain it is on. The occasional goblin can be seen sneaking around. There's a small opening leading into the ruins to the south.",
         "exits": {
             "west": "village-square",
-            "south": "ruined-cave"
+            "south": "ruins-atrium"
         },
         "items": {
         },
@@ -184,7 +184,7 @@
         "id": "ruins-atrium",
         "description": "The ruins open up to a large atrium. There's an encampment of goblins and goblin warriors. A hallway leads south.",
         "exits": {
-            "west": "village-square",
+            "north": "ruins-entrance",
             "south": "ruins-hallway"
         },
         "items": {
@@ -212,19 +212,18 @@
     },
     {
         "id": "that-cave",
-        "description": "A small white rabbit is hopping around at the cave mouth. A strangely dress man is sitting, seemingly waiting.",
+        "description": "A small white rabbit is hopping around at the cave mouth. A strangely dress man is sitting, seemingly waiting, behind a boulder nearby.",
         "exits": {
-            "west": "village-square",
-            "south": "ruined-cave"
+            "east": "ruins-hallway"
         },
         "items": {
         },
         "npcs": {
-            "brian": "5",
-            "man": "5"
+            "tim": "4",
+            "man": "4"
         },
         "enemies": {
-            "rabbit": "3"
+            "rabbit": "2"
         }
     }
 ]
