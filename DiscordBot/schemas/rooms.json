@@ -70,7 +70,7 @@
         }
     },
     {
-        "id": "a-journey's-start",
+        "id": "a-journey-begins",
         "description": "This room is large and cavernous, with pillars extending to the ceiling. Footsteps echo into the darkness. The journey begins to the north...",
         "exits": {
             "north": "momentary-passage"
@@ -89,7 +89,7 @@
         "exits": {
             "west": "a-certain-exit",
             "east": "dead-end",
-            "south": "entry-room"
+            "south": "a-journey-behins"
         },
         "items": {
             "rocks": "2"
