@@ -33,15 +33,47 @@ class EquipCommand extends commando.Command {
         }
         else {
             // do something
-            console.log(player.inventory.items);         
+            let weapon = player.equipment.weapon;
+            let armor = player.equipment.armor;
+            let items = player.inventory.items;
+
+            console.log(player.inventory.items);
+
+            if (Object.keys(items).length == 0) {
+              console.log("Empty");
+            } else {
+              for (var item in items) {
+                console.log(JSON.stringify(item));
+                if (items[item].name.toLowerCase().replace(/"/g, '') == args) {
+                  console.log("Match!");
+                  if (!items[item].equipped) {
+                      if (items[item].type == 'weapon') {
+                        weapon = items[item].name;
+                        console.log(weapon);
+                        console.log(player.equipment.weapon);
+                        items[item].equipped = true;
+                        console.log(items[item]);
+                        player.strength = player.strength + items[item].stats;
+                        console.log(player.strength);
+                        db.updateItem(player.id, ['strength'], [player.strength], 'players', () => console.log('Player strength updated'));
+                      }
+                      if (items[item].type == 'armor') {
+                        armor = items[item].name;
+                        console.log(armor);
+                        console.log(player.equipment.armor);
+                        items[item].equipped = true;
+                        console.log(items[item]);
+                        player.defense = player.defense + items[item].stats;
+                        console.log(player.defense);
+                        db.updateItem(player.id, ['defense'], [player.defense], 'players', () => console.log('Player defense updated'));
+                      }
+                  }
+                }
+              }
+            }       
     }
     
-  }
-  checkItem(message, player, data, args) {
-    var body = JSON.parse(data.body);
-    var player = body.Item;
-    var object = args.object;
-  }
+
   /* plan:
       - parse the args given so that we can get the given words into a single string (ex. 'Short' 'Sword' becomes 'Short Sword')
       - compare this string to what's in player inventory to see if we have the item
@@ -52,6 +84,7 @@ class EquipCommand extends commando.Command {
   */
   
   }
+}
         
 
     
