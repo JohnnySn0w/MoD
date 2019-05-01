@@ -25,7 +25,7 @@ class AttackCommand extends commando.Command {
     deleteMessage(message);
   }
 
-getEnemy(message, entity, player, room) {
+  getEnemy(message, entity, player, room) {
     if (!player.busy) {
       if (room.enemies[entity]) {
         db.getItem(room.enemies[entity], 'enemies', (data) => this.checkHostile(message, player, data, room));
@@ -309,7 +309,8 @@ getEnemy(message, entity, player, room) {
           'type': item.type,
           'equipped': false,
           'stats': item.stats,
-          'amount': 1
+          'amount': 1,
+          'id': item.id
         }
       }
     } else {
