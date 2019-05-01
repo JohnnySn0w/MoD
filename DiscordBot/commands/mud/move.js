@@ -39,8 +39,8 @@ class MoveCommand extends commando.Command {
 
   getRoom(message, player, data, direction, firstRetrieval) {
     // grab the actual room object
-    var body = JSON.parse(data.body);
-    var room = body.Item;
+    const body = JSON.parse(data.body);
+    const room = body.Item;
 
     if (firstRetrieval) {
       // if we're grabbing the room that the player is currently in, then we need to make sure it's a MUD sanctioned room
@@ -55,7 +55,8 @@ class MoveCommand extends commando.Command {
     } else {
       // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
       message.channel.send(`${player.name} moved ${direction}`);
-      message.member.setRoles([message.guild.roles.get(room.roleid)]).catch(e => console.error(e));
+      const roomRole = message.guild.roles.find(role => role.name === room.id);
+      message.member.setRoles([roomRole]).catch(e => console.error(e));
       const roomy = this.client.channels.find(channel => channel.name === room.id);
       roomy.send(`${player.name} has entered.`);
       
