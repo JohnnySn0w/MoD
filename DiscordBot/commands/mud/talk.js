@@ -45,7 +45,7 @@ class TalkCommand extends commando.Command {
       }
     }
     else {
-      message.channel.send(`${player.name} is too busy for chit chat`);
+      message.channel.send(`${player.name} is too busy for chit chat!`);
     }
   }
 

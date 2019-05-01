@@ -36,7 +36,7 @@ getEnemy(message, entity, player, room) {
       }
     }
     else {
-      message.channel.send(`${player.name} is too busy for battle!!!!`);
+      message.channel.send(`${player.name} is too busy for battle!`);
     }
   }
 
