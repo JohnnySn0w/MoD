@@ -33,24 +33,14 @@ class EquipCommand extends commando.Command {
         }
         else {
             // do something
-            (player.inventory.keys).forEach(element => {
-              if (args == element.toLowerCase().replace(/"/g, '')) {
-                console.log("Match!");
-                // find item in items table
-                db.getItem(element, 'items', (data) => this.checkItem(message, player, data, args));
-                // check item type
-                // assign item name to appropriate slot
-                // update player stats based on item
-              } else {
-                console.log("Not a match!");
-              }
-              
-            });           
+            console.log(player.inventory.items);         
     }
     
   }
   checkItem(message, player, data, args) {
-
+    var body = JSON.parse(data.body);
+    var player = body.Item;
+    var object = args.object;
   }
   /* plan:
       - parse the args given so that we can get the given words into a single string (ex. 'Short' 'Sword' becomes 'Short Sword')
