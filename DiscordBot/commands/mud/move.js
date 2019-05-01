@@ -33,22 +33,20 @@ class MoveCommand extends commando.Command {
       if (firstRetrieval) {
         // otherwise, clean up the direction passed, and move the player into the next room
         this.movePlayer(message, player, direction, room);
-      }
-    } else {
-      // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
-      message.channel.send(`${player.name} moved ${direction}`);
-      const roomRole = message.guild.roles.find(role => role.name === room.id);
-      message.member.setRoles([roomRole]).catch(e => console.error(e));
-      const roomy = this.client.channels.find(channel => channel.name === room.id);
-      roomy.send(`${player.name} has entered.`);
-      
+      } else {
+        // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
+        message.channel.send(`${player.name} moved ${direction}`);
+        const roomRole = message.guild.roles.find(role => role.name === room.id);
+        message.member.setRoles([roomRole]).catch(e => console.error(e));
+        const roomy = this.client.channels.find(channel => channel.name === room.id);
+        roomy.send(`${player.name} has entered.`);
+        
         // delete the user's command if not debugging
-        if (!globals.DEBUG) {
+        if (!DEBUG) {
           message.delete();
         }
       }
-    } 
-    else {
+    } else {
       message.channel.send(`${player.name} is too busy to move`);
     }
   }

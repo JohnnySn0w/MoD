@@ -29,10 +29,10 @@ class TalkCommand extends commando.Command {
     }
   }
 
-  getNPC(message, npc, player, room) {
+  getNPC(message, entity, player, room) {
     if (!player.busy) {
-      if (room.npcs[npc]) {
-        db.getItem(room.npcs[npc], 'npcs', (data) => this.getProgress(message, player, room, data));
+      if (room.npcs[entity]) {
+        db.getItem(room.npcs[entity], 'npcs', (data) => this.getProgress(message, player, room, data));
       } else {
         // if not an npc, determine if the player is talking to an enemy
         if (room.enemies[entity]) {
@@ -139,7 +139,7 @@ class TalkCommand extends commando.Command {
       if (!stop) {
         db.updateItem(player.id, ['busy'], [true], 'players', ()=>{ console.log("yes busy!"); });
         // responses change to using length
-        const filter = m => (((m.content < playerResponseCount) && (Number.isInteger(Number(m.content)))) || (m.content.includes('?talk'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
+        const filter = m => (((m.content < playerResponseCount) && (Number.isInteger(Number(m.content)))) || (m.content.includes('leave'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
         const collector = message.channel.createMessageCollector(filter, {time: 20000});
 
         // if the player responses...
@@ -149,8 +149,8 @@ class TalkCommand extends commando.Command {
           collector.stop();
           
           // kill the conversation if the player is trying to talk to another NPC
-          if (m.content.includes('?talk')) {
-          db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
+          if (m.content.includes('leave')) {
+            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
             let newNpcResponse = 'Oh ok bye';
             this.replyToPlayer(player, message, npc, newNpcResponse, 1, room, true);
           } else {
