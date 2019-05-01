@@ -1,4 +1,4 @@
-const {DEBUG, bigCheck} = require('../../globals.js');
+const {deleteMessage, bigCheck} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -22,6 +22,7 @@ class MoveCommand extends commando.Command {
   async run(message, {direction}) {
     //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, direction));
     bigCheck(message, direction, this.setRetrieval.bind(this));
+    deleteMessage(message);
   }
 
   setRetrieval(message, direction, player, room) {
@@ -43,11 +44,6 @@ class MoveCommand extends commando.Command {
         message.member.setRoles([roomRole]).catch(e => console.error(e));
         const roomy = this.client.channels.find(channel => channel.name === actualRoom.id);
         roomy.send(`${player.name} has entered.`);
-        
-        // delete the user's command if not debugging
-        if (!DEBUG) {
-          message.delete();
-        }
       }
     } else {
       message.channel.send(`${player.name} is too busy to move!`);
@@ -62,11 +58,6 @@ class MoveCommand extends commando.Command {
     else {
       // otherwise, alert the player of the lack of exits
       message.channel.send(`${player.name} has lost their sense of direction`);
-
-      // delete the user's command if not debugging
-      if (!DEBUG) {
-        message.delete();
-      }
     }
   }
 }

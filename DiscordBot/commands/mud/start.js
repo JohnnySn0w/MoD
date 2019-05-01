@@ -1,4 +1,4 @@
-const {DEBUG} = require('../../globals.js');
+const {deleteMessage} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -13,11 +13,8 @@ class StartCommand extends commando.Command {
   }
 
   async run(message) {
-    // delete the user's command if not debugging
-    if (!DEBUG) {
-      message.delete();
-    }
     db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data));
+    deleteMessage(message);
   }
 
   getPlayer(message, data) {

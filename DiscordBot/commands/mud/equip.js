@@ -1,4 +1,4 @@
-const {DEBUG} = require('../../globals.js');
+const {deleteMessage} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
@@ -8,16 +8,13 @@ class EquipCommand extends commando.Command {
       name: 'equip',
       group: 'mud',
       memberName: 'equip',
-      description: 'Lets a player arm themselves or put on armor.'      
+      description: 'Lets a player wield a weapon or put on armor.'      
     });
   }
 
   async run(message, args) {
     db.getItem(message.member.id, 'players', (data) => this.getPlayer(data, message, args));
-    // delete the user's command if not debugging
-    if (!DEBUG) {
-      message.delete();
-    }
+    deleteMessage(message);
   }
 
   getPlayer(data, message, args) {
@@ -25,64 +22,55 @@ class EquipCommand extends commando.Command {
     var body = JSON.parse(data.body);
     var player = body.Item;
 
-    args = args.toLowerCase().replace(/"/g, '');
+    if (player === undefined) {
+      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
+    } else {
+      var itemName = args.toLowerCase();
 
-        if (player === undefined) {
-            // if the player isn't in the database already, send them a notice that they need to "?start" the game
-            message.member.send("You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.");
-        }
-        else {
-            // do something
-            let weapon = player.equipment.weapon;
-            let armor = player.equipment.armor;
-            let items = player.inventory.items;
+      if (itemName === "nothing") {
+        
+      } else {
+        var item = this.getItem(player, itemName);
 
-            console.log(player.inventory.items);
-
-            if (Object.keys(items).length == 0) {
-              console.log("Empty");
+        if (item === undefined) {
+          message.member.send(`It doesn't seem that you have the ${args} in your inventory.`);
+        } else {
+          if (item.type === 'weapon' || item.type === 'armor') {
+            if (item.equipped) {
+              message.member.send(`The ${item.name} is already equipped`);
             } else {
-              for (var item in items) {
-                console.log(JSON.stringify(item));
-                if (items[item].name.toLowerCase().replace(/"/g, '') == args) {
-                  console.log("Match!");
-                  if (!items[item].equipped) {
-                      if (items[item].type == 'weapon') {
-                        weapon = items[item].name;
-                        console.log(weapon);
-                        console.log(player.equipment.weapon);
-                        items[item].equipped = true;
-                        console.log(items[item]);
-                        player.strength = player.strength + items[item].stats;
-                        console.log(player.strength);
-                        db.updateItem(player.id, ['strength'], [player.strength], 'players', () => console.log('Player strength updated'));
-                      }
-                      if (items[item].type == 'armor') {
-                        armor = items[item].name;
-                        console.log(armor);
-                        console.log(player.equipment.armor);
-                        items[item].equipped = true;
-                        console.log(items[item]);
-                        player.defense = player.defense + items[item].stats;
-                        console.log(player.defense);
-                        db.updateItem(player.id, ['defense'], [player.defense], 'players', () => console.log('Player defense updated'));
-                      }
-                  }
-                }
-              }
-            }       
+              this.equipItem(message, player, item);
+            }
+          } else {
+            message.member.send(`Although you have the ${item.name}, you can't equip it`);
+          }
+        }
+      }
     }
-    
+  }
 
-  /* plan:
-      - parse the args given so that we can get the given words into a single string (ex. 'Short' 'Sword' becomes 'Short Sword')
-      - compare this string to what's in player inventory to see if we have the item
-      - if we have the item, we then check its type and assign the item to the appropriate slot (weapon or armor)
-          - we also go find the item in the items table and update player attributes (strength, defense, etc.) based on given values
-      - of course, if we don't have that item, we don't do this      
+  getItem(player, itemName) {
+    for (var item in player.inventory.items) {
+      console.log(player.inventory.items[item])
+      if (itemName === player.inventory.items[item].name.toLowerCase()) {
+        return player.inventory.items[item];
+      }
+    }
 
-  */
-  
+    return undefined;
+  }
+
+  equipItem(message, player, item) {
+    if (player.equipment[item.type] !== null) {
+      player.inventory.items[player.equipment[item.type]].equipped = false;
+    }
+
+    console.log(item);
+    console.log(player.inventory.items);
+    player.inventory.items[item.id].equipped = true;
+    player.equipment[item.type] = item.id;
+    db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
+    message.member.send(`${item.name} equipped successfully!`);
   }
 }
         
