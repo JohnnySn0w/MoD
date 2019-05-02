@@ -8,7 +8,7 @@ class LookCommand extends commando.Command {
       name: 'look',
       group: 'mud',
       memberName: 'look',
-      description: 'Gives a description of an entity, place, or thing \n`?look <something>\nexample somethings here, around, room, old man`',
+      description: 'Gives a description of an entity, place, or thing \n`?look <something>\nexample somethings: here, around, room, old man`',
       args: [
         {
           key: 'object',
@@ -89,7 +89,7 @@ class LookCommand extends commando.Command {
       var object;
       if (objectIsRoom === true) {
         object = room;
-        object.description = `${object.description}\nExits are: ${Object.keys(object).toString()}`;
+        object.description = `${object.description}\nExits are: ${Object.keys(object.exits).toString()}`;
       } else {
         var body = JSON.parse(data.body);
         var item = body.Item;

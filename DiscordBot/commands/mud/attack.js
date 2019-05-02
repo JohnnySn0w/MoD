@@ -132,7 +132,6 @@ class AttackCommand extends commando.Command {
           if(player.inventory.keys[12] && enemy.name === 'That One Rabbit'){
             const damage = 50;
             enemy.health = enemy.health - damage;
-            db.updateItem(player.id, [player.inventory.keys[12].used], [true], 'players', () => {});
             message.channel.send(`${player.name} throws the holy hand grenade at the ${enemy.name}. It explodes beautifully, leaving nothing behind, save a foot and chunky salsa.`);
           } else {
             message.channel.send(`${player.name} decides this item is better used elsewhere.`);

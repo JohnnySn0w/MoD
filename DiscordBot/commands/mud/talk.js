@@ -8,7 +8,7 @@ class TalkCommand extends commando.Command {
       name: 'talk',
       group: 'mud',
       memberName: 'talk',
-      description: 'Allows users to interact with NPCs',
+      description: 'Gab it up with NPCs!\n`?talk <npc>`',
       args: [
         {
           key: 'npc',
