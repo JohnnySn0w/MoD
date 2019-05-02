@@ -213,7 +213,7 @@ class AttackCommand extends commando.Command {
       this.rollLoot(message, player, enemy);
     } else if (player.health < 1) {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
-      respawn(player, message).bind(this);
+      bigCheck(message, respawn.bind(this));
     } else {
       return null;
     }
