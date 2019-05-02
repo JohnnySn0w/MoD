@@ -1,4 +1,4 @@
-const {deleteMessage, bigCheck} = require('../../globals.js');
+const {deleteMessage, bigCheck, checkItems, checkKeys} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 const inventory = require('../mud/inventory.js');
@@ -36,7 +36,7 @@ class LookCommand extends commando.Command {
     }
     else {
       // otherwise, the player is looking at an item, which we need to determine
-      object = this.determineItem(args, room);
+      object = this.determineItem(args, room, player);
       if (object === undefined) {
         // if the object doesn't exist, then the player is looking at an NPC, enemy, or nothing
         object = this.determineNPC(args, room);
@@ -58,11 +58,15 @@ class LookCommand extends commando.Command {
     }
   }
 
-  determineItem(searchName, room) {
+  determineItem(searchName, room, player) {
     // determine what item the player is looking at in the given room
     var itemObject;
     if (searchName in room.items) {
       itemObject = room.items[searchName];
+    } else if (checkKeys(player, searchName) !== undefined) {
+      itemObject = checkKeys(player, searchName);
+    } else if (checkItems(player, searchName) !== undefined) {
+      itemObject = checkItems(player, searchName);
     }
 
     return itemObject;

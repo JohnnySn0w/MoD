@@ -23,7 +23,7 @@ function roomCheck(player, message, data, callback, args) {
   const room = JSON.parse(data.body).Item;
 
   if (room === undefined) {
-    message.member.send('You are not in a MUD related room.');
+    message.message.author.send('You are not in a MUD related room.');
   } else {
     callback(message, player, room, args);
   }
@@ -33,21 +33,43 @@ function bigCheck(message, callback,  args = '') {
   if(args !== '') {
     args = args.toLowerCase();
   }
-  db.getItem(message.member.id, 'players', (data) => playerCheck(data, callback, message, args));
+  db.getItem(message.message.author.id, 'players', (data) => playerCheck(data, callback, message, args));
 }
 
 function respawn(message, player) {
   // respawn player
-  console.log(message);
   db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => console.log('Player health restored'));
   message.member.setRoles([message.guild.roles.find(role => role.name === 'dead-end')]).catch(console.error);
   let channel = this.client.channels.find(channel => channel.name === 'death-notes');
   channel.send(`${player.name} totally died lmao`);
 }
 
+function checkKeys(player, itemName) {
+  // iterate through the player's list of items and check each one's name
+  for (let key in player.inventory.keys) {
+    if (itemName === player.inventory.keys[key].name.toLowerCase()) {
+      return key;
+    }
+  }
+  return undefined;
+}
+
+function checkItems(player, itemName) {
+  // iterate through the player's list of items and check each one's name
+  for (var item in player.inventory.items) {
+    if (itemName === player.inventory.items[item].name.toLowerCase()) {
+      return player.inventory.items[item].id;
+    }
+  }
+
+  return undefined;
+}
+
 module.exports = { 
   DEBUG,
   deleteMessage,
   bigCheck,
-  respawn
+  respawn,
+  checkItems,
+  checkKeys
 };

@@ -131,7 +131,7 @@ class TalkCommand extends commando.Command {
 
     // ensure that the npc has a dialogue tree
     if (npc.responses !== undefined) {
-      message.reply(`${npc.name} says: ${npcResponse}`);
+      message.reply(`${npc.name} says: ${npcResponse}\nyou can always\`leave\``);
 
       if (!stop) {
         db.updateItem(player.id, ['busy'], [true], 'players', ()=>{ console.log("yes busy!"); });
@@ -146,7 +146,7 @@ class TalkCommand extends commando.Command {
           collector.stop();
           
           // kill the conversation if the player is trying to talk to another NPC
-          if (m.content.includes('leave')) {
+          if (m.content.includes('leave')||m.content.includes('end')||m.content.includes('stop')) {
             db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
             let newNpcResponse = 'Oh ok bye';
             this.replyToPlayer(player, message, npc, newNpcResponse, 1, room, true);
