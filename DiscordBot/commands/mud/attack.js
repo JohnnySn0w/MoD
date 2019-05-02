@@ -128,15 +128,18 @@ class AttackCommand extends commando.Command {
         } else if (m.content.includes('magic')){
           deleteMessage(m);
           message.channel.send(`${player.name} is shouting nonsense`);
-        } else if (m.content.includes('throw') || m.content.includes('grenade')) {
-          if(player.inventory.keys[12] && enemy.name === 'That One Rabbit'){
-            const damage = 50;
-            enemy.health = enemy.health - damage;
-            message.channel.send(`${player.name} throws the holy hand grenade at the ${enemy.name}. It explodes beautifully, leaving nothing behind, save a foot and chunky salsa.`);
+        } else if (m.content.includes('throw')) {
+          if(m.content.includes('grenade')){
+            if(player.inventory.keys[12] && enemy.name === 'That One Rabbit'){
+              const damage = 50;
+              enemy.health = enemy.health - damage;
+              message.channel.send(`${player.name} throws the holy hand grenade at the ${enemy.name}. It explodes beautifully, leaving nothing behind, save a foot and what can only be described as chunky salsa.`);
+            } else {
+              message.channel.send(`${player.name} decides this item is better used elsewhere.`);
+            }
           } else {
-            message.channel.send(`${player.name} decides this item is better used elsewhere.`);
+            message.channel.send(`${player.name} throws an invisible curveball at ${enemy.name}.`);
           }
-          message.channel.send(`${player.name} throws an invisible curveball at ${enemy.name}.`);
         } else {
           deleteMessage(m);
           //in the future, we can add a magic system here
