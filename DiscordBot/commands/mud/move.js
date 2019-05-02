@@ -8,7 +8,7 @@ class MoveCommand extends commando.Command {
       name: 'move',
       group: 'mud',
       memberName: 'move',
-      description: 'Moves the user to a different room (i.e. text channel)',
+      description: 'Move to a different room (i.e. text channel).\n`?move <direction>`',
       args: [
         {
           key: 'direction',
@@ -25,7 +25,7 @@ class MoveCommand extends commando.Command {
     deleteMessage(message);
   }
 
-  setRetrieval(message, direction, player, room) {
+  setRetrieval(message, player, room, direction) {
     this.getRoom(message, player, room, direction, true);
   }
 

@@ -8,7 +8,7 @@ class StartCommand extends commando.Command {
       name: 'start',
       group: 'mud',
       memberName: 'start',
-      description: '`?start` will create your character, and let you play the game. '
+      description: '`?start` will create your character, and let you play the game.'
     });
   }
 

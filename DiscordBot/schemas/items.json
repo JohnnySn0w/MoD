@@ -16,7 +16,7 @@
     {
         "name": "boulders",
         "id": "2",
-        "description": "A large pile of imposing boulders block the path westward. It's no use trying to move them.",
+        "description": "A large pile of imposing boulders block the hallway to the south. It's no use trying to move them.",
         "type": null,
         "stats": null
     },
@@ -96,5 +96,33 @@
         "description": "There is small pile of rubble. Perhaps a grave marker?",
         "type": null,
         "stats": null
-    }
+    },
+    {
+        "name": "guilt",
+        "id": "14",
+        "description": "You feel the burden of having taken an innocent life",
+        "type": "key",
+        "stats": null
+    },
+    {
+        "name": "encampment",
+        "id": "15",
+        "description": "Sticks and tarp make up a few tents surrounding a crackling fire. A goblin chef(?) tends to the spit over the flame, while others go about their camp duties",
+        "type": null,
+        "stats": null
+    },
+    {
+        "name": "atrium",
+        "id": "16",
+        "description": "The large, vaulted ceiling of the atrium displays the chaotic shadows from the camp's fire. This building must have once been great, but is now riddled with cracks and holes of varying sizes.",
+        "type": null,
+        "stats": null
+    },
+    {
+        "name": "sky",
+        "id": "17",
+        "description": "There's a wooden ladder that rises up from a perfectly square hole. It seems to lead downward.",
+        "type": null,
+        "stats": null
+    },
 ]

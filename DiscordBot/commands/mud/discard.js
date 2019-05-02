@@ -8,7 +8,7 @@ class DiscardCommand extends commando.Command {
       name: 'discard',
       group: 'mud',
       memberName: 'discard',
-      description: 'Lets a player toss out items in their inventory.'      
+      description: 'Lets a player toss out items in their inventory.\n`?discard <item>`'      
     });
   }
 

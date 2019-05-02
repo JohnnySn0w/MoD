@@ -41,7 +41,7 @@
         "respawn": null
     },
     {
-        "name": "Goblin-Warrior",
+        "name": "Goblin Warrior",
         "id": "1",
         "level": 4,
         "health": 50,
@@ -94,5 +94,24 @@
             }             
         ],
         "respawn": 5
+    },
+    {
+        "name": "Rabbit",
+        "id": "3",
+        "level": 1,
+        "health": 5,
+        "strength": 3,
+        "defense": 1,
+        "description": "There's a brown rabbit here",
+        "loot": [
+            {   
+                "name": "Guilt",
+                "id":"14",
+                "type":"key",
+                "amount": 1,
+                "rarity": 10                      
+            }             
+        ],
+        "respawn": null
     }
 ]

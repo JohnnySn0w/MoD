@@ -39,9 +39,9 @@ function bigCheck(message, callback,  args = '') {
 function respawn(message, player) {
   // respawn player
   db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => console.log('Player health restored'));
-  message.member.setRoles([message.guild.roles.find(role => role.name === 'village-square')]).catch(console.error);
-  let channel = this.client.channels.find(channel => channel.name === 'village-square');
-  channel.send(`${player.name} is reborn, ready to fight again!`);
+  message.member.setRoles([message.guild.roles.find(role => role.name === 'dead-end')]).catch(console.error);
+  let channel = this.client.channels.find(channel => channel.name === 'death-notes');
+  channel.send(`@everyone ${player.name} totally died lmao`);
 }
 
 module.exports = { 

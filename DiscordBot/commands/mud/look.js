@@ -8,7 +8,7 @@ class LookCommand extends commando.Command {
       name: 'look',
       group: 'mud',
       memberName: 'look',
-      description: 'Gives a description of an item in the same room as the user',
+      description: 'Gives a description of an entity, place, or thing \n`?look <something>\nexample somethings here, around, room, old man`',
       args: [
         {
           key: 'object',
@@ -24,7 +24,7 @@ class LookCommand extends commando.Command {
     deleteMessage(message);
   }
 
-  getRoom(message, args, player, room) {
+  getRoom(message, player, room, args) {
     var object;
     if (args === 'room' || args === 'here'|| args === 'around' || args === 'area') {
       this.replyToPlayer(message, player, true, room);
@@ -89,6 +89,7 @@ class LookCommand extends commando.Command {
       var object;
       if (objectIsRoom === true) {
         object = room;
+        object.description = `${object.description}\nExits are: ${Object.keys(object).toString()}`;
       } else {
         var body = JSON.parse(data.body);
         var item = body.Item;

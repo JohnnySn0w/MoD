@@ -8,7 +8,7 @@ class StatsCommand extends commando.Command {
       name: 'stats',
       group: 'mud',
       memberName: 'stats',
-      description: 'Shows player stats for the player who calls for them'      
+      description: 'PMs your stats\n`?stats`'      
     });
   }
 
@@ -24,19 +24,19 @@ class StatsCommand extends commando.Command {
 
     if (player === undefined) {
       // if the player isn't in the database already, send them a notice that they need to "?start" the game
-      message.member.send("You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.");
+      message.member.send('You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.');
     } else {
       // calculate the additives from weapon and armor
       var weaponMod;
       if (player.equipment.weapon == null) {
-        weaponMod = "0";
+        weaponMod = '0';
       } else {
         weaponMod = player.inventory.items[player.equipment.weapon].stats;
       }
 
       var armorMod;
       if (player.equipment.armor == null) {
-        armorMod = "0";
+        armorMod = '0';
       } else {
         armorMod = player.inventory.items[player.equipment.armor].stats;
       }
@@ -46,7 +46,7 @@ class StatsCommand extends commando.Command {
       
       // also send a warning if the player's health is low
       if (player.health > 0 && player.health < 11) {
-          message.member.send("You're on death's door, my friend.");
+        message.member.send('Ur gonna die');
       }
     }
   }

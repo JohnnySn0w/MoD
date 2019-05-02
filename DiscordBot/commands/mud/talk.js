@@ -26,7 +26,7 @@ class TalkCommand extends commando.Command {
     deleteMessage(message);
   }
 
-  getNPC(message, entity, player, room) {
+  getNPC(message, player, room, entity) {
     if (!player.busy) {
       if (room.npcs[entity]) {
         db.getItem(room.npcs[entity], 'npcs', (data) => this.getProgress(message, player, room, data));

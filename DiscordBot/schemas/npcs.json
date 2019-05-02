@@ -255,7 +255,7 @@
                 ]
             },
             "2": {
-                "reply": "That rabbit is so dangerous! Vicious little bastard kills anythingin range. If only I had a bomb...",
+                "reply": "That rabbit is so dangerous! Vicious little bastard kills anything in range. If only I had a bomb...",
                 "prompts": [
                     {
                         "prompt": "[0] Say hello again",

@@ -8,7 +8,7 @@ class EquipCommand extends commando.Command {
       name: 'equip',
       group: 'mud',
       memberName: 'equip',
-      description: 'Lets a player wield a weapon or put on armor.'      
+      description: 'Lets a player wield a weapon or put on armor.\n`?equip <item>`'      
     });
   }
 

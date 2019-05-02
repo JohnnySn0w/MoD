@@ -9,7 +9,7 @@ class AttackCommand extends commando.Command {
       name: 'attack',
       group: 'mud',
       memberName: 'attack',
-      description: '\n```?attack <target> and then afterwards, supply a type of attack within 10 seconds. Valid keywords after initiation: weapon, magic, run```',
+      description: '\n`?attack <target> and then afterwards, supply a type of attack within 10 seconds. Valid keywords after successful initiation: weapon, magic, throw, run`',
       args: [
         {
           key: 'object',
@@ -25,7 +25,7 @@ class AttackCommand extends commando.Command {
     deleteMessage(message);
   }
 
-  getEnemy(message, entity, player, room) {
+  getEnemy(message, player, room, entity, ) {
     if (!player.busy) {
       if (room.enemies[entity]) {
         db.getItem(room.enemies[entity], 'enemies', (data) => this.checkHostile(message, player, data, room));
@@ -128,14 +128,16 @@ class AttackCommand extends commando.Command {
         } else if (m.content.includes('magic')){
           deleteMessage(m);
           message.channel.send(`${player.name} is shouting nonsense`);
-        } else if (m.content.includes('throw') && m.content.includes('grenade') && enemy.name === 'That One Rabbit') {
-          if(player.inventory.keys[12]){
+        } else if (m.content.includes('throw') || m.content.includes('grenade')) {
+          if(player.inventory.keys[12] && enemy.name === 'That One Rabbit'){
             const damage = 50;
             enemy.health = enemy.health - damage;
-            message.channel.send(`${player.name} throws the holy hand grenade at the ${enemy.name}. It explodes beautifully, leaving nothing behind, save a foot.`);
+            db.updateItem(player.id, [player.inventory.keys[12].used], [true], 'players', () => {});
+            message.channel.send(`${player.name} throws the holy hand grenade at the ${enemy.name}. It explodes beautifully, leaving nothing behind, save a foot and chunky salsa.`);
           } else {
-            message.channel.send(`${player.name} throws nothing at the ${enemy.name}`);
+            message.channel.send(`${player.name} decides this item is better used elsewhere.`);
           }
+          message.channel.send(`${player.name} throws an invisible curveball at ${enemy.name}.`);
         } else {
           deleteMessage(m);
           //in the future, we can add a magic system here
@@ -164,6 +166,7 @@ class AttackCommand extends commando.Command {
     }
     if (damage > 0) {
       player.health = player.health - damage;
+      db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
       message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage} damage.`);
     } else {
       message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
@@ -208,7 +211,7 @@ class AttackCommand extends commando.Command {
       this.rollLoot(message, player, enemy);
     } else if (player.health < 1) {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
-      respawn(player, message);
+      respawn(player, message).bind(this);
     } else {
       return null;
     }

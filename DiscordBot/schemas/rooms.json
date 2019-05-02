@@ -1,75 +1,5 @@
 [
     {
-        "id": "entry-room",
-        "description": "This room is large and cavernous, with pillars extending to the ceiling. Footsteps echo into the darkness. The journey begins to the north... \nThere's also an old-man, a little-boy, and a shopkeep in the room.",
-        "exits": {
-            "north": "room-0"
-        },
-        "items": {
-            "pillars": "3"
-        },
-        "npcs": {
-            "old-man": "1",
-            "little-boy": "2",
-            "shopkeep": "3"
-        },
-        "enemies": {
-            "goblin": "0",
-            "goblin-warrior": "1"
-        }
-    },
-    {
-        "id": "room-0",
-        "description": "The cave walls narrow in and create a hallway of sorts. The hallways comes to a split where the west path leads to light while the east path leads to a pile of rocks. To the south is a large room.\nThe shadowy figure of the shopkeep looms in the corner.",
-        "exits": {
-            "west": "room-1",
-            "south": "entry-room"
-        },
-        "items": {
-            "boulders": "2",
-            "rocks": "2"
-        },
-        "npcs": {
-            "shopkeep": "3"
-        },
-        "enemies": {
-            
-        }
-    },
-    {
-        "id": "room-1",
-        "description": "The room is oddly shaped like a perfect cube. The stone walls are completely smooth. On the far wall, there's ladder. To the east is a hallway.",
-        "exits": {
-            "up": "room-2",
-            "east": "room-0"
-        },
-        "items": {
-            "ladder": "1"
-        },
-        "npcs": {
-
-        },
-        "enemies": {
-            
-        }
-    },
-    {
-        "id": "room-2",
-        "description": "It's bright here at the surface. There seems to only be flat grasses for miles. Only the ladder breaks up the landscape.",
-        "exits": {
-            "down": "room-1"
-        },
-        "items": {
-            "ladder": "0"
-        },
-        "npcs": {
-
-        },
-        "enemies": {
-            
-        }
-    },
-    {
         "id": "a-journey-begins",
         "description": "This room is large and cavernous, with pillars extending to the ceiling. Footsteps echo into the darkness. The journey begins to the north...",
         "exits": {
@@ -89,7 +19,7 @@
         "exits": {
             "west": "a-certain-exit",
             "east": "dead-end",
-            "south": "a-journey-behins"
+            "south": "a-journey-begins"
         },
         "items": {
             "rocks": "2"
@@ -102,12 +32,12 @@
     },
     {
         "id": "dead-end",
-        "description": "Here the hallway ends abruptly. The only noticeable landmark is the pile of rocks at your feet",
+        "description": "Here the hallway ends abruptly. The only noticeable landmark is the pile of rocks at your feet.",
         "exits": {
             "west": "momentary-passage"
         },
         "items": {
-            "rocks": "2"
+            "rocks": "13"
         },
         "npcs": {
         },
@@ -133,7 +63,7 @@
     },
     {
         "id": "the-fields",
-        "description": "It's bright here at the surface. There seems to only be flat grasses and hills for miles, and only the ladder and a dirt path leading north break up the landscape.",
+        "description": "It's bright here at the surface. There seems to only be flat grasses and hills for miles, and only the ladder and a dirt path leading north break up the landscape. Every so often, you can spot a rabbit dashing by.",
         "exits": {
             "down": "a-certain-exit",
             "north": "village-square"
@@ -145,12 +75,12 @@
 
         },
         "enemies": {
-            
+            "rabbit":"3"
         }
     },
     {
         "id": "village-square",
-        "description": "This seems to be the center of a small village. There's a pop-up shop with a strange shopkeep, as well as and old man and a little boy loitering around. To the east are what look like ruins of a time long since forgotten.",
+        "description": "This seems to be the center of a small village. There's a pop-up shop with a strange shopkeep, as well as an old man and a little boy loitering around. To the east are what look like ruins of a time long since forgotten.",
         "exits": {
             "south": "the-fields",
             "east": "ruins-entrance"
@@ -159,8 +89,11 @@
         },
         "npcs": {
             "old man": "1",
+            "man": "1",
             "little boy": "2",
-            "shopkeep": "3"
+            "boy": "2",
+            "shopkeep": "3",
+            "shopkeeper": "3"
         },
         "enemies": {
         }
@@ -188,12 +121,15 @@
             "south": "ruins-hallway"
         },
         "items": {
+            "atrium": "16",
+            "encampment": "15",
+            "camp": "15"
         },
         "npcs": {
         },
         "enemies": {
             "goblin": "0",
-            "goblin-warrior": "1"
+            "goblin warrior": "1"
         }
     },
     {
@@ -204,6 +140,8 @@
             "west": "that-cave"
         },
         "items": {
+            "boulders": "2",
+            "sky": "17"
         },
         "npcs": {
         },
@@ -212,7 +150,7 @@
     },
     {
         "id": "that-cave",
-        "description": "A small white rabbit is hopping around at the cave mouth. A strangely dress man is sitting, seemingly waiting, behind a boulder nearby.",
+        "description": "A small white rabbit is hopping around at the cave mouth. A strangely dressed man is sitting, seemingly waiting, behind a boulder nearby.",
         "exits": {
             "east": "ruins-hallway"
         },
