@@ -1,6 +1,7 @@
 const {deleteMessage, bigCheck} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
+const inventory = require('../mud/inventory.js');
 
 class LookCommand extends commando.Command {
   constructor(client) {
@@ -28,6 +29,10 @@ class LookCommand extends commando.Command {
     var object;
     if (args === 'room' || args === 'here'|| args === 'around' || args === 'area') {
       this.replyToPlayer(message, player, true, room);
+    }
+    else if (args === 'inventory' || args === 'items' || 'equipped' || 'equipment') {
+      var command = new inventory(this.client);
+      command.run(message);
     }
     else {
       // otherwise, the player is looking at an item, which we need to determine

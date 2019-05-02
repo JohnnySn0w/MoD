@@ -4,7 +4,7 @@ const DEBUG = false;
 function deleteMessage(message) {
 // delete the user's command if not debugging
   if (!DEBUG) {
-    message.delete();
+    message.delete().catch(e => console.error(e));
   }
 }
 
