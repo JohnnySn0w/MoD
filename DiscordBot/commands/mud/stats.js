@@ -3,12 +3,15 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class StatsCommand extends commando.Command {
+  static commandInfo() {
+    return('PMs your stats\n`?stats`');
+  }
   constructor(client) {
     super(client, {
       name: 'stats',
       group: 'mud',
       memberName: 'stats',
-      description: 'PMs your stats\n`?stats`'      
+      description: StatsCommand.commandInfo(),
     });
   }
 

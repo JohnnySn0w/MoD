@@ -4,12 +4,15 @@ const db = require('../../../dbhandler');
 const inventory = require('../mud/inventory.js');
 
 class LookCommand extends commando.Command {
+  static commandInfo() {
+    return('Gives a description of an entity, place, or thing \n`?look <something>\nexample somethings: here, around, room, old man`');
+  }
   constructor(client) {
     super(client, {
       name: 'look',
       group: 'mud',
       memberName: 'look',
-      description: 'Gives a description of an entity, place, or thing \n`?look <something>\nexample somethings: here, around, room, old man`',
+      description: LookCommand.commandInfo(),
       args: [
         {
           key: 'object',

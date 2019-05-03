@@ -4,12 +4,15 @@ const db = require('../../../dbhandler');
 
 
 class AttackCommand extends commando.Command {
+  static commandInfo() {
+    return('`?attack <target> and then afterwards, supply a type of attack within 10 seconds. Valid keywords after successful initiation: weapon, magic, throw(requires an item name also), run`');
+  }
   constructor(client) {
     super(client, {
       name: 'attack',
       group: 'mud',
       memberName: 'attack',
-      description: '\n`?attack <target> and then afterwards, supply a type of attack within 10 seconds. Valid keywords after successful initiation: weapon, magic, throw, run`',
+      description: AttackCommand.commandInfo(),
       args: [
         {
           key: 'object',
@@ -138,7 +141,7 @@ class AttackCommand extends commando.Command {
               message.channel.send(`${player.name} decides this item is better used elsewhere.`);
             }
           } else {
-            message.channel.send(`${player.name} throws an invisible curveball at ${enemy.name}.`);
+            message.channel.send(`${player.name} throws nothing at all at ${enemy.name}.`);
           }
         } else {
           deleteMessage(m);

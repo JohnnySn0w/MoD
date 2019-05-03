@@ -3,12 +3,15 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class EquipCommand extends commando.Command {
+  static commandInfo() {
+    return('Lets a player wield a weapon or put on armor.\n`?equip <item>`');
+  }
   constructor(client) {
     super(client, {
       name: 'equip',
       group: 'mud',
       memberName: 'equip',
-      description: 'Lets a player wield a weapon or put on armor.\n`?equip <item>`'      
+      description: EquipCommand.commandInfo(),
     });
   }
 

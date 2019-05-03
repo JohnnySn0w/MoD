@@ -3,12 +3,15 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class InventoryCommand extends commando.Command {
+  static commandInfo() {
+    return('Shows inventory in a PM.\n`?inventory`');
+  }
   constructor(client) {
     super(client, {
       name: 'inventory',
       group: 'mud',
       memberName: 'inventory',
-      description: 'Shows inventory in a PM.\n`?inventory`'      
+      description: InventoryCommand.commandInfo(),
     });
   }
 

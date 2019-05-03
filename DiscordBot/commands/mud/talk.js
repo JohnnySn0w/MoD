@@ -3,12 +3,15 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class TalkCommand extends commando.Command {
+  static commandInfo() {
+    return('Gab it up with NPCs!\n`?talk <npc>`');
+  }
   constructor(client) {
     super(client, {
       name: 'talk',
       group: 'mud',
       memberName: 'talk',
-      description: 'Gab it up with NPCs!\n`?talk <npc>`',
+      description: TalkCommand.commandInfo(),
       args: [
         {
           key: 'npc',
