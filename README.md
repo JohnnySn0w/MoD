@@ -1,3 +1,6 @@
+<a href="https://codeclimate.com/github/JohnnySn0w/MoD/maintainability"><img src="https://api.codeclimate.com/v1/badges/1901d2aed01ef57e9384/maintainability" /></a>
+
+
 ![Image of the MUD DM](http://www.mahan.io/static/media/DMspritev3.png)
 # MoD: MUD on Discord
 ### A wot?
