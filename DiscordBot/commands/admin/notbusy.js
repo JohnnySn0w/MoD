@@ -13,7 +13,7 @@ class NotBusy extends commando.Command {
     super(client, {
       name: 'notbusy',
       group: 'admin',
-      ownerOnly: true,
+      ownerOnly: false,
       memberName: 'notbusy',
       description: 'Makes a player not busy',
       //user permissions
