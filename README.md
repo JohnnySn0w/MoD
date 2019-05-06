@@ -1,5 +1,8 @@
-![Image of the MUD DM](http://www.mahan.io/static/media/DMspritev3.png)
-# MoD: MUD on Discord
+<img src="http://www.mahan.io/static/media/DMspritev3.png" height="64"/>
+
+___
+
+# MoD: MUD on Discord <a href="https://codeclimate.com/github/JohnnySn0w/MoD/maintainability"><img src="https://api.codeclimate.com/v1/badges/1901d2aed01ef57e9384/maintainability" /></a>
 ### A wot?
 For the uninitiated, a MUD is a Multi-User Dungeon. Think text-based adventure game, but as an online multiplayer game
 ### And you want to stick that on Discord?
