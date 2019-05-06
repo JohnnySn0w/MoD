@@ -30,7 +30,7 @@ class LookCommand extends commando.Command {
 
   getRoom(message, player, room, args) {
     var object;
-    if (args === 'room' || args === 'here'|| args === 'around' || args === 'area') {
+    if (args === undefined || args === 'room' || args === 'here'|| args === 'around' || args === 'area') {
       this.replyToPlayer(message, player, true, room);
     }
     else if (args === 'inventory' || args === 'items' || args === 'equipped' || args === 'equipment') {

@@ -29,11 +29,12 @@ class Help extends commando.Command {
     let descripts = [];
     Object.keys(c).forEach((key) => {
       if (key !== 'help') {
-        descripts.push(`**${key}**: ${c[key].commandInfo()}\n`) ;
+        descripts.push(`**${key}**: ${c[key].commandInfo()}`) ;
       } else {
-        descripts.push(Help.commandInfo());
+        descripts.push(`**${key}**: ${Help.commandInfo()}`);
       }
     });
+    descripts.push('***bot commands should be send in game and not directly to the bot***');
     return descripts;
   }
 }

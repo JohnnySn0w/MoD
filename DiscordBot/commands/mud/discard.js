@@ -4,7 +4,7 @@ const db = require('../../../dbhandler');
 
 class DiscardCommand extends commando.Command {
   static commandInfo() {
-    return('Lets a player toss out items in their inventory.\n`?discard <item>`');
+    return('Remove an item from inventory.\n`?discard <item>`');
   }
   constructor(client) {
     super(client, {

@@ -4,7 +4,7 @@ const db = require('../../../dbhandler');
 
 class EquipCommand extends commando.Command {
   static commandInfo() {
-    return('Lets a player wield a weapon or put on armor.\n`?equip <item>`');
+    return('Equip a weapon or armor.\n`?equip <item>`');
   }
   constructor(client) {
     super(client, {
