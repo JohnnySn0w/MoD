@@ -4,7 +4,7 @@ const db = require('../../../dbhandler');
 
 class StartCommand extends commando.Command {
   static commandInfo() {
-    return('`?start` will create your character, and let you play the game.');
+    return('Creates your character, and lets you play the game.\n`?start`');
   }
   constructor(client) {
     super(client, {

@@ -7,7 +7,7 @@ const c = require('../../commands.js');
 
 class Help extends commando.Command {
   static commandInfo() {
-    return('displays this message\n`?help`');
+    return('Displays this message\n`?help`');
   }
   constructor(client) {
     super(client, {
@@ -25,7 +25,6 @@ class Help extends commando.Command {
     deleteMessage(message);
   }
   commandDescripts() {
-    console.log(c);
     let descripts = [];
     Object.keys(c).forEach((key) => {
       if (key !== 'help') {
