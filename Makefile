@@ -1,31 +1,29 @@
 SHELL = /bin/bash
-USER = vagrant
-SLS = /vagrant/node_modules/serverless/bin/serverless
-DIRECTORY = ~/.config
-SERVERDIR = /vagrant/dbData
+SLS = ./node_modules/serverless/bin/serverless
+SERVERDIR = ./dbData
+# DIRECTORY = ~/.config
+# USER = vagrant
 
-.PHONY: deleteDir
-deleteDir:
-	if test -d $(DIRECTORY); \
-		then sudo rm -rf $(DIRECTORY); \
-	fi
+####These commands are deprecated, and only useful/safeish inside a vm
+# .PHONY: deleteDir
+# deleteDir:
+# 	if test -d $(DIRECTORY); \
+# 		then sudo rm -rf $(DIRECTORY); \
+# 	fi
 
-.PHONY: dependencies
-dependencies: deleteDir 
-	mkdir $(DIRECTORY);
-	sudo chown -R $(USER) ~/.npm; sudo chown -R $(USER) $(DIRECTORY);
-	sudo yarn global add nodemon;
-	sudo yarn global add jest;
-	sudo yarn install --no-bin-links;
+# .PHONY: dependencies
+# dependencies: deleteDir 
+# 	# mkdir $(DIRECTORY);
+# 	yarn install --no-bin-links;
 
 .PHONY: dynamoSetup
 dynamoSetup:
-	sudo $(SLS) dynamodb install;
+	$(SLS) dynamodb install;
 	if test -d $(SERVERDIR); \
-		then sudo $(SLS) dynamodb start --migrate --seed; \
+		then $(SLS) dynamodb start --migrate --seed; \
 	else \
 		mkdir $(SERVERDIR); \
-		sudo $(SLS) dynamodb start --migrate --seed; \
+		$(SLS) dynamodb start --migrate --seed; \
 	fi
 
 

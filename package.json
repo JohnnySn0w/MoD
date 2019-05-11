@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "mud on discord",
   "main": "./DiscordBot/index.js",
+  "engines" : { 
+    "node" : "^10.0.0" 
+  },
   "dependencies": {
     "discord.js": "^11.4.2",
     "discord.js-commando": "^0.10.0",
@@ -15,9 +18,9 @@
     "serverless-dynamodb-local": "^0.2.35"
   },
   "scripts": {
-    "start": "nodemon -L --max-old-space-size=2048 ./DiscordBot/index.js",
-    "test": "nodemon  --prof --max-old-space-size=2048 ./DiscordBot/index.js",
-    "watch": "jest --watch"
+    "start": "nodemon --max-old-space-size=2048 ./DiscordBot/index.js",
+    "seed": "./node_modules/serverless/bin/serverless dynamodb seed",
+    "test": "nodemon  --prof --max-old-space-size=2048 ./DiscordBot/index.js"
   },
   "repository": {
     "type": "git",
