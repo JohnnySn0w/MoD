@@ -41,7 +41,7 @@
         "respawn": null
     },
     {
-        "name": "Goblin-Warrior",
+        "name": "Goblin Warrior",
         "id": "1",
         "level": 4,
         "health": 50,
@@ -75,5 +75,43 @@
             }             
         ],
         "respawn": 10
+    },
+    {
+        "name": "That One Rabbit",
+        "id": "2",
+        "level": 6,
+        "health": 30,
+        "strength": 50,
+        "defense": 15,
+        "description": "A small, white rabbit, with crimson...eyes. Seemingly innocuous.",
+        "loot": [
+            {   
+                "name": "Rabbit's Foot",
+                "id":"11",
+                "type":"key",
+                "amount": 1,
+                "rarity": 100                      
+            }             
+        ],
+        "respawn": 5
+    },
+    {
+        "name": "Rabbit",
+        "id": "3",
+        "level": 1,
+        "health": 5,
+        "strength": 3,
+        "defense": 1,
+        "description": "There's a brown rabbit here",
+        "loot": [
+            {   
+                "name": "Guilt",
+                "id":"14",
+                "type":"key",
+                "amount": 1,
+                "rarity": 10                      
+            }             
+        ],
+        "respawn": null
     }
 ]

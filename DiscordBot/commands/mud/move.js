@@ -3,12 +3,15 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class MoveCommand extends commando.Command {
+  static commandInfo() {
+    return('Move to a different room (i.e. text channel).\n`?move <direction>`');
+  }
   constructor(client) {
     super(client, {
       name: 'move',
       group: 'mud',
       memberName: 'move',
-      description: 'Moves the user to a different room (i.e. text channel)',
+      description: MoveCommand.commandInfo(),
       args: [
         {
           key: 'direction',
@@ -21,11 +24,11 @@ class MoveCommand extends commando.Command {
 
   async run(message, {direction}) {
     //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, direction));
-    bigCheck(message, direction, this.setRetrieval.bind(this));
+    bigCheck(message, this.setRetrieval.bind(this), direction);
     deleteMessage(message);
   }
 
-  setRetrieval(message, direction, player, room) {
+  setRetrieval(message, player, room, direction) {
     this.getRoom(message, player, room, direction, true);
   }
 

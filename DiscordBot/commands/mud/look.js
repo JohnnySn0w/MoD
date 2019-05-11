@@ -1,14 +1,18 @@
-const {deleteMessage, bigCheck} = require('../../globals.js');
+const {deleteMessage, bigCheck, checkItems, checkKeys} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
+const inventory = require('../mud/inventory.js');
 
 class LookCommand extends commando.Command {
+  static commandInfo() {
+    return('Gives a description of an entity, place, or thing \n`?look <something>`\nexample somethings: `here`, `around`, `room`, `old man`');
+  }
   constructor(client) {
     super(client, {
       name: 'look',
       group: 'mud',
       memberName: 'look',
-      description: 'Gives a description of an item in the same room as the user',
+      description: LookCommand.commandInfo(),
       args: [
         {
           key: 'object',
@@ -20,18 +24,22 @@ class LookCommand extends commando.Command {
   }
 
   async run(message, args) {
-    bigCheck(message, args.object, this.getRoom.bind(this));
+    bigCheck(message, this.getRoom.bind(this), args.object);
     deleteMessage(message);
   }
 
-  getRoom(message, args, player, room) {
+  getRoom(message, player, room, args) {
     var object;
-    if (args === 'room' || args === 'here') {
+    if (args === undefined || args === 'room' || args === 'here'|| args === 'around' || args === 'area') {
       this.replyToPlayer(message, player, true, room);
+    }
+    else if (args === 'inventory' || args === 'items' || args === 'equipped' || args === 'equipment') {
+      var command = new inventory(this.client);
+      command.run(message);
     }
     else {
       // otherwise, the player is looking at an item, which we need to determine
-      object = this.determineItem(args, room);
+      object = this.determineItem(args, room, player);
       if (object === undefined) {
         // if the object doesn't exist, then the player is looking at an NPC, enemy, or nothing
         object = this.determineNPC(args, room);
@@ -53,11 +61,15 @@ class LookCommand extends commando.Command {
     }
   }
 
-  determineItem(searchName, room) {
+  determineItem(searchName, room, player) {
     // determine what item the player is looking at in the given room
     var itemObject;
     if (searchName in room.items) {
       itemObject = room.items[searchName];
+    } else if (checkKeys(player, searchName) !== undefined) {
+      itemObject = checkKeys(player, searchName);
+    } else if (checkItems(player, searchName) !== undefined) {
+      itemObject = checkItems(player, searchName);
     }
 
     return itemObject;
@@ -89,6 +101,7 @@ class LookCommand extends commando.Command {
       var object;
       if (objectIsRoom === true) {
         object = room;
+        object.description = `${object.description}\nExits are: ${Object.keys(object.exits).toString()}`;
       } else {
         var body = JSON.parse(data.body);
         var item = body.Item;

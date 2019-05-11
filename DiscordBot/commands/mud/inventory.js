@@ -3,12 +3,15 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class InventoryCommand extends commando.Command {
+  static commandInfo() {
+    return('Shows inventory in a PM.\n`?inventory`');
+  }
   constructor(client) {
     super(client, {
       name: 'inventory',
       group: 'mud',
       memberName: 'inventory',
-      description: 'Shows player inventory in a PM to the player.'      
+      description: InventoryCommand.commandInfo(),
     });
   }
 
@@ -23,43 +26,43 @@ class InventoryCommand extends commando.Command {
     var player = body.Item;
 
     if (player === undefined) {
-        // if the player isn't in the database already, send them a notice that they need to "?start" the game
-        message.member.send("You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.");
+      // if the player isn't in the database already, send them a notice that they need to "?start" the game
+      message.member.send('You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.');
     } else {
       // otherwise, direct message the player with their health, strength, and defense
       let weapon = player.equipment.weapon;
       let armor = player.equipment.armor;
       let keys = player.inventory.keys;
       let items = player.inventory.items;
-      let keyList = "";
-      let itemList = "";
+      let keyList = '';
+      let itemList = '';
       
       // check to keep the DM from saying null. Instead, if there's nothing, say "None"
       if (weapon == null) {
-        weapon = "None Equipped";
+        weapon = 'None Equipped';
       } else {
         weapon = player.inventory.items[weapon].name;
       }
       
       if (armor == null) {
-        armor = "None Equipped";
+        armor = 'None Equipped';
       } else {
         armor = player.inventory.items[armor].name;
       }
 
       if (Object.keys(keys).length == 0) {
-        keyList = "Empty";
+        keyList = 'Empty';
       } else {
         for (var key in keys) {
-          keyList = `${keyList}\n${keys[key].name}`
+          keyList = `${keyList}\n${keys[key].name}`;
         }
       }
 
       if (Object.keys(items).length == 0) {
-        itemList = "Empty";
+        itemList = 'Empty';
       } else {
         for (var item in items) {
-          itemList = `${itemList}\n${items[item].name} x${items[item].amount}`
+          itemList = `${itemList}\n${items[item].name} x${items[item].amount}`;
         }
       }
 

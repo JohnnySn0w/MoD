@@ -3,12 +3,15 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class DiscardCommand extends commando.Command {
+  static commandInfo() {
+    return('Remove an item from inventory.\n`?discard <item>`');
+  }
   constructor(client) {
     super(client, {
       name: 'discard',
       group: 'mud',
       memberName: 'discard',
-      description: 'Lets a player toss out items in their inventory.'      
+      description: DiscardCommand.commandInfo(),
     });
   }
 

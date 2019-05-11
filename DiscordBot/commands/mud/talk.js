@@ -3,12 +3,15 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class TalkCommand extends commando.Command {
+  static commandInfo() {
+    return('Gab it up with NPCs!\n`?talk <npc>`');
+  }
   constructor(client) {
     super(client, {
       name: 'talk',
       group: 'mud',
       memberName: 'talk',
-      description: 'Allows users to interact with NPCs',
+      description: TalkCommand.commandInfo(),
       args: [
         {
           key: 'npc',
@@ -22,11 +25,11 @@ class TalkCommand extends commando.Command {
   async run(message, {npc}) {
     // get the player object so that we know the player's progress with this NPC
     //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, npc, data));
-    bigCheck(message, npc, this.getNPC.bind(this));
+    bigCheck(message, this.getNPC.bind(this), npc);
     deleteMessage(message);
   }
 
-  getNPC(message, entity, player, room) {
+  getNPC(message, player, room, entity) {
     if (!player.busy) {
       if (room.npcs[entity]) {
         db.getItem(room.npcs[entity], 'npcs', (data) => this.getProgress(message, player, room, data));
@@ -34,10 +37,10 @@ class TalkCommand extends commando.Command {
         // if not an npc, determine if the player is talking to an enemy
         if (room.enemies[entity]) {
           // if an enemy, then mention that the player can't talk to the enemy
-          message.channel.send(`The ${entity} would rather a fight than a chat.`);
+          message.channel.send(`${player.name} fails an attempt at parley with the ${entity}`);
         } else {
           // if not an enemy either, they're talking to no one
-          message.channel.send(`${player.name} is conversing with no one.`);
+          message.channel.send(`${player.name} is conversing with unseen forces.`);
         }
       }
     }
@@ -89,7 +92,7 @@ class TalkCommand extends commando.Command {
           // if the player is in a shopkeep menu, list the goods and the player's gold
           npcResponse = npcResponse + `\n[--You have ${player.inventory.gold} gold--] `;
           for (var i = 0; i < npc.goods.length; i++) {
-            npcResponse = npcResponse + '\n [' + i + '] ' + npc.goods[i].item + ' - '
+            npcResponse = npcResponse + '\n [' + i + '] ' + npc.goods[i].item + ' - ';
 
             // if the player already has the item and it's a key item, then don't offer it to them
             if (player.inventory.keys[npc.goods[i].id]) {
@@ -131,13 +134,13 @@ class TalkCommand extends commando.Command {
 
     // ensure that the npc has a dialogue tree
     if (npc.responses !== undefined) {
-      message.reply(`${npc.name} says: ${npcResponse}`);
+      message.reply(`${npc.name} says: ${npcResponse}\nyou can always\`leave\``);
 
       if (!stop) {
         db.updateItem(player.id, ['busy'], [true], 'players', ()=>{ console.log("yes busy!"); });
         // responses change to using length
         const filter = m => (((m.content < playerResponseCount) && (Number.isInteger(Number(m.content)))) || (m.content.includes('leave'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
-        const collector = message.channel.createMessageCollector(filter, {time: 20000});
+        const collector = message.channel.createMessageCollector(filter, {time: 10000});
 
         // if the player responses...
         collector.on('collect', m => {
@@ -146,7 +149,7 @@ class TalkCommand extends commando.Command {
           collector.stop();
           
           // kill the conversation if the player is trying to talk to another NPC
-          if (m.content.includes('leave')) {
+          if (m.content.includes('leave')||m.content.includes('end')||m.content.includes('stop')) {
             db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
             let newNpcResponse = 'Oh ok bye';
             this.replyToPlayer(player, message, npc, newNpcResponse, 1, room, true);

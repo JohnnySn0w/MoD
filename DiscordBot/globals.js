@@ -1,40 +1,75 @@
 const db = require('../dbhandler');
-const DEBUG = true;
+const DEBUG = false;
 
 function deleteMessage(message) {
 // delete the user's command if not debugging
   if (!DEBUG) {
-    message.delete();
+    message.delete().catch(e => console.error(e));
   }
 }
 
-function playerCheck(args, data, callback, message) {
+function playerCheck(data, callback, message, args) {
   let player = JSON.parse(data.body).Item;
   
   if (player === undefined) {
     message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
   } else {
-    db.getItem(message.channel.name, 'rooms', (moreData) => roomCheck(args, player, message, moreData, callback))
+    db.getItem(message.channel.name, 'rooms', (moreData) => roomCheck(player, message, moreData, callback, args));
   }
 }
 
-function roomCheck(args, player, message, data, callback) {
+function roomCheck(player, message, data, callback, args) {
   // grab the actual player object
   const room = JSON.parse(data.body).Item;
 
   if (room === undefined) {
-    message.member.send('You are not in a MUD related room.');
+    message.message.author.send('You are not in a MUD related room.');
   } else {
-    callback(message, args, player, room);
+    callback(message, player, room, args);
   }
 }
 
-function bigCheck(message, args, callback) {
-  args = args.toLowerCase();
-  db.getItem(message.member.id, 'players', (data) => playerCheck(args, data, callback, message));
-};
+function bigCheck(message, callback,  args = '') {
+  if(args !== '') {
+    args = args.toLowerCase();
+  }
+  db.getItem(message.message.author.id, 'players', (data) => playerCheck(data, callback, message, args));
+}
+
+function respawn(message, player) {
+  // respawn player
+  db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => console.log('Player health restored'));
+  message.member.setRoles([message.guild.roles.find(role => role.name === 'dead-end')]).catch(console.error);
+  let channel = this.client.channels.find(channel => channel.name === 'death-notes');
+  channel.send(`${player.name} totally died lmao`);
+}
+
+function checkKeys(player, itemName) {
+  // iterate through the player's list of items and check each one's name
+  for (let key in player.inventory.keys) {
+    if (itemName === player.inventory.keys[key].name.toLowerCase()) {
+      return key;
+    }
+  }
+  return undefined;
+}
+
+function checkItems(player, itemName) {
+  // iterate through the player's list of items and check each one's name
+  for (var item in player.inventory.items) {
+    if (itemName === player.inventory.items[item].name.toLowerCase()) {
+      return player.inventory.items[item].id;
+    }
+  }
+
+  return undefined;
+}
 
 module.exports = { 
-	DEBUG,
-  deleteMessage, bigCheck
+  DEBUG,
+  deleteMessage,
+  bigCheck,
+  respawn,
+  checkItems,
+  checkKeys
 };

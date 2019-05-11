@@ -1,15 +1,18 @@
-const { deleteMessage, bigCheck } = require('../../globals.js');
+const { deleteMessage, bigCheck, respawn } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 
 class AttackCommand extends commando.Command {
+  static commandInfo() {
+    return('Attack a target\n`?attack <target>` and then afterwards, supply a type of attack within 10 seconds.\nValid keywords after successful initiation: `weapon`, `magic`, `run`, `throw` (throw requires an item name)');
+  }
   constructor(client) {
     super(client, {
       name: 'attack',
       group: 'mud',
       memberName: 'attack',
-      description: `?attack <target> and then afterwards, supply a type of attack within 10 seconds. Valid keywords after initiation: weapon, magic, run`,
+      description: AttackCommand.commandInfo(),
       args: [
         {
           key: 'object',
@@ -21,11 +24,11 @@ class AttackCommand extends commando.Command {
   }
 
   async run(message, args) {
-    bigCheck(message, args.object, this.getEnemy.bind(this));
+    bigCheck(message, this.getEnemy.bind(this), args.object);
     deleteMessage(message);
   }
 
-  getEnemy(message, entity, player, room) {
+  getEnemy(message, player, room, entity, ) {
     if (!player.busy) {
       if (room.enemies[entity]) {
         db.getItem(room.enemies[entity], 'enemies', (data) => this.checkHostile(message, player, data, room));
@@ -128,6 +131,18 @@ class AttackCommand extends commando.Command {
         } else if (m.content.includes('magic')){
           deleteMessage(m);
           message.channel.send(`${player.name} is shouting nonsense`);
+        } else if (m.content.includes('throw')) {
+          if(m.content.includes('grenade')){
+            if(player.inventory.keys[12] && enemy.name === 'That One Rabbit'){
+              const damage = 50;
+              enemy.health = enemy.health - damage;
+              message.channel.send(`${player.name} throws the holy hand grenade at the ${enemy.name}. It explodes beautifully, leaving nothing behind, save a foot and what can only be described as chunky salsa.`);
+            } else {
+              message.channel.send(`${player.name} decides this item is better used elsewhere.`);
+            }
+          } else {
+            message.channel.send(`${player.name} throws nothing at all at ${enemy.name}.`);
+          }
         } else {
           deleteMessage(m);
           //in the future, we can add a magic system here
@@ -156,6 +171,7 @@ class AttackCommand extends commando.Command {
     }
     if (damage > 0) {
       player.health = player.health - damage;
+      db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
       message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage} damage.`);
     } else {
       message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
@@ -200,18 +216,10 @@ class AttackCommand extends commando.Command {
       this.rollLoot(message, player, enemy);
     } else if (player.health < 1) {
       message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
-      this.respawn(player, message);
+      bigCheck(message, respawn.bind(this));
     } else {
       return null;
     }
-  }
-
-  respawn(player, message) {
-    // respawn player
-    db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => console.log('Player health restored'));
-    message.member.setRoles([message.guild.roles.find(role => role.name === 'entry-room')]).catch(console.error);
-    var channel = this.client.channels.find(channel => channel.name === 'entry-room');
-    channel.send(`${player.name} is reborn, ready to fight again!`);
   }
 
   leveling(xp, player, message) {
@@ -295,7 +303,7 @@ class AttackCommand extends commando.Command {
       player.inventory.keys[item.id] = {
         'name': item.name,
         'used': false
-      }
+      };
     // if the item is a weapon or armor...
     } else if (item.type === "weapon" || item.type === "armor") {
       // check to see if the player already has that item

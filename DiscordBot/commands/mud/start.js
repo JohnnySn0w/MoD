@@ -3,12 +3,15 @@ const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class StartCommand extends commando.Command {
+  static commandInfo() {
+    return('Creates your character, and lets you play the game.\n`?start`');
+  }
   constructor(client) {
     super(client, {
       name: 'start',
       group: 'mud',
       memberName: 'start',
-      description: 'Sets the player on his or her journey into the MUD'
+      description: StartCommand.commandInfo(),
     });
   }
 
@@ -54,7 +57,7 @@ class StartCommand extends commando.Command {
           },
           'items': {
           },
-          'gold': 50
+          'gold': 200
         },
         'equipment': {
           'weapon': null,
@@ -73,7 +76,7 @@ class StartCommand extends commando.Command {
 
   setRoles(message) {
     // once the player data is stored on the database, reassign the player's room permissions to the entry room
-    const entryRoomRole = message.guild.roles.find(role => role.name === 'entry-room');
+    const entryRoomRole = message.guild.roles.find(role => role.name === 'a-journey-begins');
     message.reply('Welcome to the MUD! Your journey starts in the above text channels. Good luck!');
     message.member.setRoles([entryRoomRole]).catch(e => console.error(e));
   }
