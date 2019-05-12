@@ -7,7 +7,7 @@
     "node" : "^10.0.0" 
   },
   "dependencies": {
-    "discord.js": "^11.4.2",
+    "discord.js": "^11.5.0",
     "discord.js-commando": "^0.10.0",
     "yarn": "^1.12.3"
   },
@@ -27,7 +27,7 @@
     "url": "git+https://github.com/JohnnySn0w/MoD.git"
   },
   "author": "",
-  "license": "AGPL-3.0",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/JohnnySn0w/MoD/issues"
   },
