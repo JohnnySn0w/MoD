@@ -28,7 +28,7 @@ class AttackCommand extends commando.Command {
     deleteMessage(message);
   }
 
-  getEnemy(message, player, room, entity, ) {
+  getEnemy(message, player, room, entity) {
     if (!player.busy) {
       if (room.enemies[entity]) {
         db.getItem(room.enemies[entity], 'enemies', (data) => this.checkHostile(message, player, data, room));
@@ -64,12 +64,6 @@ class AttackCommand extends commando.Command {
     } else {
       message.channel.send(`${player.name} tries to attack the air.`);
     }
-  }
-
-  cleanArgs(args) {
-    // ignore the argument's capitalization
-    args.object = args.object.toLowerCase();
-    return args;
   }
 
   calculateDamage(attacker, victim, weaponMod = 0, armorMod = 0) {

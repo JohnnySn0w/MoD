@@ -1,5 +1,6 @@
 const db = require('../dbhandler');
 const DEBUG = false;
+const gameWorldName = 'game channels';
 
 function deleteMessage(message) {
 // delete the user's command if not debugging
@@ -66,10 +67,11 @@ function checkItems(player, itemName) {
 }
 
 module.exports = { 
+  bigCheck,
+  checkItems,
+  checkKeys,
   DEBUG,
   deleteMessage,
-  bigCheck,
-  respawn,
-  checkItems,
-  checkKeys
+  gameWorldName,
+  respawn
 };
