@@ -5,11 +5,9 @@ ___
 # MoD: MUD on Discord <a href="https://codeclimate.com/github/JohnnySn0w/MoD/maintainability"><img src="https://api.codeclimate.com/v1/badges/1901d2aed01ef57e9384/maintainability" /></a>
 ### A wot?
 For the uninitiated, a MUD is a Multi-User Dungeon. Think text-based adventure game, but as an online multiplayer game
-### And you want to stick that on Discord?
-We did. And man, rate limited messages per channel is a pain.
+### And you stuck that on Discord?
+Yeah, and man, rate limited messages per channel is a pain.
 So yeah, the bot can take hand-crafted game modules and run a MUD with them. A skeleton on which to drape the flesh of world-building.
-### In 6 months??
-Yeah, we did
 ### Ok. How do I run it?
 See the Setup section of the wiki!
 
@@ -18,7 +16,7 @@ ___
 ## Features thus far:
 
 ### Basic demo dungeon
-- This is the basic framework for a dungeon, and serves as a short example of what can be done at a simple level.
+- This is the basic framework for a dungeon, and serves as a short example of what can be done at a simple level. It can easily be replaced with whatever your actual world is.
 
 ### Administrative commands
 - db – allows for simple queries to the database, as well as functionality for on-the-fly creation of game elements
