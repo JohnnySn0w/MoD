@@ -52,9 +52,9 @@ class Gen extends commando.Command {
   createCategory(guild) {
     guild.createChannel(gameWorldName, {
       type: 'category',
-      permissionsOverwrites: [{
-        id: guild.id,
-        deny: ['VIEW_CHANNEL']
+      permissionOverwrites: [{
+        id: guild.id.toString(),
+        deny: ['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY', 'SEND_MESSAGES']
       }]
     }).then(category => console.log(`Created ${category.name}`))
       .catch(console.error);
@@ -64,7 +64,7 @@ class Gen extends commando.Command {
     rooms.forEach((room) => {
       if(guild.roles.find(role => role.name === room.id) === null) {
         guild.createRole({
-          name: room.id,
+          name: room.id.toString(),
           color: '66CDAA',
         }).then(role => console.log(`Created new role with name ${role.name}`))
           .catch(console.error);
@@ -79,14 +79,15 @@ class Gen extends commando.Command {
         guild.createChannel(room.id, {
           type: 'text',
           parent: guild.channels.find(channel => channel.name === gameWorldName).id,
-          permissionsOverwrites: [
+          permissionOverwrites: [
             {
-              id: guild.id,
-              deny: ['VIEW_CHANNEL', 'READ_MESSAGES', 'READ_MESSAGE_HISTORY', 'SEND_MESSAGES']
+              id: guild.id.toString(),
+              deny: ['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY', 'SEND_MESSAGES']
             },
             {
-              id: guild.roles.find(role => role.name === room.id).id,
-              allowed: ['VIEW_CHANNEL', 'READ_MESSAGES', 'READ_MESSAGE_HISTORY', 'SEND_MESSAGES']
+              id: guild.roles.find(role => role.name === room.id).id.toString(),
+              allow: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
+              deny: ['READ_MESSAGE_HISTORY']
             }
           ]
         }).then(channel => console.log(`Created new room channel with name ${channel.name}`))
