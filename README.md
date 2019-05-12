@@ -20,6 +20,7 @@ ___
 
 ### Administrative commands
 - db – allows for simple queries to the database, as well as functionality for on-the-fly creation of game elements
+- gen - Automated generation of channels/roles for game rooms
 - notbusy - a short-term fix for a higher level problem, fixes a player's busy status if the bot gets interrupted. Will be removed in the future when the true solution is implemented.
 - test – in-house manufactured unit testing
 
@@ -34,7 +35,6 @@ ___
 - Inventory - get a pm of your inventory
 
 ### Prospective future features:
-- Automated generation of channels for game rooms from database entries
 - Custom player descriptions for RP
 - Change nickname for RP
 - Player housing
