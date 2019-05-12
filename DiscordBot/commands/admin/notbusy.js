@@ -1,8 +1,5 @@
 // importing from other files
 const commando = require('discord.js-commando');
-
-// import the dbhandler functions, accessible by using db.whateverFunction
-// technically we can use anything as a variable name as it's simply an alias
 const db = require('../../../dbhandler');
 const { deleteMessage } = require('../../globals.js');
 
@@ -31,7 +28,7 @@ class NotBusy extends commando.Command {
   // the core function for the command, runs asynchronously
   async run(message, {playerID}) {
     db.updateItem(playerID, ['busy'], [false], 'players', ()=>{
-        message.channel.send(`<@${playerID}> is no longer busy!`);
+      message.channel.send(`<@${playerID}> is no longer busy!`);
     });
     deleteMessage(message);
   }
