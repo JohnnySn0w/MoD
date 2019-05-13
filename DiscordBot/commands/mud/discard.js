@@ -16,7 +16,7 @@ class DiscardCommand extends commando.Command {
   }
 
   async run(message, args) {
-    db.getItem(message.member.id, 'players', (data) => this.getPlayer(data, message, args));
+    db.getItem(message.author.id, 'players', (data) => this.getPlayer(data, message, args));
     deleteMessage(message);
   }
 
@@ -27,7 +27,7 @@ class DiscardCommand extends commando.Command {
 
     // make sure the player is a part of the MUD
     if (player === undefined) {
-      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
+      message.author.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in test-zone to get started!');
     } else {
       // grab the item from keys first
       var itemName = args.toLowerCase();
@@ -39,18 +39,18 @@ class DiscardCommand extends commando.Command {
 
         // ensure the item exists
         if (item === undefined) {
-          message.member.send(`It doesn't seem that you have the ${args} in your inventory.`);
+          message.author.send(`It doesn't seem that you have the ${args} in your inventory.`);
         } else {
           // make sure the item isn't already equipped
           if (item.equipped && item.amount == 1) {
-            message.member.send(`The ${item.name} is equipped, and it's your last item of its kind. Equip something else to discard it.`);
+            message.author.send(`The ${item.name} is equipped, and it's your last item of its kind. Equip something else to discard it.`);
           } else {
             // discard the item
             this.discardItem(message, player, item);
           }
         }
       } else {
-        message.member.send(`${item.name} is a key item. You can't discard it.`);
+        message.author.send(`${item.name} is a key item. You can't discard it.`);
       }
     }
   }
@@ -87,7 +87,7 @@ class DiscardCommand extends commando.Command {
 
     // update the player object and message the player
     db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
-    message.member.send(`${item.name} was discarded.`);
+    message.author.send(`${item.name} was discarded.`);
   }
 }
 

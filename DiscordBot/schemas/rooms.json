@@ -100,7 +100,7 @@
     },
     {
         "id": "ruins-entrance",
-        "description": "There's not much to see beyond the vine entrenched stone that sprawls from here, other than the interruptive stone of the mountain it is on. The occasional goblin can be seen sneaking around. There's a small opening leading into the ruins to the south.",
+        "description": "There's not much to see beyond the vine-entrenched stone that sprawls from here, other than the interruptive stone of the mountain it is on. The occasional goblin can be seen sneaking around. There's a small opening leading into the ruins to the south.",
         "exits": {
             "west": "village-square",
             "south": "ruins-atrium"

@@ -4,8 +4,10 @@ const gameWorldName = 'game channels';
 
 function deleteMessage(message) {
 // delete the user's command if not debugging
-  if (!DEBUG) {
-    message.delete().catch(e => console.error(e));
+  if (message.channel.type !== 'dm') {
+    if (!DEBUG) {
+      message.delete().catch(e => console.error(e));
+    }
   }
 }
 
@@ -24,17 +26,21 @@ function roomCheck(player, message, data, callback, args) {
   const room = JSON.parse(data.body).Item;
 
   if (room === undefined) {
-    message.message.author.send('You are not in a MUD related room.');
+    message.author.send('You are not in a MUD related room.');
   } else {
     callback(message, player, room, args);
   }
 }
 
 function bigCheck(message, callback,  args = '') {
+  if (message.message.channel.type === 'dm') {
+    message.author.send('You are not in a MUD related room.');
+    return null;
+  }
   if(args !== '') {
     args = args.toLowerCase();
   }
-  db.getItem(message.message.author.id, 'players', (data) => playerCheck(data, callback, message, args));
+  db.getItem(message.author.id, 'players', (data) => playerCheck(data, callback, message, args));
 }
 
 function respawn(message, player) {

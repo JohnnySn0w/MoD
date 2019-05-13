@@ -33,7 +33,6 @@ class Help extends commando.Command {
         descripts.push(`**${key}**: ${Help.commandInfo()}`);
       }
     });
-    descripts.push('***bot commands should be send in game and not directly to the bot***');
     return descripts;
   }
 }
