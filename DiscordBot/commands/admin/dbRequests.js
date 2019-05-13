@@ -8,7 +8,7 @@ const commando = require('discord.js-commando');
 // import the dbhandler functions, accessible by using db.whateverFunction
 // technically we can use anything as a variable name as it's simply an alias
 const db = require('../../../dbhandler');
-const { DEBUG } = require('../../globals.js');
+const { deleteMessage } = require('../../globals.js');
 
 class DB extends commando.Command {
   //constructor for the class
@@ -72,41 +72,36 @@ class DB extends commando.Command {
   // the core function for the command, runs asynchronously
   async run(message, args) {
     // clean and parse the args passed
-    args = this.cleanArguments(args);    
-    if(args[0] === 'save') {
+    args = this.cleanArguments(args);
+    switch(args[0]) {
+    case 'save':
       // convert the third arg to a JSON object string
       args[1] = JSON.stringify(args[1]);
       // call the saveItem function from dbHandler.js,
       // sending it the dumbDynamoRoom JSON object, and an anonymous function 
       // which is later exectued as a callback
       db.saveItem(dumbDynamoRoom, 'rooms', (data) => this.replies(message, data, 'save'));
-      if(!DEBUG) {
-        message.delete();
-      }
-    } else if (args[0] === 'get') {
+      deleteMessage(message);
+      break;
+    case'get':
       // call the getItem function from dbHandler.js,
       // sending it the ID of the item we want to get
       // 2nd param is the table
       // is also sent a callback for logging purposes
       db.getItem(args[1], args[2], (data) => this.replies(message, data, 'get'));
-      if(!DEBUG) {
-        message.delete();
-      }
-    // } else if (args[0] === 'update') {
-    //   db.deleteItem(args[1], args[2], (data) => this.replies(message, data, 'update'));
-    //   if(!DEBUG) {
-    //     message.delete();
-    //   }
-    } else if (args[0] === 'delete') {
+      deleteMessage(message);
+      break;
+      // } else if (args[0] === 'update') {
+      //   db.deleteItem(args[1], args[2], (data) => this.replies(message, data, 'update'));
+      //   deleteMessage(message);
+    case 'delete':
       db.deleteItem(args[1], args[2], (data) => this.replies(message, data, 'delete'));
-      if(!DEBUG) {
-        message.delete();
-      }
-    } else if (args[0] === 'respawn') {
+      deleteMessage(message);
+      break;
+    case 'respawn':
       db.saveItem(gobbie, 'enemies', (data) => this.replies(message, data, 'save'));
-      if(!DEBUG) {
-        message.delete();
-      }
+      deleteMessage(message);
+      break;
     }
   }
 }
