@@ -16,7 +16,7 @@ class StartCommand extends commando.Command {
   }
 
   async run(message) {
-    db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data));
+    db.getItem(message.author.id, 'players', (data) => this.getPlayer(message, data));
     deleteMessage(message);
   }
 
@@ -31,7 +31,7 @@ class StartCommand extends commando.Command {
     }
     else {
       // otherwise, the player is already a part of the database
-      message.member.send('You\'ve already started the MUD!');
+      message.author.send('You\'ve already started the MUD!');
     }
   }
 
@@ -70,7 +70,7 @@ class StartCommand extends commando.Command {
     }
     else {
       // otherwise, direct the user to where they can start the game at
-      message.member.send('Sorry, you can\'t start playing the MUD unless you start in a non-MUD room.');
+      message.author.send('Sorry, you can\'t start playing the MUD unless you start in a non-MUD room.');
     }
   }
 

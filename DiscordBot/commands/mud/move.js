@@ -40,13 +40,12 @@ class MoveCommand extends commando.Command {
       } else {
         // grab the actual room object since we did another dynamo call to get it
         const actualRoom = JSON.parse(room.body).Item;
-
+        const nextRoom = this.client.channels.find(channel => channel.name === actualRoom.id);
         // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
-        message.channel.send(`${player.name} moved ${direction}`);
+        message.channel.send(`${player.name} moved to <#${nextRoom.id}>`);
         const roomRole = message.guild.roles.find(role => role.name === actualRoom.id);
         message.member.setRoles([roomRole]).catch(e => console.error(e));
-        const roomy = this.client.channels.find(channel => channel.name === actualRoom.id);
-        roomy.send(`${player.name} has entered.`);
+        nextRoom.send(`${player.name} has entered.`);
       }
     } else {
       message.channel.send(`${player.name} is too busy to move!`);

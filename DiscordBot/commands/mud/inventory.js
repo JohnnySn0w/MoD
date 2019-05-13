@@ -16,7 +16,7 @@ class InventoryCommand extends commando.Command {
   }
 
   async run(message) {
-    db.getItem(message.member.id, 'players', (data) => this.getPlayer(data, message));
+    db.getItem(message.author.id, 'players', (data) => this.getPlayer(data, message));
     deleteMessage(message);
   }
 
@@ -27,7 +27,7 @@ class InventoryCommand extends commando.Command {
 
     if (player === undefined) {
       // if the player isn't in the database already, send them a notice that they need to "?start" the game
-      message.member.send('You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.');
+      message.author.send('You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.');
     } else {
       // otherwise, direct message the player with their health, strength, and defense
       let weapon = player.equipment.weapon;
@@ -67,7 +67,7 @@ class InventoryCommand extends commando.Command {
       }
 
       // DM the player
-      message.member.send(`\`\`\`javascript\n${player.name}ʼs Inventory\nGold: ${player.inventory.gold}\nWeapon: ${weapon}\nArmor: ${armor}\n\nKey Items: ${keyList}\n\nItems: ${itemList}\`\`\``);            
+      message.author.send(`\`\`\`javascript\n${player.name}ʼs Inventory\nGold: ${player.inventory.gold}\nWeapon: ${weapon}\nArmor: ${armor}\n\nKey Items: ${keyList}\n\nItems: ${itemList}\`\`\``);            
     }
   }
 }
