@@ -42,13 +42,13 @@ class MoveCommand extends commando.Command {
         const actualRoom = JSON.parse(room.body).Item;
         const nextRoom = this.client.channels.find(channel => channel.name === actualRoom.id);
         // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
-        message.channel.send(`${player.name} moved to <#${nextRoom.id}>`);
+        message.channel.send(`${player.characterName} moved to <#${nextRoom.id}>`);
         const roomRole = message.guild.roles.find(role => role.name === actualRoom.id);
         message.member.setRoles([roomRole]).catch(e => console.error(e));
-        nextRoom.send(`${player.name} has entered.`);
+        nextRoom.send(`${player.characterName} has entered.`);
       }
     } else {
-      message.channel.send(`${player.name} is too busy to move!`);
+      message.channel.send(`${player.characterName} is too busy to move!`);
     }
   }
 
@@ -59,7 +59,7 @@ class MoveCommand extends commando.Command {
     }
     else {
       // otherwise, alert the player of the lack of exits
-      message.channel.send(`${player.name} has lost their sense of direction`);
+      message.channel.send(`${player.characterName} has lost their sense of direction`);
     }
   }
 }

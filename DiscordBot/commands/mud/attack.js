@@ -33,13 +33,13 @@ class AttackCommand extends commando.Command {
       if (room.enemies[entity]) {
         db.getItem(room.enemies[entity], 'enemies', (data) => this.checkHostile(message, player, data, room));
       } else if (room.npcs[entity]) {
-        message.channel.send(`${player.name} glares with murderous intent towards ${entity}.`);
+        message.channel.send(`${player.characterName} glares with murderous intent towards ${entity}.`);
       } else {
-        message.channel.send(`${player.name} is feeling stabby.`);
+        message.channel.send(`${player.characterName} is feeling stabby.`);
       }
     }
     else {
-      message.channel.send(`${player.name} is too busy for battle!`);
+      message.channel.send(`${player.characterName} is too busy for battle!`);
     }
   }
 
@@ -55,14 +55,14 @@ class AttackCommand extends commando.Command {
         // make the player too busy to do anything else
         db.updateItem(player.id, ['busy'], [true], 'players', ()=>{
           console.log('Player is busy');
-          message.channel.send(`${player.name} has engaged ${enemy.name} in combat!`);
+          message.channel.send(`${player.characterName} has engaged ${enemy.name} in combat!`);
           this.combatLoop(message, player, enemy, room);
         });
       }
     } else if(enemy){
-      message.channel.send(`${player.name} glares with murderous intent towards ${enemy.name}.`);
+      message.channel.send(`${player.characterName} glares with murderous intent towards ${enemy.name}.`);
     } else {
-      message.channel.send(`${player.name} tries to attack the air.`);
+      message.channel.send(`${player.characterName} tries to attack the air.`);
     }
   }
 
@@ -93,7 +93,7 @@ class AttackCommand extends commando.Command {
         m.content = m.content.toLowerCase();
       }
       if (!responded) {
-        message.channel.send(`${player.name} sauntered away from ${enemy.name}, as if in a daze`);
+        message.channel.send(`${player.characterName} sauntered away from ${enemy.name}, as if in a daze`);
         db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
         this.leveling(xp, player, message);
         this.postCombat(enemy, message, player, room);
@@ -109,39 +109,39 @@ class AttackCommand extends commando.Command {
           }
           if (damage > 0) {
             enemy.health = enemy.health - damage;
-            message.channel.send(`${player.name} hit ${enemy.name} for ${damage} damage.`);
+            message.channel.send(`${player.characterName} hit ${enemy.name} for ${damage} damage.`);
             // increment experience counter; can vary depending on the enemy later
             xp = xp + 5;
           } else {
-            message.channel.send(`${player.name} swung at the ${enemy.name} and missed.`);
+            message.channel.send(`${player.characterName} swung at the ${enemy.name} and missed.`);
           }
         } else if (m.content.includes('run')){
           deleteMessage(m);
-          message.channel.send(`${player.name} ran away from ${enemy.name}`);
+          message.channel.send(`${player.characterName} ran away from ${enemy.name}`);
           db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
           this.leveling(xp, player, message);
           this.postCombat(enemy, message, player, room);
           return null;
         } else if (m.content.includes('magic')){
           deleteMessage(m);
-          message.channel.send(`${player.name} is shouting nonsense`);
+          message.channel.send(`${player.characterName} is shouting nonsense`);
         } else if (m.content.includes('throw')) {
           if(m.content.includes('grenade')){
             if(player.inventory.keys[12] && enemy.name === 'That One Rabbit'){
               const damage = 50;
               enemy.health = enemy.health - damage;
-              message.channel.send(`${player.name} throws the holy hand grenade at the ${enemy.name}. It explodes beautifully, leaving nothing behind, save a foot and what can only be described as chunky salsa.`);
+              message.channel.send(`${player.characterName} throws the holy hand grenade at the ${enemy.name}. It explodes beautifully, leaving nothing behind, save a foot and what can only be described as chunky salsa.`);
             } else {
-              message.channel.send(`${player.name} decides this item is better used elsewhere.`);
+              message.channel.send(`${player.characterName} decides this item is better used elsewhere.`);
             }
           } else {
-            message.channel.send(`${player.name} throws nothing at all at ${enemy.name}.`);
+            message.channel.send(`${player.characterName} throws nothing at all at ${enemy.name}.`);
           }
         } else {
           deleteMessage(m);
           //in the future, we can add a magic system here
           message.member.send('That ain\'t a valid attack type pardner');
-          message.channel.send(`${player.name} is flailing around`);
+          message.channel.send(`${player.characterName} is flailing around`);
         }
         //prevents enemy attacking if dead
         if(enemy.health > 0) {
@@ -166,9 +166,9 @@ class AttackCommand extends commando.Command {
     if (damage > 0) {
       player.health = player.health - damage;
       db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
-      message.channel.send(`${player.name} was hit by the ${enemy.name} for ${damage} damage.`);
+      message.channel.send(`${player.characterName} was hit by the ${enemy.name} for ${damage} damage.`);
     } else {
-      message.channel.send(`${enemy.name} swung at the ${player.name} and missed.`);
+      message.channel.send(`${enemy.name} swung at the ${player.characterName} and missed.`);
     }
     
     if (player.health < 1){
@@ -193,7 +193,7 @@ class AttackCommand extends commando.Command {
     if(enemy.health < 1) {
       // update the player health and enemy aggro state and notify the room
       setTimeout(() => {
-        message.channel.send(`${player.name} defeated the ${enemy.name}.`);
+        message.channel.send(`${player.characterName} defeated the ${enemy.name}.`);
       }, 100);
       // updating player health
       db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
@@ -209,7 +209,7 @@ class AttackCommand extends commando.Command {
       }
       this.rollLoot(message, player, enemy);
     } else if (player.health < 1) {
-      message.channel.send(`${player.name} was defeated by a ${enemy.name}.`);
+      message.channel.send(`${player.characterName} was defeated by a ${enemy.name}.`);
       bigCheck(message, respawn.bind(this));
     } else {
       return null;
@@ -245,7 +245,7 @@ class AttackCommand extends commando.Command {
         'players',
         ()=>{}
       );
-      message.channel.send(`${player.name} leveled up!`);
+      message.channel.send(`${player.characterName} leveled up!`);
       message.member.send(`Level up!\nYou're now at level ${player.currentLevel}.\nExperience: ${player.experience}`);
     } else {
       // adding experience without leveling

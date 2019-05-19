@@ -22,7 +22,8 @@
             "south": "a-journey-begins"
         },
         "items": {
-            "rocks": "2"
+            "rocks": "2",
+            "pile of rocks": "2"
         },
         "npcs": {
         },

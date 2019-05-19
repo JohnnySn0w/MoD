@@ -1,5 +1,6 @@
 module.exports = {
   attack: require('./commands/mud/attack'),
+  describe: require('./commands/mud/describe'),
   discard: require('./commands/mud/discard'),
   equip: require('./commands/mud/equip'),
   help: require('./commands/mud/help'),

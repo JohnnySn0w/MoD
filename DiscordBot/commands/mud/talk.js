@@ -37,15 +37,15 @@ class TalkCommand extends commando.Command {
         // if not an npc, determine if the player is talking to an enemy
         if (room.enemies[entity]) {
           // if an enemy, then mention that the player can't talk to the enemy
-          message.channel.send(`${player.name} fails an attempt at parley with the ${entity}`);
+          message.channel.send(`${player.characterName} fails an attempt at parley with the ${entity}`);
         } else {
           // if not an enemy either, they're talking to no one
-          message.channel.send(`${player.name} is conversing with unseen forces.`);
+          message.channel.send(`${player.characterName} is conversing with unseen forces.`);
         }
       }
     }
     else {
-      message.channel.send(`${player.name} is too busy for chit chat!`);
+      message.channel.send(`${player.characterName} is too busy for chit chat!`);
     }
   }
 
@@ -54,7 +54,7 @@ class TalkCommand extends commando.Command {
 
     // if the npc doesn't exist, print it
     if (npc === undefined) {
-      message.channel.send(`${player.name} is conversing with unseen forces.`);
+      message.channel.send(`${player.characterName} is conversing with unseen forces.`);
     } else {
       // otherwise, grab the npc's response and number of dialogue options
       const [npcResponse, playerResponseCount] = this.determineResponse(npc, player);
@@ -108,7 +108,7 @@ class TalkCommand extends commando.Command {
 
       } else {
         // if there's no npc response that matches the player's progress...
-        message.channel.send(`${player.name} talks to ${npc.name} in a strange way.`);
+        message.channel.send(`${player.characterName} talks to ${npc.name} in a strange way.`);
       }
 
     } else {
@@ -134,7 +134,7 @@ class TalkCommand extends commando.Command {
 
     // ensure that the npc has a dialogue tree
     if (npc.responses !== undefined) {
-      message.reply(`${npc.name} says: ${npcResponse}\nyou can always\`leave\``);
+      message.reply(`${npc.name} says: ${npcResponse}\nyou can always \`leave\``);
 
       if (!stop) {
         db.updateItem(player.id, ['busy'], [true], 'players', ()=>{ console.log("yes busy!"); });
@@ -168,7 +168,7 @@ class TalkCommand extends commando.Command {
         collector.on('end', () => {
           // if the player never responded then alert the player that the NPC is no longer listening
           if (!responded) {
-            message.channel.send(`${npc.name} walked away from ${player.name}`);
+            message.channel.send(`${npc.name} walked away from ${player.characterName}`);
             
             // reset the shopkeeper NPC back to its default state
             if (npc.goods.length > 0){

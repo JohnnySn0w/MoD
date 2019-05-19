@@ -48,7 +48,7 @@ class LookCommand extends commando.Command {
           object = this.determineEnemy(args, room);
           if (object === undefined) {
             // the player is not looking at anything
-            message.channel.send(`${player.name} stares into space.`);
+            message.channel.send(`${player.characterName} stares into space.`);
           } else {
             db.getItem(object, 'enemies', (data) => this.replyToPlayer(message, player, false, room, data));
           }
@@ -119,7 +119,7 @@ class LookCommand extends commando.Command {
     }
     catch (error) {
       console.log("Looking at an object broke something.\n" + error.message);
-      message.channel.send(`${player.name} stares into space.`);
+      message.channel.send(`${player.characterName} stares into space.`);
     }
   }
 }

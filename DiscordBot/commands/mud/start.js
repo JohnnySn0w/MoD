@@ -43,7 +43,8 @@ class StartCommand extends commando.Command {
     if (room === undefined) {
       // if the player is not in a MUD room, create a new player object to push to the db
       var newPlayer = {
-        'name': message.member.user.username,
+        'characterName': message.member.user.username,
+        'description': 'just another person',
         'id': message.member.id,
         'health': 100,
         'maxhealth': 100,
