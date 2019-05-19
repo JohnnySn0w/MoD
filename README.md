@@ -38,3 +38,9 @@ ___
 - Custom player descriptions for RP
 - Change nickname for RP
 - Player housing
+
+
+___
+
+I'd like to give a big thanks to the original senior project group who worked with me in getting this thing started:
+Eric Ortiz, Samantha Santiago, Olivia Spears, Christopher Boquet, and Elijah Jefferson. You guys helped make my crazy idea a reality, and I'm really glad to have worked with you on it.
