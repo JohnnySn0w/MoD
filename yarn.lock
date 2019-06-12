@@ -737,10 +737,10 @@ discord.js-commando@^0.10.0:
     escape-string-regexp "^1.0.0"
     require-all "^2.0.0"
 
-discord.js@^11.5.0:
-  version "11.5.0"
-  resolved "https://registry.yarnpkg.com/discord.js/-/discord.js-11.5.0.tgz#23a74bb0e92572b41ae18b203461cb16410ba85d"
-  integrity sha512-7TAyr2p1ZP9k4gaIhQWOxZpybznT6ND55HbhntUqwQqXkAjIxU3ATbwiOSuCMd4AXz7L9wk1rioRL0sOjXs5CA==
+discord.js@^11.5.1:
+  version "11.5.1"
+  resolved "https://registry.yarnpkg.com/discord.js/-/discord.js-11.5.1.tgz#910fb9f6410328581093e044cafb661783a4d9e8"
+  integrity sha512-tGhV5xaZXE3Z+4uXJb3hYM6gQ1NmnSxp9PClcsSAYFVRzH6AJH74040mO3afPDMWEAlj8XsoPXXTJHTxesqcGw==
   dependencies:
     long "^4.0.0"
     prism-media "^0.0.3"
@@ -3055,11 +3055,6 @@ yaml-ast-parser@0.0.34:
   version "0.0.34"
   resolved "https://registry.yarnpkg.com/yaml-ast-parser/-/yaml-ast-parser-0.0.34.tgz#d00f3cf9d773b7241409ae92a6740d1db19f49e6"
   integrity sha1-0A88+ddztyQUCa6SpnQNHbGfSeY=
-
-yarn@^1.12.3:
-  version "1.12.3"
-  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.12.3.tgz#fb4599bf1f8da01552bcc7e1571dfd4e53788203"
-  integrity sha512-8f5rWNDvkhAmCxmn8C0LsNWMxTYVk4VGKiq0sIB6HGZjaZTHsGIH87SUmVDUEd2Wk54bqKoUlbVWgQFCQhRkVw==
 
 yauzl@^2.4.2:
   version "2.10.0"
