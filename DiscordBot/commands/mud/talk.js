@@ -136,7 +136,8 @@ class TalkCommand extends commando.Command {
 
   determineNextState(selection) {
     const { player, npc, message, tempPrompts } = this.state;
-    const type = Object.keys(tempPrompts[selection]['progression'])[0];
+    const type = tempPrompts[selection] ? 
+      Object.keys(tempPrompts[selection]['progression'])[0] : '';
 
     if (selection.includes('leave') || type === 'terminals') {
       db.updateItem(player.id, ['busy'], [false], 'players', () =>{});
