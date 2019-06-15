@@ -7,6 +7,7 @@ module.exports = {
   inventory: require('./commands/mud/inventory'),
   look: require('./commands/mud/look'),
   move: require('./commands/mud/move'),
+  shop: require('./commands/mud/shop'),
   start: require('./commands/mud/start'),
   stats: require('./commands/mud/stats'),
   sudoku: require('./commands/mud/sudoku'),

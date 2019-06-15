@@ -29,6 +29,10 @@ class TalkCommand extends commando.Command {
 
   checkNPC(message, player, room, npc) {
     let npcID;
+    if (player.busy) {
+
+      return null;
+    }
     if (room.npcs[npc]) {
         npcID = room.npcs[npc];
     } else {
@@ -90,6 +94,7 @@ class TalkCommand extends commando.Command {
           this.determineNextState(m.content.toLowerCase());
           deleteMessage(m);
         } else {
+          db.updateItem(player.id, ['busy'], [false], 'players', () => {});
           message.channel.send(`${npc.name} walked away from ${player.characterName}.`);
           this.determineStartOrEndState(npc.terminals, true);
         }
@@ -103,11 +108,7 @@ class TalkCommand extends commando.Command {
     let i = 0;
     this.state.tempPrompts = {};
     for (i = 0; i < prompts.length; i++) {
-      if(prompts[i].reqs && this.evaluateRequirements(prompts[i].reqs)) {
-        promptSection = promptSection.concat(`[${x}] ${prompts[i].prompt}\n`);
-        this.state.tempPrompts[x] = prompts[i];
-        x++;
-      } else if (prompts[i].reqs === undefined) {
+      if((prompts[i].reqs && this.evaluateRequirements(prompts[i].reqs)) || prompts[i].reqs === undefined) {
         promptSection = promptSection.concat(`[${x}] ${prompts[i].prompt}\n`);
         this.state.tempPrompts[x] = prompts[i];
         x++;
