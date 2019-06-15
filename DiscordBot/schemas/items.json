@@ -124,5 +124,12 @@
         "description": "There's a wooden ladder that rises up from a perfectly square hole. It seems to lead downward.",
         "type": null,
         "stats": null
+    },
+    {
+        "name": "shop",
+        "id": "18",
+        "description": "A makeshift pop up shop is here, a hoody lad is attending the small counter",
+        "type": null,
+        "stats": null
     }
 ]

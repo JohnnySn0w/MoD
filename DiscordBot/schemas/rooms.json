@@ -87,6 +87,9 @@
             "east": "ruins-entrance"
         },
         "items": {
+            "pop-up shop": "18",
+            "shop": "18",
+            "popup shop": "18"
         },
         "npcs": {
             "old man": "1",
