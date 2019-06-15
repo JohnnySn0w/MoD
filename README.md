@@ -33,6 +33,7 @@ ___
 - Discard/Equip - discard or equip an item, respectively
 - Help - display available commands and syntax
 - Inventory - get a pm of your inventory
+- Describe - set character description and name
 
 ### Prospective future features:
 - Custom player descriptions for RP
