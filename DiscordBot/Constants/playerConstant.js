@@ -1,9 +1,9 @@
 module.exports.PLAYER_CONSTANT = (message) => { 
-    return {
+  return {
     characterName: `${message.member.nickname ? message.member.nickname : message.member.user.username}`,
-    description: "just another person",
+    description: 'just another person',
     id: `${message.member.id}`,
-    emoji: "bust_in_silhouette",
+    emoji: 'bust_in_silhouette',
     health: 100,
     maxhealth: 100,
     currentLevel: 1,
@@ -23,5 +23,5 @@ module.exports.PLAYER_CONSTANT = (message) => {
       armor: null
     },
     busy: false
-  }
-}
+  };
+};

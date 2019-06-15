@@ -54,7 +54,6 @@ class AttackCommand extends commando.Command {
       } else {
         // make the player too busy to do anything else
         db.updateItem(player.id, ['busy'], [true], 'players', ()=>{
-          console.log('Player is busy');
           message.channel.send(`${player.characterName} has engaged ${enemy.name} in combat!`);
           this.combatLoop(message, player, enemy, room);
         });
@@ -293,13 +292,13 @@ class AttackCommand extends commando.Command {
     let item = JSON.parse(data.body).Item;
     
     // if the item is a key item, add it to the player's list of keys
-    if (item.type === "key") {
+    if (item.type === 'key') {
       player.inventory.keys[item.id] = {
         'name': item.name,
         'used': false
       };
     // if the item is a weapon or armor...
-    } else if (item.type === "weapon" || item.type === "armor") {
+    } else if (item.type === 'weapon' || item.type === 'armor') {
       // check to see if the player already has that item
       if (player.inventory.items[item.id]) {
         // if so, bump the item's amount
@@ -313,10 +312,10 @@ class AttackCommand extends commando.Command {
           'stats': item.stats,
           'amount': 1,
           'id': item.id
-        }
+        };
       }
     } else {
-      console.log("Item is not a grabbable.");
+      console.log('Item is not a grabbable.');
       return;
     }
 

@@ -77,7 +77,7 @@ class ShopCommand extends commando.Command {
         npcResponse = npc.responses[playerProgress].reply;
         
         // determine if the player is in a shopkeep menu
-        if (playerProgress !== "list" & playerProgress !== "success" & playerProgress !== "failure" & playerProgress !== "soldout") {
+        if (playerProgress !== 'list' & playerProgress !== 'success' & playerProgress !== 'failure' & playerProgress !== 'soldout') {
 
           // create the dialogue tree for the player
           for (var i = 0; i < npc.responses[playerProgress].prompts.length; i++) {
@@ -91,7 +91,7 @@ class ShopCommand extends commando.Command {
 
           // if the player is in a shopkeep menu, list the goods and the player's gold
           npcResponse = npcResponse + `\n[--You have ${player.inventory.gold} gold--] `;
-          for (var i = 0; i < npc.goods.length; i++) {
+          for (i = 0; i < npc.goods.length; i++) {
             npcResponse = npcResponse + '\n [' + i + '] ' + npc.goods[i].item + ' - ';
 
             // if the player already has the item and it's a key item, then don't offer it to them
@@ -137,7 +137,7 @@ class ShopCommand extends commando.Command {
       message.reply(`${npc.name} says: ${npcResponse}\nyou can always \`leave\``);
 
       if (!stop) {
-        db.updateItem(player.id, ['busy'], [true], 'players', ()=>{ console.log("yes busy!"); });
+        db.updateItem(player.id, ['busy'], [true], 'players', ()=>{ console.log('yes busy!'); });
         // responses change to using length
         const filter = m => (((m.content < playerResponseCount) && (Number.isInteger(Number(m.content)))) || (m.content.includes('leave'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
         const collector = message.channel.createMessageCollector(filter, {time: 10000});
@@ -150,7 +150,7 @@ class ShopCommand extends commando.Command {
           
           // kill the conversation if the player is trying to Shop to another NPC
           if (m.content.includes('leave')||m.content.includes('end')||m.content.includes('stop')) {
-            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
+            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log('not busy!'); });
             let newNpcResponse = 'Oh ok bye';
             this.replyToPlayer(player, message, npc, newNpcResponse, 1, room, true);
           } else {
@@ -175,7 +175,7 @@ class ShopCommand extends commando.Command {
               player.progress.npc[npc.id] = '0';
               db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
             }
-            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
+            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log('not busy!'); });
           }
         });
       }
@@ -193,15 +193,15 @@ class ShopCommand extends commando.Command {
     let buyingItem = false;
 
     // if the npc isn't a shopkeeper or the player's progression with the shopkeeper is zero...
-	  if (!(npc.goods.length > 0) || progression == '0') {
+    if (!(npc.goods.length > 0) || progression == '0') {
       // iterate through the npc's list of responses for the one that the player submitted
-	    for (let i = 0; i < npc.responses[currentProgress].prompts.length; i++) {			
-		    if (i.toString() === playerResponse) {
-		      progression = npc.responses[currentProgress].prompts[i].progression;
-		      break;
-		    }
-	    }
-	  } else {
+      for (let i = 0; i < npc.responses[currentProgress].prompts.length; i++) {			
+        if (i.toString() === playerResponse) {
+          progression = npc.responses[currentProgress].prompts[i].progression;
+          break;
+        }
+      }
+    } else {
       // if the player is buying an item, check to make sure they have enough gold
       if (player.inventory.gold >= npc.goods[playerResponse].cost) {
         // check to make sure the item isn't "sold out"
@@ -228,13 +228,13 @@ class ShopCommand extends commando.Command {
     let item = JSON.parse(data.body).Item;
     
     // if the item is a key item, add it to the player's list of keys
-    if (item.type === "key") {
+    if (item.type === 'key') {
       player.inventory.keys[item.id] = {
         'name': item.name,
         'used': false
-      }
+      };
     // if the item is a weapon or armor...
-    } else if (item.type === "weapon" || item.type === "armor") {
+    } else if (item.type === 'weapon' || item.type === 'armor') {
       // check to see if the player already has that item
       if (player.inventory.items[item.id]) {
         // if so, bump the item's amount
@@ -248,10 +248,10 @@ class ShopCommand extends commando.Command {
           'stats': item.stats,
           'amount': 1,
           'id': item.id
-        }
+        };
       }
     } else {
-      console.log("Item is not a grabbable.");
+      console.log('Item is not a grabbable.');
       return;
     }
 

@@ -14,7 +14,7 @@ module.exports = {
     },
     "rules": {
         "no-console": [
-            "error",
+            "warn",
             { allow: ["warn", "error"] },
         ],
         "indent": [

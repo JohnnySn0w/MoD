@@ -34,10 +34,10 @@ class TalkCommand extends commando.Command {
       return null;
     }
     if (room.npcs[npc]) {
-        npcID = room.npcs[npc];
+      npcID = room.npcs[npc];
     } else {
-        message.channel.send(`${player.characterName} is trying to communicate with unseen forces.`);
-        return null;
+      message.channel.send(`${player.characterName} is trying to communicate with unseen forces.`);
+      return null;
     }
     this.state = { message, player, room };
     db.getItem(npcID, 'npcs', this.startConvo.bind(this));
@@ -54,10 +54,10 @@ class TalkCommand extends commando.Command {
 
     Object.keys(states).forEach(state => {
       states[state].reqs ?
-      (this.evaluateRequirements(states[state].reqs) ?
-      validStates.push(states[state])
-      : '')
-      : validStates.push(states[state]);
+        (this.evaluateRequirements(states[state].reqs) ?
+          validStates.push(states[state])
+          : '')
+        : validStates.push(states[state]);
     });
     validStates.forEach(state => {
       if (state.priority > sendState.priority) {
@@ -73,9 +73,9 @@ class TalkCommand extends commando.Command {
   evaluateRequirements(reqs) {
     return reqs.every((req) => {
       try {
-        eval(req)
-      }
-      catch {
+        eval(req);
+      } catch(error) {
+        console.error(error);
         return false;
       }
       return true;
@@ -133,14 +133,13 @@ class TalkCommand extends commando.Command {
   activateFlags(flags) {
     const { player } = this.state;
     flags.forEach( flag=> {
-      console.log(flag);
       try {
         eval(flag.property);
       }
       catch(error) {
         console.error(error);
         db.updateItem(player.id, ['busy'], [false], 'players', () => {});
-        return null
+        return null;
       }
       db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
     });

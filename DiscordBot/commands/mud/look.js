@@ -118,7 +118,7 @@ class LookCommand extends commando.Command {
       }
     }
     catch (error) {
-      console.log("Looking at an object broke something.\n" + error.message);
+      console.error('Looking at an object broke something.\n' + error.message);
       message.channel.send(`${player.characterName} stares into space.`);
     }
   }
