@@ -29,8 +29,8 @@ class TalkCommand extends commando.Command {
 
   checkNPC(message, player, room, npc) {
     let npcID;
-    if (player.busy) {
-
+    if (player.busy === true) {
+      message.channel.send(`${player.characterName} is trying to multitask.`);
       return null;
     }
     if (room.npcs[npc]) {
@@ -50,6 +50,8 @@ class TalkCommand extends commando.Command {
   determineStartOrEndState(states, terminal=false) {
     const validStates = [];
     let sendState = { priority: 0 };
+    const { player } = this.state;
+
     Object.keys(states).forEach(state => {
       states[state].reqs ?
       (this.evaluateRequirements(states[state].reqs) ?
@@ -62,12 +64,21 @@ class TalkCommand extends commando.Command {
         sendState = state;
       }
     });
+    if (terminal) {
+      db.updateItem(player.id, ['busy'], [false], 'players', () =>{});
+    }
     this.assembleMessage(sendState, terminal);
   }
 
   evaluateRequirements(reqs) {
     return reqs.every((req) => {
-      return eval(req);
+      try {
+        eval(req)
+      }
+      catch {
+        return false;
+      }
+      return true;
     });
   }
 
@@ -122,15 +133,24 @@ class TalkCommand extends commando.Command {
   activateFlags(flags) {
     const { player } = this.state;
     flags.forEach( flag=> {
-      eval(flag.property);
+      console.log(flag);
+      try {
+        eval(flag.property);
+      }
+      catch(error) {
+        console.error(error);
+        db.updateItem(player.id, ['busy'], [false], 'players', () => {});
+        return null
+      }
       db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
     });
   }
 
   startConvo({body}) {
     const npc = JSON.parse(body).Item;
-    const { player } = this.state;
+    const { player, message } = this.state;
     db.updateItem(player.id, ['busy'], [true], 'players', () =>{});
+    message.channel.send(`${player.characterName} is talking to ${npc.name}.`);
     this.state.npc = npc;
     this.determineStartOrEndState(npc.intros);
   }
@@ -141,7 +161,6 @@ class TalkCommand extends commando.Command {
       Object.keys(tempPrompts[selection]['progression'])[0] : '';
 
     if (selection.includes('leave') || type === 'terminals') {
-      db.updateItem(player.id, ['busy'], [false], 'players', () =>{});
       message.channel.send(`${player.characterName} walked away from ${npc.name}.`);
       this.determineStartOrEndState(npc.terminals, true);
       return null;
