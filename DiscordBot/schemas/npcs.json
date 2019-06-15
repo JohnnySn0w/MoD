@@ -260,6 +260,7 @@
     {
         "name": "Shopkeep",
         "id": "3",
+        "emoji": "moneybag",
         "level": 0,
         "health": 500,
         "strength": 500,
@@ -318,6 +319,7 @@
     {
         "name": "Tim",
         "id": "4",
+        "emoji": "crystal_ball",
         "level": 0,
         "health": 10,
         "strength": 3,
@@ -348,7 +350,7 @@
                     }
                 ],
                 "reqs": [
-                    "this.state.player.inventory.keys[12].used === true"
+                    "this.state.player.inventory.keys[11] === true"
                 ]
             }
         },
@@ -385,7 +387,7 @@
                 "priority": "2",
                 "reply": "\"Thanks for killing the rabbit!\"",
                 "reqs": [
-                    "this.state.player.inventory.keys[12].used === true"
+                    "this.state.player.inventory.keys[11] === true"
                 ]
             }
         }

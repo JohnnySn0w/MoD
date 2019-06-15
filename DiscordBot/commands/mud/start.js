@@ -1,6 +1,7 @@
 const {deleteMessage} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
+const { PLAYER_CONSTANT } = require('../../Constants/playerConstant');
 
 class StartCommand extends commando.Command {
   static commandInfo() {
@@ -42,31 +43,7 @@ class StartCommand extends commando.Command {
 
     if (room === undefined) {
       // if the player is not in a MUD room, create a new player object to push to the db
-      var newPlayer = {
-        'characterName': message.member.user.username,
-        'description': 'just another person',
-        'id': message.member.id,
-        'health': 100,
-        'maxhealth': 100,
-        'currentLevel': 1,
-        'strength': 7,
-        'defense': 5,
-        'experience': 0,
-        'nextLevelExperience': 100,
-        'inventory': {
-          'keys': {
-          },
-          'items': {
-          },
-          'gold': 200
-        },
-        'equipment': {
-          'weapon': null,
-          'armor': null
-        },
-        'busy': false,
-        'progress': {'npc':{}} // progress is added dynamically with each new npc encounter now :^)
-      };
+      var newPlayer = PLAYER_CONSTANT(message);
       db.saveItem(newPlayer, 'players', () => this.setRoles(message));
     }
     else {
