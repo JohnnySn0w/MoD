@@ -23,248 +23,131 @@ class TalkCommand extends commando.Command {
   }
 
   async run(message, {npc}) {
-    // get the player object so that we know the player's progress with this NPC
-    //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, npc, data));
-    bigCheck(message, this.getNPC.bind(this), npc);
+    bigCheck(message, this.checkNPC.bind(this), npc);
     deleteMessage(message);
   }
 
-  getNPC(message, player, room, entity) {
-    if (!player.busy) {
-      if (room.npcs[entity]) {
-        db.getItem(room.npcs[entity], 'npcs', (data) => this.getProgress(message, player, room, data));
-      } else {
-        // if not an npc, determine if the player is talking to an enemy
-        if (room.enemies[entity]) {
-          // if an enemy, then mention that the player can't talk to the enemy
-          message.channel.send(`${player.characterName} fails an attempt at parley with the ${entity}`);
-        } else {
-          // if not an enemy either, they're talking to no one
-          message.channel.send(`${player.characterName} is conversing with unseen forces.`);
-        }
-      }
-    }
-    else {
-      message.channel.send(`${player.characterName} is too busy for chit chat!`);
-    }
-  }
-
-  getProgress(message, player, room, data) {
-    const npc = JSON.parse(data.body).Item;
-
-    // if the npc doesn't exist, print it
-    if (npc === undefined) {
-      message.channel.send(`${player.characterName} is conversing with unseen forces.`);
+  checkNPC(message, player, room, npc) {
+    let npcID;
+    if (room.npcs[npc]) {
+        npcID = room.npcs[npc];
     } else {
-      // otherwise, grab the npc's response and number of dialogue options
-      const [npcResponse, playerResponseCount] = this.determineResponse(npc, player);
-      this.replyToPlayer(player, message, npc, npcResponse, playerResponseCount, room, false);
+        message.channel.send(`${player.characterName} is trying to communicate with unseen forces.`);
+        return null;
     }
+    this.state = { message, player, room };
+    db.getItem(npcID, 'npcs', this.startConvo.bind(this));
   }
 
-  // creates the npcs response and prompts based on players progress
-  determineResponse(npc, player) {
-    let npcResponse;
-    let playerResponseCount = 0;
-
-    // find player's progress with this npc
-    let playerProgress = player.progress.npc[npc.id];
-
-    if (playerProgress) {
-
-      // ensure that the npc has an actual response for that progress
-      if (npc.responses[playerProgress]) {
-        npcResponse = npc.responses[playerProgress].reply;
-        
-        // determine if the player is in a shopkeep menu
-        if (playerProgress !== "list" & playerProgress !== "success" & playerProgress !== "failure" & playerProgress !== "soldout") {
-
-          // create the dialogue tree for the player
-          for (var i = 0; i < npc.responses[playerProgress].prompts.length; i++) {
-            npcResponse = npcResponse + '\n' + npc.responses[playerProgress].prompts[i].prompt;
-            // numOfResponses = numOfResponses + 1;
-          }
-
-          playerResponseCount = npc.responses[playerProgress].prompts.length;
-          
-        } else {
-
-          // if the player is in a shopkeep menu, list the goods and the player's gold
-          npcResponse = npcResponse + `\n[--You have ${player.inventory.gold} gold--] `;
-          for (var i = 0; i < npc.goods.length; i++) {
-            npcResponse = npcResponse + '\n [' + i + '] ' + npc.goods[i].item + ' - ';
-
-            // if the player already has the item and it's a key item, then don't offer it to them
-            if (player.inventory.keys[npc.goods[i].id]) {
-              npcResponse = npcResponse + 'SOLD OUT';
-            } else {
-              npcResponse = npcResponse + npc.goods[i].cost + ' gold';
-            }
-            // numOfResponses = numOfResponses + 1;
-          }
-
-          playerResponseCount = npc.goods.length;
-        }
-
-      } else {
-        // if there's no npc response that matches the player's progress...
-        message.channel.send(`${player.characterName} talks to ${npc.name} in a strange way.`);
+  /*
+    evaluate which intro/terminal states are available to player then
+    pick the one with the lowest priority setting
+  */
+  determineStartOrEndState(states, terminal=false) {
+    const validStates = [];
+    let sendState = { priority: 0 };
+    Object.keys(states).forEach(state => {
+      states[state].reqs ?
+      (this.evaluateRequirements(states[state].reqs) ?
+      validStates.push(states[state])
+      : '')
+      : validStates.push(states[state]);
+    });
+    validStates.forEach(state => {
+      if (state.priority > sendState.priority) {
+        sendState = state;
       }
-
-    } else {
-      // if the player hasn't talked to this NPC before, create the player's progress in their object
-      player.progress.npc[npc.id] = '0';
-      npcResponse = npc.responses['0'].reply;
-
-      // create the dialoge tree for the player
-      for (let i = 0; i < npc.responses['0'].prompts.length; i++) {
-        npcResponse = `${npcResponse}\n${npc.responses['0'].prompts[i].prompt}`;
-      }
-
-      playerResponseCount = npc.responses['0'].prompts.length;
-    }
-    
-    // return the npc's response and the number of replies the player can give to the npc
-    return [npcResponse, playerResponseCount];
+    });
+    this.assembleMessage(sendState, terminal);
   }
 
-  // have the npc reply to the player
-  replyToPlayer(player, message, npc, npcResponse, playerResponseCount, room, stop) {
+  evaluateRequirements(reqs) {
+    return reqs.every((req) => {
+      return eval(req);
+    });
+  }
+
+  // go through and set any flags, as well as send the message,
+  // and generate prompts for continued convo
+  assembleMessage(sendState, terminal) {
     let responded = false;
+    const { player, message, npc} = this.state;
+    const filter = m => m.author.id === message.author.id;
+    const collector = message.channel.createMessageCollector(filter, {time: 10000});
+    const messageToSend = `:${npc.emoji}:**${npc.name} says to <@${player.id}>:**\n*${sendState.reply}*\n`;
+    const prompts = sendState.prompts ? this.createPrompt(sendState.prompts) : '';
 
-    // ensure that the npc has a dialogue tree
-    if (npc.responses !== undefined) {
-      message.reply(`${npc.name} says: ${npcResponse}\nyou can always \`leave\``);
-
-      if (!stop) {
-        db.updateItem(player.id, ['busy'], [true], 'players', ()=>{ console.log("yes busy!"); });
-        // responses change to using length
-        const filter = m => (((m.content < playerResponseCount) && (Number.isInteger(Number(m.content)))) || (m.content.includes('leave'))) && m.author.id === message.author.id; //only accepts responses in key and only from the person who started convo
-        const collector = message.channel.createMessageCollector(filter, {time: 10000});
-
-        // if the player responses...
-        collector.on('collect', m => {
-          responded = true;
-          // stop the collector or else we'll have infinite collectors!!!
-          collector.stop();
-          
-          // kill the conversation if the player is trying to talk to another NPC
-          if (m.content.includes('leave')||m.content.includes('end')||m.content.includes('stop')) {
-            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
-            let newNpcResponse = 'Oh ok bye';
-            this.replyToPlayer(player, message, npc, newNpcResponse, 1, room, true);
-          } else {
-            // depending on the player's response, edit the player's progress with this NPC
-            let buyingItem = this.makeProgress(player, npc, m.content, message, room);
-            // recursively call this function every time the player interacts with the npc and doesn't buy an item successfully
-            if (!buyingItem) {
-              let [newNpcResponse, newPlayerResponseCount] = this.determineResponse(npc, player);
-              this.replyToPlayer(player, message, npc, newNpcResponse, newPlayerResponseCount, room, false);
-            }
-          }
-        });
-
-        // if the collector times out
-        collector.on('end', () => {
-          // if the player never responded then alert the player that the NPC is no longer listening
-          if (!responded) {
-            message.channel.send(`${npc.name} walked away from ${player.characterName}`);
-            
-            // reset the shopkeeper NPC back to its default state
-            if (npc.goods.length > 0){
-              player.progress.npc[npc.id] = '0';
-              db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
-            }
-            db.updateItem(player.id, ['busy'], [false], 'players', ()=>{ console.log("not busy!"); });
-          }
-        });
-      }
-
-    } else {
-      // if the npc has no responses...
-      message.channel.send(`${npc.name} has nothing to say.`);
-    }
-  }
-  
-  makeProgress(player, npc, playerResponse, message, room) {
-    // adjusts the players conversational progress with the npc
-    let currentProgress = player.progress.npc[npc.id];
-    let progression = currentProgress;
-    let buyingItem = false;
-
-    // if the npc isn't a shopkeeper or the player's progression with the shopkeeper is zero...
-	  if (!(npc.goods.length > 0) || progression == '0') {
-      // iterate through the npc's list of responses for the one that the player submitted
-	    for (let i = 0; i < npc.responses[currentProgress].prompts.length; i++) {			
-		    if (i.toString() === playerResponse) {
-		      progression = npc.responses[currentProgress].prompts[i].progression;
-		      break;
-		    }
-	    }
-	  } else {
-      // if the player is buying an item, check to make sure they have enough gold
-      if (player.inventory.gold >= npc.goods[playerResponse].cost) {
-        // check to make sure the item isn't "sold out"
-        if (player.inventory.keys[npc.goods[playerResponse].id]) {
-          progression = 'soldout';
+    sendState.flags ? this.activateFlags(sendState.flags) : '';
+    message.channel.send(`${messageToSend}${prompts}`).catch(console.error);
+    if(!terminal){
+      collector.on('collect', () => {
+        responded = true;
+        collector.stop();
+      });
+      collector.on('end', m => {
+        m = m.array()[0];
+        if (responded) {
+          this.determineNextState(m.content.toLowerCase());
+          deleteMessage(m);
         } else {
-          db.getItem(npc.goods[playerResponse].id, 'items', (data) => this.buyItem(player, npc.goods[playerResponse].cost, data, npc, message, room));
-          progression = 'success';
-          buyingItem = true;
+          message.channel.send(`${npc.name} walked away from ${player.characterName}.`);
+          this.determineStartOrEndState(npc.terminals, true);
         }
-      } else {
-        progression = 'failure';
-      }
+      });
     }
-
-    // push the progression to the database
-    player.progress.npc[npc.id] = progression;
-    db.updateItem(player.id, ['progress'], [player.progress], 'players', () => {});
-
-    return buyingItem;
   }
 
-  buyItem(player, cost, data, npc, message, room) {
-    let item = JSON.parse(data.body).Item;
-    
-    // if the item is a key item, add it to the player's list of keys
-    if (item.type === "key") {
-      player.inventory.keys[item.id] = {
-        'name': item.name,
-        'used': false
+  createPrompt(prompts) {
+    let promptSection = '';
+    let x = 0;
+    let i = 0;
+    this.state.tempPrompts = {};
+    for (i = 0; i < prompts.length; i++) {
+      if(prompts[i].reqs && this.evaluateRequirements(prompts[i].reqs)) {
+        promptSection = promptSection.concat(`[${x}] ${prompts[i].prompt}\n`);
+        this.state.tempPrompts[x] = prompts[i];
+        x++;
+      } else if (prompts[i].reqs === undefined) {
+        promptSection = promptSection.concat(`[${x}] ${prompts[i].prompt}\n`);
+        this.state.tempPrompts[x] = prompts[i];
+        x++;
       }
-    // if the item is a weapon or armor...
-    } else if (item.type === "weapon" || item.type === "armor") {
-      // check to see if the player already has that item
-      if (player.inventory.items[item.id]) {
-        // if so, bump the item's amount
-        player.inventory.items[item.id].amount = player.inventory.items[item.id].amount + 1;
-      } else {
-        // if not, add the item to the player's inventory
-        player.inventory.items[item.id] = {
-          'name': item.name,
-          'type': item.type,
-          'equipped': false,
-          'stats': item.stats,
-          'amount': 1,
-          'id': item.id
-        }
-      }
-    } else {
-      console.log("Item is not a grabbable.");
-      return;
     }
+    return promptSection;
+  }
 
-    console.log(JSON.stringify(player.inventory));
+  //activate the flags from npc dialog if any
+  //be very careful with this
+  activateFlags(flags) {
+    const { player } = this.state;
+    flags.forEach( flag=> {
+      eval(flag.property);
+      db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
+    });
+  }
 
-    // take gold from player inventory
-    player.inventory.gold = player.inventory.gold - cost;
-    // update the player's inventory
-    db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
+  startConvo({body}) {
+    const npc = JSON.parse(body).Item;
+    const { player } = this.state;
+    db.updateItem(player.id, ['busy'], [true], 'players', () =>{});
+    this.state.npc = npc;
+    this.determineStartOrEndState(npc.intros);
+  }
 
-    // call the reply function after buying an item since we need to update the player's gold and inventory beforehand
-    let [newNpcResponse, newPlayerResponseCount] = this.determineResponse(npc, player);
-    this.replyToPlayer(player, message, npc, newNpcResponse, newPlayerResponseCount, room, false);
+  determineNextState(selection) {
+    const { player, npc, message, tempPrompts } = this.state;
+    const type = Object.keys(tempPrompts[selection]['progression'])[0];
+
+    if (selection.includes('leave') || type === 'terminals') {
+      db.updateItem(player.id, ['busy'], [false], 'players', () =>{});
+      message.channel.send(`${player.characterName} walked away from ${npc.name}.`);
+      this.determineStartOrEndState(npc.terminals, true);
+      return null;
+    } else if (tempPrompts[selection] !== undefined && type !== undefined) {
+      this.assembleMessage(npc[type][tempPrompts[selection]['progression'][type]]);
+    } else {
+      this.determineStartOrEndState(npc.terminals, true);
+    }
   }
 }
 

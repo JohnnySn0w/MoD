@@ -2,168 +2,260 @@
     {
         "name": "Old Man",
         "id": "1",
+        "emoji": "older_man" ,
         "level": 0,
         "health": 10,
         "strength": 1,
         "defense": 2,
         "description": "There's an old man here, he's bent over and seems to be upset about something...",
-        "responses": {
+        "intros": {
             "0": {
-                "reply": "Hello! I'm so old!",
+                "priority": "1",
+                "reply": "\"Hello! I'm so old!\"",
                 "prompts": [
                     {
-                        "prompt":  "[0] Ask how he is",
-                        "progression": "1"
+                        "prompt": "Ask how he is",
+                        "progression":{
+                            "intermediates": "0"
+                        }
                     }, 
                     {
-                        "prompt":"[1] Ask where you are",
-                        "progression": "2"
+                        "prompt": "Ask where you are",
+                        "progression":{
+                            "intermediates": "1"
+                        }
+                    },
+                    {
+                        "prompt": "Say Goodbye", 
+                        "progression":{
+                            "terminals": "0"
+                        }
                     }
                 ]
             },
             "1": {
-                "reply": "My back hurts because I'm so OLD!",
+                "priority": "2",
+                "reply": "\"Hi there!!! I hope I feel better soon!!\"",
                 "prompts": [
                     {
-                        "prompt": "[0] Say hello again",
-                        "progression": "0" 
+                        "prompt": "Ask how he is",
+                        "progression":{
+                            "intermediates": "3"
+                        }
                     },
                     {
-                        "prompt": "[1] Ask where you are",
-                        "progression": "2"
+                        "prompt": "Ask where you are",
+                        "progression":{
+                            "intermediates": "4"
+                        }
                     },
                     {
-                        "prompt": "[2] Offer him some ALEVE",
-                        "progression": "3"
+                        "prompt": "Say Goodbye", 
+                        "progression":{
+                            "terminals": "1"
+                        }
+                    }
+                ],
+                "reqs": [
+                    "this.state.player.inventory.keys[6].used === true"
+                ]
+            }
+        },
+        "intermediates": {
+            "0": {
+                "reply": "\"My back hurts because I'm so OLD!\"",
+                "prompts": [
+                    {
+                        "prompt": "Ask where you are",
+                        "progression":{
+                            "intermediates": "1"
+                        }
+                    },
+                    {
+                        "prompt": "Offer him some ALEVE",
+                        "progression":{
+                            "intermediates": "2"
+                        },
+                        "reqs": [
+                            "this.state.player.inventory.keys[6].used === false"
+                        ]
+                    },
+                    {
+                        "prompt": "Say Goodbye", 
+                        "progression":{
+                            "terminals": "0"
+                        }
+                    }
+                ]
+            },
+            "1": {
+                "reply": "\"I don't know! I'm old.\"",
+                "prompts": [
+                    {
+                        "prompt": "Ask how he is", 
+                        "progression":{
+                            "intermediates": "0"
+                        }
+                    },
+                    {
+                        "prompt": "Offer him some ALEVE",
+                        "progression":{
+                            "intermediates": "2"
+                        },
+                        "reqs": [
+                            "this.state.player.inventory.keys[6].used === false"
+                        ]
+                    },
+                    {
+                        "prompt": "Say Goodbye", 
+                        "progression":{
+                            "terminals": "0"
+                        }
                     }
                 ]
             },
             "2": {
-                "reply": "I don't know! I'm old.",
+                "reply": "\"Oh wow!!! Thank you so much!!\"\n\nThe old man puts the ALEVE in his pocket...",
                 "prompts": [
                     {
-                        "prompt": "[0] Say hello again", 
-                        "progression": "0"
+                        "prompt": "Ask how he is",
+                        "progression":{
+                            "intermediates": "3"
+                        }
                     },
                     {
-                        "prompt": "[1] Ask how he is", 
-                        "progression": "1"
+                        "prompt": "Ask where you are",
+                        "progression":{
+                            "intermediates": "4"
+                        }
+                    },
+                    {
+                        "prompt": "Say Goodbye", 
+                        "progression":{
+                            "terminals": "1"
+                        }
+                    }
+                ],
+                "flags": [
+                    { 
+                        "property": "this.state.player.inventory.keys[6].used = true"
                     }
                 ]
             },
-            "3": {
-                "reply": "Oh wow!!! Thank you so much!!\n\nThe old man puts the ALEVE in his pocket...",
+            "3" : {
+                "reply": "\"My back feels better already!!!\"\n\n...You don't mention that the ALEVE is still in his pocket...",
                 "prompts": [
                     {
-                        "prompt": "[0] Say hello again",
-                        "progression": "4"
-                    }, 
-                    {
-                        "prompt": "[1] Ask how he is",
-                        "progression": "5"
+                        "prompt": "Ask where you are",
+                        "progression":{
+                            "intermediates": "4"
+                        }
                     },
                     {
-                        "prompt": "[2] Ask where you are",
-                        "progression": "6"
+                        "prompt": "Say Goodbye", 
+                        "progression":{
+                            "terminals": "1"
+                        },
+                        "reqs": [
+                            "this.state.player.inventory.keys[6].used"
+                        ]
                     }
                 ]
             },
             "4" : {
-                "reply": "Hi there!!! I hope I feel better soon!!",
+                "reply": "\"We're in a village square you silly goose!!!\"",
                 "prompts": [
                     {
-                        "prompt": "[0] Ask how he is",
-                        "progression": "5"
+                        "prompt": "Ask how he is", 
+                        "progression":{
+                            "intermediates": "3"
+                        }
                     },
                     {
-                        "prompt": "[1] Ask where you are",
-                        "progression": "6"
-                    }
-                ]
-            },
-            "5" : {
-                "reply": "My back feels better already!!!\n\n...You don't mention that the ALEVE is still in his pocket...",
-                "prompts": [
-                    {
-                        "prompt": "[0] Say hello again",
-                        "progression": "4" 
-                    },
-                    {
-                        "prompt": "[1] Ask where you are",
-                        "progression": "6"
-                    }
-                ]
-            },
-            "6" : {
-                "reply": "We're in a village square you silly goose!!!",
-                "prompts": [
-                    {
-                        "prompt": "[0] Say hello again", 
-                        "progression": "4"
-                    },
-                    {
-                        "prompt": "[1] Ask how he is", 
-                        "progression": "5"
+                        "prompt": "Say Goodbye", 
+                        "progression":{
+                            "terminals": "1"
+                        },
+                        "reqs": [
+                            "this.state.player.inventory.keys[6].used"
+                        ]
                     }
                 ]
             }
         },
-        "goods": [
-            
-        ]
+        "terminals": {
+            "0": {
+                "priority": "1",
+                "reply": "\"See ya later!\""
+            },
+            "1": {
+                "priority": "2",
+                "reply": "\"Goodbye! Thanks again for the ALEVE!\"",
+                "reqs": [
+                    "this.state.player.inventory.keys[6].used"
+                ]
+            }
+        }
     }, 
     {
         "name": "Little Boy",
         "id": "2",
         "level": 0,
+        "emoji": "boy" ,
         "health": 10,
         "strength": 3,
         "defense": 1,
-        "description": "There's a little boy here.",
-        "responses": {
+        "description": "There's a little boy here.\nHe's wearing a propeller beanie, so it's quite obvious he's the baddest bitch on the block",
+        "intros": {
             "0": {
-                "reply": "Hello!!! I'm a little boy!",
+                "priority":"1",
+                "reply": "\"Hello!!! I'm a little boy!\"",
                 "prompts": [
                     {
-                        "prompt": "[0] Ask how is he",
-                        "progression": "1"
+                        "prompt": "Ask how he is",
+                        "progression":{
+                            "intermediates": "0"
+                        }
                     },
                     {
-                        "prompt": "[1] Ask where you are",
-                        "progression": "2"
-                    }
-                ]
-            },
-            "1": {
-                "reply": "I'm so great! I'm a little boy!",
-                "prompts": [
-                    {
-                        "prompt": "[0] Say hello again",
-                        "progression": "0"
-                    },
-                    {
-                        "prompt": "[1] Ask where you are",
-                        "progression": "2"
-                    }
-                ]
-            },
-            "2": {
-                "reply": "How would I know? I'm a little boy!",
-                "prompts": [
-                    {
-                        "prompt": "[0] Say hello again",
-                        "progression": "0"
-                    },
-                    {
-                        "prompt": "[1] Ask how he is",
-                        "progression": "1"
+                        "prompt": "Ask where you are",
+                        "progression":{
+							"intermediates": "1"
+						}
                     }
                 ]
             }
         },
-        "goods": [
-            
-        ]
+        "intermediates": {
+            "0": {
+                "reply": "\"I'm so great! I'm a little boy!\"",
+                "prompts": [
+                    {
+                        "prompt": "Ask where you are",
+                        "progression":{
+							"intermediates": "1"
+						}
+                    }
+                ]
+            },
+            "1": {
+                "reply": "\"How would I know? I'm a little boy!\"",
+                "prompts": [
+                    {
+                        "prompt": "Ask how he is",
+                        "progression":{
+							"intermediates": "0"
+						}
+                    }
+                ]
+            }
+        },
+        "terminals": {
+            "0": {
+                "priority":"1",
+                "reply": "\"Bye!\""
+            }
+        }
     }, 
     {
         "name": "Shopkeep",
@@ -175,7 +267,7 @@
         "description": "There's mysterious shape, surrounded by shadows and jingling with coin.",
         "responses" : {
             "0": {
-                "reply": "....what do you need",
+                "reply": "\"....what do you need?\"",
                 "prompts": [
                     {
                         "prompt": "[0] Ask what they have to sell",
@@ -184,19 +276,19 @@
                 ]
             },
             "list": {
-                "reply": "....take a look",
+                "reply": "\"....take a look!\"",
                 "prompts": []
             },
             "success": {
-                "reply": "....here you go.\n....this is all I have",
+                "reply": "\"....here you go.\n....this is all I have\"",
                 "prompts":[]
             },
             "failure": {
-                "reply": "....you're joking right? \n....take a look",
+                "reply": "\"....you're joking right?\n\"",
                 "prompts": []
             },
             "soldout": {
-                "reply": "....I'm out of stock",
+                "reply": "\"....I'm out of stock\"",
                 "prompts": []
             }
         },
@@ -231,45 +323,71 @@
         "strength": 3,
         "defense": 1,
         "description": "A man sits, cloaked in furs, wearing a silly hat with horns.",
-        "responses": {
+        "intros": {
             "0": {
-                "reply": "Hello! My name is Tim.",
+                "priority": "1",
+                "reply": "\"Hello! My name is Tim.\"",
                 "prompts": [
                     {
-                        "prompt": "[0] Ask how is he",
-                        "progression": "1"
+                        "prompt": "Ask how he is",
+                        "progression": {
+                            "intermediates": "1"
+                        }
                     }
                 ]
             },
             "1": {
-                "reply": "Not too great! Just waiting on that rabbit to go away.",
+                "priority": "2",
+                "reply": "\"Holy Smokes you got it!\"",
                 "prompts": [
                     {
-                        "prompt": "[0] Say hello again",
-                        "progression": "0"
-                    },
+                        "prompt": "Ask how he is",
+                        "progression": {
+                            "intermediates": "1"
+                        }
+                    }
+                ],
+                "reqs": [
+                    "this.state.player.inventory.keys[12].used === true"
+                ]
+            }
+        },
+        "intermediates": {
+            "0": {
+                "reply": "\"Not too great! Just waiting on that rabbit to go away.\"",
+                "prompts": [
                     {
-                        "prompt": "[1] Ask about the rabbit",
-                        "progression": "2"
+                        "prompt": "Ask about the rabbit",
+                        "progression": {
+                            "intermediates": "1"
+                        }
                     }
                 ]
             },
-            "2": {
-                "reply": "That rabbit is so dangerous! Vicious little bastard kills anything in range. If only I had a bomb...",
+            "1": {
+                "reply": "\"That rabbit is so dangerous!\nVicious little bastard kills anything in range. If only I had a bomb...\"",
                 "prompts": [
                     {
-                        "prompt": "[0] Say hello again",
-                        "progression": "0"
-                    },
-                    {
-                        "prompt": "[1] Ask how he is",
-                        "progression": "1"
+                        "prompt": "Ask how he is",
+                        "progression": {
+                            "intermediates": "0"
+                        }
                     }
                 ]
             }
         },
-        "goods": [
-            
-        ]
+        "terminals": {
+            "0": {
+                "priority": "1",
+                "reply": "\"Oh ok, bye!\""
+            },
+            "1": {
+                "priority": "2",
+                "reply": "\"Thanks for killing the rabbit!\"",
+                "reqs": [
+                    "this.state.player.inventory.keys[12].used === true"
+                ]
+            }
+        }
     }
 ]
