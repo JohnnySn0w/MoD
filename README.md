@@ -22,7 +22,6 @@ ___
 - db – allows for simple queries to the database, as well as functionality for on-the-fly creation of game elements
 - gen - Automated generation of channels/roles for game rooms
 - notbusy - a short-term fix for a higher level problem, fixes a player's busy status if the bot gets interrupted. Will be removed in the future when the true solution is implemented.
-- test – in-house manufactured unit testing
 
 ### Player commands
 - Look – returns a description of items, rooms, npcs, enemies, 
