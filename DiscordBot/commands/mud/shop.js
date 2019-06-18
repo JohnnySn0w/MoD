@@ -108,7 +108,7 @@ class ShopCommand extends commando.Command {
 
       } else {
         // if there's no npc response that matches the player's progress...
-        message.channel.send(`${player.characterName} Shops to ${npc.name} in a strange way.`);
+        console.log('blah');
       }
 
     } else {
