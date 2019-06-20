@@ -35,8 +35,6 @@ ___
 - Describe - set character description and name
 
 ### Prospective future features:
-- Custom player descriptions for RP
-- Change nickname for RP
 - Player housing
 
 
