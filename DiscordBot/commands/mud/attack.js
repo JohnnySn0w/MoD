@@ -1,11 +1,11 @@
-const { deleteMessage, bigCheck, respawn } = require('../../globals.js');
+const { deleteMessage, bigCheck, respawn, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 
 class AttackCommand extends commando.Command {
   static commandInfo() {
-    return('Attack a target\n`?attack <target>` and then afterwards, supply a type of attack within 10 seconds.\nValid keywords after successful initiation: `weapon`, `magic`, `run`, `throw` (throw requires an item name)');
+    return(`Attack a target\n\`${commandPrefix}attack <target>\` and then afterwards, supply a type of attack within 10 seconds.\nValid keywords after successful initiation: \`weapon\`, \`magic\`, \`run\`, \`throw\` (throw requires an item name)`);
   }
   constructor(client) {
     super(client, {

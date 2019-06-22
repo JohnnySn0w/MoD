@@ -1,17 +1,22 @@
-const { deleteMessage } = require('../../globals.js');
+const { deleteMessage, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
-class EquipCommand extends commando.Command {
+class ItemCommand extends commando.Command {
   static commandInfo() {
-    return('Equip a weapon or armor.\n`?equip <item>`');
+    return(
+      `The Item command has 3 sub-commands:
+      Equip a weapon or armor: \`${commandPrefix}item equip <item>\`
+      Remove an item from inventory: \`${commandPrefix}item discard <item>\`
+      Unequip a weapon or armor: \`${commandPrefix}item unequip <item>\``
+    );
   }
   constructor(client) {
     super(client, {
-      name: 'equip',
+      name: 'item',
       group: 'mud',
-      memberName: 'equip',
-      description: EquipCommand.commandInfo(),
+      memberName: 'item',
+      description: ItemCommand.commandInfo(),
     });
   }
 
@@ -36,14 +41,12 @@ class EquipCommand extends commando.Command {
     const { message, itemName } = this.state;
     // grab the item from keys first
     let item = this.getItem('keys');
-    console.log('thsihfdkafhjs', item);
     // check to make sure the item isn't a key
     if (item) {
       message.author.send(`${item.name} is a key item. You can't equip it.`);
       return null;
     }
     item = this.getItem('items');
-    console.log('ashciuovxhzcv', item);
     if (item === undefined) {
       message.author.send(`It doesn't seem that you have the ${itemName} in your inventory.`);
       return null;
@@ -64,7 +67,6 @@ class EquipCommand extends commando.Command {
     // iterate through the player's list of items and check each one's name
     Object.keys(player.inventory[keysOrItems]).forEach((key) => {
       if (itemName === player.inventory[keysOrItems][key].name.toLowerCase()) {
-        console.log(player.inventory[keysOrItems][key]);
         thing = player.inventory[keysOrItems][key];
       }
     });
@@ -89,4 +91,4 @@ class EquipCommand extends commando.Command {
 
     
 
-module.exports = EquipCommand;
+module.exports = ItemCommand;

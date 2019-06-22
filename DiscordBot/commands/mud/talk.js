@@ -1,10 +1,10 @@
-const {deleteMessage, bigCheck} = require('../../globals.js');
+const { deleteMessage, bigCheck, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class TalkCommand extends commando.Command {
   static commandInfo() {
-    return('Gab it up with the denizens of the world!\n`?talk <npc>`');
+    return(`Gab it up with the denizens of the world!\n\`${commandPrefix}talk <npc>\``);
   }
   constructor(client) {
     super(client, {

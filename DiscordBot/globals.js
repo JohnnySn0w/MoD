@@ -2,6 +2,7 @@ const db = require('../dbhandler');
 const DEBUG = false;
 const emojiOn = true;
 const gameWorldName = 'game channels';
+const commandPrefix = '.';
 
 function deleteMessage(message) {
 // delete the user's command if not debugging
@@ -82,6 +83,7 @@ module.exports = {
   bigCheck,
   checkItems,
   checkKeys,
+  commandPrefix,
   DEBUG,
   deleteMessage,
   emojiCheck,

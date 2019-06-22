@@ -1,10 +1,10 @@
-const {deleteMessage} = require('../../globals.js');
+const { deleteMessage, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class StatsCommand extends commando.Command {
   static commandInfo() {
-    return('PMs your stats\n`?stats`');
+    return(`PMs your stats\n\`${commandPrefix}stats\``);
   }
   constructor(client) {
     super(client, {
