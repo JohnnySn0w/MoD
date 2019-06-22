@@ -75,12 +75,13 @@ class TalkCommand extends commando.Command {
   evaluateRequirements(reqs) {
     return reqs.every((req) => {
       try {
+        console.log(req);
         eval(req);
       } catch(error) {
         console.error(error);
         return false;
       }
-      return true;
+      return eval(req);
     });
   }
 
