@@ -266,16 +266,21 @@
         "strength": 500,
         "defense": 500,
         "description": "There's mysterious shape, surrounded by shadows and jingling with coin.",
-        "responses" : {
+        "intros": {
             "0": {
+                "priority": "1",
                 "reply": "\"....what do you need?\"",
                 "prompts": [
                     {
-                        "prompt": "[0] Ask what they have to sell",
-                        "progression": "list"
+                        "prompt": "Ask what they're selling",
+                        "progression": {
+                            "shopping": "list"
+                        }
                     }
                 ]
-            },
+            }
+        },
+        "shopping": {
             "list": {
                 "reply": "\"take a look!\"",
                 "prompts": []
@@ -291,6 +296,12 @@
             "soldout": {
                 "reply": "\"Sorry, I'm out of stock.\"",
                 "prompts": []
+            }
+        },
+        "terminals": {
+            "0": {
+                "priority": "1",
+                "reply": "\"Laterrrrr\""
             }
         },
         "goods": [
