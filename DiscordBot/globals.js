@@ -7,7 +7,7 @@ function deleteMessage(message) {
 // delete the user's command if not debugging
   if (message.channel.type !== 'dm') {
     if (!DEBUG) {
-      message.delete().catch(e => console.error(e));
+      message.delete().catch(console.error);
     }
   }
 }
