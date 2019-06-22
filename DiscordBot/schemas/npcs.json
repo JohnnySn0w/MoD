@@ -310,7 +310,7 @@
                 "id": "6",
                 "cost": 10,
                 "reqs": [
-                    "player.inventory.keys[6] === undefined"
+                    "this.state.player.inventory.keys[6] === undefined"
                 ]
             },
             {
