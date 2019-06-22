@@ -72,7 +72,7 @@
     {
 		"name": "Average Sword",
 		"id": "10",
-		"description": "It's what you think of when you think of a sword. Pretty all right.",
+		"description": "It's what you think of when you think of a sword. Pretty alright.",
         "type": "weapon",
         "stats": 6
     },
