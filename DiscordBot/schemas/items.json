@@ -87,7 +87,7 @@
 		"name": "Holy Hand Grenade",
 		"id": "12",
 		"description": "An ornate grenade with a cross on it. Possibly holy.",
-        "type": "key",
+        "type": "weapon",
         "stats": 50
     },
     {

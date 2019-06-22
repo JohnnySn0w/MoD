@@ -4,7 +4,7 @@ const db = require('../../../dbhandler');
 
 class TalkCommand extends commando.Command {
   static commandInfo() {
-    return('Gab it up with NPCs!\n`?talk <npc>`');
+    return('Gab it up with the denizens of the world!\n`?talk <npc>`');
   }
   constructor(client) {
     super(client, {
@@ -20,6 +20,9 @@ class TalkCommand extends commando.Command {
         }
       ]
     });
+    this.assembleMessage = this.assembleMessage.bind(this);
+    this.startConvo = this.startConvo.bind(this);
+    this.buyItem = this.buyItem.bind(this);
   }
 
   async run(message, {npc}) {
@@ -34,30 +37,29 @@ class TalkCommand extends commando.Command {
       return null;
     }
     if (room.npcs[npc]) {
-        npcID = room.npcs[npc];
+      npcID = room.npcs[npc];
     } else {
-        message.channel.send(`${player.characterName} is trying to communicate with unseen forces.`);
-        return null;
+      message.channel.send(`${player.characterName} is trying to communicate with unseen forces.`);
+      return null;
     }
     this.state = { message, player, room };
-    db.getItem(npcID, 'npcs', this.startConvo.bind(this));
+    db.getItem(npcID, 'npcs', this.startConvo);
   }
 
   /*
     evaluate which intro/terminal states are available to player then
     pick the one with the lowest priority setting
   */
-  determineStartOrEndState(states, terminal=false) {
+  determineStartOrEndState(states, terminal = false) {
     const validStates = [];
     let sendState = { priority: 0 };
     const { player } = this.state;
 
     Object.keys(states).forEach(state => {
       states[state].reqs ?
-      (this.evaluateRequirements(states[state].reqs) ?
-      validStates.push(states[state])
-      : '')
-      : validStates.push(states[state]);
+        (this.evaluateRequirements(states[state].reqs) ?
+          validStates.push(states[state]) : '')
+        : validStates.push(states[state]);
     });
     validStates.forEach(state => {
       if (state.priority > sendState.priority) {
@@ -73,27 +75,31 @@ class TalkCommand extends commando.Command {
   evaluateRequirements(reqs) {
     return reqs.every((req) => {
       try {
-        eval(req)
-      }
-      catch {
+        console.log(req);
+        eval(req);
+      } catch(error) {
+        console.error(error);
         return false;
       }
-      return true;
+      return eval(req);
     });
   }
 
   // go through and set any flags, as well as send the message,
   // and generate prompts for continued convo
-  assembleMessage(sendState, terminal) {
+  assembleMessage(sendState, terminal = false) {
+    const { player, message, npc } = this.state;
+    console.log(sendState);
     let responded = false;
-    const { player, message, npc} = this.state;
     const filter = m => m.author.id === message.author.id;
     const collector = message.channel.createMessageCollector(filter, {time: 10000});
-    const messageToSend = `:${npc.emoji}:**${npc.name} says to <@${player.id}>:**\n*${sendState.reply}*\n`;
-    const prompts = sendState.prompts ? this.createPrompt(sendState.prompts) : '';
+    const messageToSend = `:${npc.emoji ? npc.emoji : ''}:**${npc.name} says to <@${player.id}>:**\n*${sendState.reply}*\n`;
+    const prompts = sendState.prompts ? 
+      this.createPrompt(sendState.prompts) : '';
 
     sendState.flags ? this.activateFlags(sendState.flags) : '';
     message.channel.send(`${messageToSend}${prompts}`).catch(console.error);
+    // if a non-terminal state logic
     if(!terminal){
       collector.on('collect', () => {
         responded = true;
@@ -114,15 +120,27 @@ class TalkCommand extends commando.Command {
   }
 
   createPrompt(prompts) {
+    const { player, npc, shopping } = this.state;
     let promptSection = '';
     let x = 0;
     let i = 0;
     this.state.tempPrompts = {};
-    for (i = 0; i < prompts.length; i++) {
-      if((prompts[i].reqs && this.evaluateRequirements(prompts[i].reqs)) || prompts[i].reqs === undefined) {
-        promptSection = promptSection.concat(`[${x}] ${prompts[i].prompt}\n`);
-        this.state.tempPrompts[x] = prompts[i];
-        x++;
+    if (shopping) {
+      promptSection = promptSection.concat(`[––You have ${player.inventory.gold} gold––]\n`);
+      npc.goods.forEach((good) => {
+        if (good.reqs === undefined || this.evaluateRequirements(good.reqs)) {
+          promptSection = promptSection.concat(`[${x}] ${good.item} - ${good.cost} gold\n`);
+          this.state.tempPrompts[x] = good;
+          x += 1;
+        }
+      });
+    } else {
+      for (i = 0; i < prompts.length; i++) {
+        if(prompts[i].reqs === undefined || (prompts[i].reqs && this.evaluateRequirements(prompts[i].reqs))) {
+          promptSection = promptSection.concat(`[${x}] ${prompts[i].prompt}\n`);
+          this.state.tempPrompts[x] = prompts[i];
+          x += 1;
+        }
       }
     }
     return promptSection;
@@ -133,14 +151,13 @@ class TalkCommand extends commando.Command {
   activateFlags(flags) {
     const { player } = this.state;
     flags.forEach( flag=> {
-      console.log(flag);
       try {
         eval(flag.property);
       }
       catch(error) {
         console.error(error);
         db.updateItem(player.id, ['busy'], [false], 'players', () => {});
-        return null
+        return null;
       }
       db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
     });
@@ -155,16 +172,74 @@ class TalkCommand extends commando.Command {
     this.determineStartOrEndState(npc.intros);
   }
 
-  determineNextState(selection) {
-    const { player, npc, message, tempPrompts } = this.state;
-    const type = tempPrompts[selection] ? 
-      Object.keys(tempPrompts[selection]['progression'])[0] : '';
+  //{ id: '6', cost: 10, item: 'ALEVE' }
+  tryBuy(item) {
+    const { player, npc } = this.state;
+    if (player.inventory.gold >= item.cost) {
+      player.inventory.gold -= item.cost;
+      db.getItem(item.id, 'items', this.buyItem);
+    } else {
+      this.assembleMessage(npc.shopping.failure);
+    }
+  }
 
+  buyItem(itemData) {
+    const item = JSON.parse(itemData.body).Item;
+    const { player, npc } = this.state;
+    // if the item is a key item, add it to the player's list of keys
+    if (item.type === 'key') {
+      player.inventory.keys[item.id] = {
+        'name': item.name,
+        'used': false
+      };
+    // if the item is not key...
+    } else {
+      // check to see if the player already has that item
+      if (player.inventory.items[item.id]) {
+        // if so, bump the item's amount
+        player.inventory.items[item.id].amount += 1;
+      } else if (item.type === 'weapon' || item.type === 'armor') {
+        // if not, add the item to the player's inventory
+        player.inventory.items[item.id] = {
+          'name': item.name,
+          'type': item.type,
+          'equipped': false,
+          'stats': item.stats,
+          'amount': 1,
+          'id': item.id
+        };
+      //item is a consumable and therefore not equippable
+      } else {
+        player.inventory.items[item.id] = {
+          'name': item.name,
+          'type': item.type,
+          'stats': item.stats,
+          'amount': 1,
+          'id': item.id
+        };
+      }
+    }
+    db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => this.assembleMessage(npc.shopping.success));
+  }
+
+  determineNextState(selection) {
+    const { player, npc, message, tempPrompts, shopping } = this.state;
+    let type;
+    if (shopping && !selection.includes('leave')) {
+      this.tryBuy(tempPrompts[selection]);
+      return null;
+    } else {
+      type = tempPrompts[selection] ? 
+        Object.keys(tempPrompts[selection]['progression'])[0] : '';
+    }
     if (selection.includes('leave') || type === 'terminals') {
       message.channel.send(`${player.characterName} walked away from ${npc.name}.`);
       this.determineStartOrEndState(npc.terminals, true);
-      return null;
+    } else if (type === 'shopping') {
+      this.state.shopping = true;
+      this.assembleMessage(npc[type][tempPrompts[selection]['progression'][type]]);
     } else if (tempPrompts[selection] !== undefined && type !== undefined) {
+      // this is black magic fuckery, don't worry about it too much
       this.assembleMessage(npc[type][tempPrompts[selection]['progression'][type]]);
     } else {
       this.determineStartOrEndState(npc.terminals, true);

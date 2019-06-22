@@ -260,43 +260,58 @@
     {
         "name": "Shopkeep",
         "id": "3",
+        "emoji": "moneybag",
         "level": 0,
         "health": 500,
         "strength": 500,
         "defense": 500,
         "description": "There's mysterious shape, surrounded by shadows and jingling with coin.",
-        "responses" : {
+        "intros": {
             "0": {
+                "priority": "1",
                 "reply": "\"....what do you need?\"",
                 "prompts": [
                     {
-                        "prompt": "[0] Ask what they have to sell",
-                        "progression": "list"
+                        "prompt": "Ask what they're selling",
+                        "progression": {
+                            "shopping": "list"
+                        }
                     }
                 ]
-            },
+            }
+        },
+        "shopping": {
             "list": {
-                "reply": "\"....take a look!\"",
+                "reply": "\"take a look!\"",
                 "prompts": []
             },
             "success": {
-                "reply": "\"....here you go.\n....this is all I have\"",
+                "reply": "\"here you go.\"",
                 "prompts":[]
             },
             "failure": {
-                "reply": "\"....you're joking right?\n\"",
+                "reply": "\"....you're joking right?\"\n\n(you can't afford that)",
                 "prompts": []
             },
             "soldout": {
-                "reply": "\"....I'm out of stock\"",
+                "reply": "\"Sorry, I'm out of stock.\"",
                 "prompts": []
+            }
+        },
+        "terminals": {
+            "0": {
+                "priority": "1",
+                "reply": "\"Laterrrrr\""
             }
         },
         "goods": [
             {
                 "item": "ALEVE",
                 "id": "6",
-                "cost": 10
+                "cost": 10,
+                "reqs": [
+                    "this.state.player.inventory.keys[6] === undefined"
+                ]
             },
             {
                 "item": "Garbage Sword",
@@ -318,6 +333,7 @@
     {
         "name": "Tim",
         "id": "4",
+        "emoji": "crystal_ball",
         "level": 0,
         "health": 10,
         "strength": 3,
@@ -343,12 +359,12 @@
                     {
                         "prompt": "Ask how he is",
                         "progression": {
-                            "intermediates": "1"
+                            "intermediates": "2"
                         }
                     }
                 ],
                 "reqs": [
-                    "this.state.player.inventory.keys[12].used === true"
+                    "this.state.player.inventory.keys[11] === true"
                 ]
             }
         },
@@ -374,6 +390,45 @@
                         }
                     }
                 ]
+            },
+            "2": {
+                "reply": "Doing just fine now that the beast is slain!",
+                "prompts": [
+                    {
+                        "prompt": "Ask about the rabbit",
+                        "progression": {
+                            "intermediates": "3"
+                        }
+                    }
+                ]
+            },
+            "3": {
+                "reply": "Well it's dead now, so I suppose I can get on with it!",
+                "prompts": [
+                    {
+                        "prompt": "Ask how he's doing",
+                        "progression": {
+                            "intermediates": "2"
+                        }
+                    },
+                    {
+                        "prompt": "Ask what 'it' is",
+                        "progression": {
+                            "intermediates": "4"
+                        }
+                    }
+                ]
+            },
+            "4": {
+                "reply": "Not so sure anymore, it's been a long while.",
+                "prompts": [
+                    {
+                        "prompt": "Ask how he is",
+                        "progression": {
+                            "intermediates": "2"
+                        }
+                    }
+                ]
             }
         },
         "terminals": {
@@ -383,9 +438,9 @@
             },
             "1": {
                 "priority": "2",
-                "reply": "\"Thanks for killing the rabbit!\"",
+                "reply": "\"Bye! Thanks for killing the rabbit!\"",
                 "reqs": [
-                    "this.state.player.inventory.keys[12].used === true"
+                    "this.state.player.inventory.keys[11] === true"
                 ]
             }
         }

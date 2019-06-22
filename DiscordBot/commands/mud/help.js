@@ -1,7 +1,7 @@
 
 
 const commando = require('discord.js-commando');
-const { deleteMessage } = require('../../globals.js');
+const { deleteMessage, emojiCheck } = require('../../globals.js');
 const c = require('../../commands.js');
 
 
@@ -19,8 +19,7 @@ class Help extends commando.Command {
   }
   
   async run(message) {
-    const emojiFind = this.client.emojis.find(emoji => emoji.name === "");
-    const rulebook = emojiFind ? emojiFind.toString() : ':notebook_with_decorative_cover:';
+    const rulebook = emojiCheck('notebook_with_decorative_cover', this.client.emojis);
     message.message.author.send(
       `${rulebook}***MoD Commands***${rulebook}\n${this.commandDescripts()}`
     );

@@ -1,5 +1,6 @@
 const db = require('../dbhandler');
 const DEBUG = false;
+const emojiOn = true;
 const gameWorldName = 'game channels';
 
 function deleteMessage(message) {
@@ -9,6 +10,11 @@ function deleteMessage(message) {
       message.delete().catch(e => console.error(e));
     }
   }
+}
+
+function emojiCheck(emojiName, emojis) {
+  const emojiFind = emojis.find(emoji => emoji.name === emojiName);
+  return emojiFind ? emojiFind.toString() : `:${emojiName}:`;
 }
 
 function bigCheck(message, callback,  args = '') {
@@ -78,6 +84,8 @@ module.exports = {
   checkKeys,
   DEBUG,
   deleteMessage,
+  emojiCheck,
+  emojiOn,
   gameWorldName,
   respawn
 };

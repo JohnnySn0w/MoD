@@ -3,12 +3,13 @@
   "version": "0.8.0",
   "description": "mud on discord",
   "main": "./DiscordBot/index.js",
-  "engines" : { 
-    "node" : "^10.0.0" 
+  "engines": {
+    "node": "^12.4.0"
   },
   "dependencies": {
     "discord.js": "^11.5.1",
-    "discord.js-commando": "^0.10.0"
+    "discord.js-commando": "^0.10.0",
+    "eslint": "^5.16.0"
   },
   "devDependencies": {
     "aws-sdk": "^2.373.0",
@@ -21,7 +22,9 @@
     "seed": "./node_modules/serverless/bin/serverless dynamodb seed",
     "startDb": "./node_modules/serverless/bin/serverless dynamodb start --migrate --seed",
     "createDb": "./node_modules/serverless/bin/serverless dynamodb install; ./node_modules/serverless/bin/serverless dynamodb start --migrate --seed",
-    "test": "nodemon  --prof --max-old-space-size=2048 ./DiscordBot/index.js"
+    "test": "nodemon  --prof --max-old-space-size=2048 ./DiscordBot/index.js",
+    "eslint": "./node_modules/.bin/eslint --ext ./DiscordBot/*.js ./DiscordBot/commands/**/*.js"
+
   },
   "repository": {
     "type": "git",
