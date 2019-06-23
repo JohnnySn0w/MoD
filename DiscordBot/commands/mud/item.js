@@ -1,6 +1,7 @@
 const { deleteMessage, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
+const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class ItemCommand extends commando.Command {
   static commandInfo() {
@@ -12,12 +13,7 @@ class ItemCommand extends commando.Command {
     );
   }
   constructor(client) {
-    super(client, {
-      name: 'item',
-      group: 'mud',
-      memberName: 'item',
-      description: ItemCommand.commandInfo(),
-    });
+    super(client, COMMAND_CONSTANT('item', ItemCommand.commandInfo()));
   }
 
   async run(message, args) {

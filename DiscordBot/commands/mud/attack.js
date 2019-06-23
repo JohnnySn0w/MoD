@@ -1,8 +1,8 @@
 const { deleteMessage, bigCheck, respawn, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
-const { ITEM_CONSTANT } = require('../../Constants/playerConstant');
-
+const { ITEM_CONSTANT } = require('../../Constants/itemConstant');
+const  { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class AttackCommand extends commando.Command {
   static commandInfo() {
@@ -14,19 +14,7 @@ class AttackCommand extends commando.Command {
       \`weapon\`, \`magic\`, \`run\`, \`throw\` (throw requires an item name)`);
   }
   constructor(client) {
-    super(client, {
-      name: 'attack',
-      group: 'mud',
-      memberName: 'attack',
-      description: AttackCommand.commandInfo(),
-      args: [
-        {
-          key: 'object',
-          prompt: 'What are you trying to attack?',
-          type: 'string'
-        }
-      ]
-    });
+    super(client, COMMAND_CONSTANT('attack',  AttackCommand.commandInfo(), true));
   }
 
   async run(message, args) {
@@ -131,17 +119,8 @@ class AttackCommand extends commando.Command {
           deleteMessage(m);
           message.channel.send(`${player.characterName} is shouting nonsense`);
         } else if (m.content.includes('throw')) {
-          if(m.content.includes('grenade')){
-            if(player.inventory.keys[12] && enemy.name === 'That One Rabbit'){
-              const damage = 50;
-              enemy.health = enemy.health - damage;
-              message.channel.send(`${player.characterName} throws the holy hand grenade at the ${enemy.name}. It explodes beautifully, leaving nothing behind, save a foot and what can only be described as chunky salsa.`);
-            } else {
-              message.channel.send(`${player.characterName} decides this item is better used elsewhere.`);
-            }
-          } else {
-            message.channel.send(`${player.characterName} throws nothing at all at ${enemy.name}.`);
-          }
+          deleteMessage(m);
+          message.channel.send(`${player.characterName} throws nothing at all at ${enemy.name}.`);
         } else {
           deleteMessage(m);
           //in the future, we can add a magic system here
@@ -261,12 +240,10 @@ class AttackCommand extends commando.Command {
   // loot functionality!
   rollLoot(message, player, enemy) {
     let possibleLoot = [];
-
     // perform a loot roll on every item in the enemy's loot array
     for (let lootIndex = 0; lootIndex < enemy.loot.length; lootIndex++) {
       let lootChance = Math.floor(Math.random() * 100);
       let loot = enemy.loot[lootIndex];
-
       // add the successfully rolled items to the possible loot array
       if (lootChance <= loot.rarity) {
         possibleLoot.push(loot);
@@ -305,14 +282,13 @@ class AttackCommand extends commando.Command {
       // check to see if the player already has that item
       if (player.inventory.items[item.id]) {
         // if so, bump the item's amount
-        player.inventory.items[item.id].amount = player.inventory.items[item.id].amount + 1;
+        player.inventory.items[item.id].amount += 1;
       } else {
         // if not, add the item to the player's inventory
-        player.inventory.items[item.id] = ITEM_CONSTANT(item);
+        player.inventory.items[item.id] = ITEM_CONSTANT(item, true);
       }
     } else {
-      console.log('Item is not a grabbable.');
-      return null;
+      player.inventory.items[item.id] = ITEM_CONSTANT(item);
     }
     message.member.send(`After defeating ${enemy.name} you picked up a ${item.name}.`);
     // update db item with changes from above

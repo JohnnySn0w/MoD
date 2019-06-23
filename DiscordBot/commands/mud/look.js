@@ -2,6 +2,7 @@ const {deleteMessage, bigCheck, checkItems, checkKeys, commandPrefix} = require(
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 const inventory = require('../mud/inventory.js');
+const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class LookCommand extends commando.Command {
   static commandInfo() {
@@ -11,19 +12,7 @@ class LookCommand extends commando.Command {
       example somethings: \`here\`, \`around\`, \`room\`, \`old man\``);
   }
   constructor(client) {
-    super(client, {
-      name: 'look',
-      group: 'mud',
-      memberName: 'look',
-      description: LookCommand.commandInfo(),
-      args: [
-        {
-          key: 'object',
-          prompt: 'What are you trying to look at?',
-          type: 'string'
-        }
-      ]
-    });
+    super(client, COMMAND_CONSTANT('look', LookCommand.commandInfo(), true));
   }
 
   async run(message, args) {

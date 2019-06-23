@@ -1,6 +1,7 @@
 const {deleteMessage, bigCheck, commandPrefix} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
+const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class MoveCommand extends commando.Command {
   static commandInfo() {
@@ -9,19 +10,7 @@ class MoveCommand extends commando.Command {
       \`${commandPrefix}move <direction>\``);
   }
   constructor(client) {
-    super(client, {
-      name: 'move',
-      group: 'mud',
-      memberName: 'move',
-      description: MoveCommand.commandInfo(),
-      args: [
-        {
-          key: 'direction',
-          prompt: 'Which direction do you wish to move in?',
-          type: 'string'
-        }
-      ]
-    });
+    super(client, COMMAND_CONSTANT('move', MoveCommand.commandInfo(), true));
   }
 
   async run(message, {direction}) {

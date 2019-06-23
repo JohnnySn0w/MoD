@@ -1,6 +1,7 @@
 const { deleteMessage, emojiCheck, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
+const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class Describe extends commando.Command {
   static commandInfo() {
@@ -10,12 +11,7 @@ class Describe extends commando.Command {
       A valid example would be \`${commandPrefix}describe name Atreyu\` to set your player name to Atreyu`);
   }
   constructor(client) {
-    super(client, {
-      name: 'describe',
-      group: 'mud',
-      memberName: 'describe',
-      description: Describe.commandInfo(),
-    });
+    super(client, COMMAND_CONSTANT('describe', Describe.commandInfo()));
   }
   
   async run(message, args) {

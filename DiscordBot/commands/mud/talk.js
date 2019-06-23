@@ -2,6 +2,7 @@ const { deleteMessage, bigCheck, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 const { ITEM_CONSTANT } = require('../../Constants/itemConstant');
+const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class TalkCommand extends commando.Command {
   static commandInfo() {
@@ -10,19 +11,7 @@ class TalkCommand extends commando.Command {
       \`${commandPrefix}talk <npc>\``);
   }
   constructor(client) {
-    super(client, {
-      name: 'talk',
-      group: 'mud',
-      memberName: 'talk',
-      description: TalkCommand.commandInfo(),
-      args: [
-        {
-          key: 'npc',
-          prompt: 'Who are you talking to?',
-          type: 'string'
-        }
-      ]
-    });
+    super(client, COMMAND_CONSTANT('talk', TalkCommand.commandInfo(), true));
     this.assembleMessage = this.assembleMessage.bind(this);
     this.startConvo = this.startConvo.bind(this);
     this.buyItem = this.buyItem.bind(this);

@@ -1,6 +1,7 @@
 const { deleteMessage, commandPrefix} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
+const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class InventoryCommand extends commando.Command {
   static commandInfo() {
@@ -9,12 +10,7 @@ class InventoryCommand extends commando.Command {
       \`${commandPrefix}inventory\``);
   }
   constructor(client) {
-    super(client, {
-      name: 'inventory',
-      group: 'mud',
-      memberName: 'inventory',
-      description: InventoryCommand.commandInfo(),
-    });
+    super(client, COMMAND_CONSTANT('inventory', InventoryCommand.commandInfo()));
   }
 
   async run(message) {

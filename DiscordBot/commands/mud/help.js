@@ -1,8 +1,7 @@
-
-
 const commando = require('discord.js-commando');
 const { deleteMessage, emojiCheck, commandPrefix } = require('../../globals.js');
 const c = require('../../commands.js');
+const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 
 class Help extends commando.Command {
@@ -12,12 +11,7 @@ class Help extends commando.Command {
       \`${commandPrefix}help\``);
   }
   constructor(client) {
-    super(client, {
-      name: 'help',
-      group: 'mud',
-      memberName: 'help',
-      description: Help.commandInfo(),
-    });
+    super(client, COMMAND_CONSTANT('help', Help.commandInfo()));
   }
   
   async run(message) {
@@ -30,6 +24,7 @@ class Help extends commando.Command {
   commandDescripts() {
     let descripts = '';
     Object.keys(c).forEach((key) => {
+      console.log(key);
       if (key !== 'help') {
         descripts = descripts.concat(`\n**${key}**: ${c[key].commandInfo()}`) ;
       } else {

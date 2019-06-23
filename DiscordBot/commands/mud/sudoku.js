@@ -1,5 +1,6 @@
 const { deleteMessage, bigCheck, respawn, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
+const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class Sudoku extends commando.Command {
   static commandInfo() {
@@ -8,12 +9,7 @@ class Sudoku extends commando.Command {
       \`${commandPrefix}sudoku\``);
   }
   constructor(client) {
-    super(client, {
-      name: 'sudoku',
-      group: 'mud',
-      memberName: 'sudoku',
-      description: Sudoku.commandInfo(),
-    });
+    super(client, COMMAND_CONSTANT('sudoku', Sudoku.commandInfo()));
   }
   
   async run(message) {
