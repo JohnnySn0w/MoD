@@ -1,7 +1,7 @@
-const {deleteMessage, bigCheck, checkItems, checkKeys, commandPrefix} = require('../../globals.js');
+const {deleteMessage, bigCheck, checkItems, checkKeys, commandPrefix} = require('../../utilities/globals');
 const commando = require('discord.js-commando');
-const db = require('../../../dbhandler');
-const inventory = require('../mud/inventory.js');
+const db = require('../../utilities/dbhandler');
+const inventory = require('./inventory');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class LookCommand extends commando.Command {

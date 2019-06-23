@@ -1,4 +1,4 @@
-const { deleteMessage, bigCheck, respawn, commandPrefix } = require('../../globals.js');
+const { deleteMessage, bigCheck, respawn, commandPrefix } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 

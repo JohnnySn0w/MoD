@@ -1,4 +1,4 @@
-const db = require('../dbhandler');
+const db = require('./dbhandler');
 const DEBUG = false;
 const emojiOn = true;
 const gameWorldName = 'game channels';

@@ -1,14 +1,6 @@
-/*
-  kind of an example command
-*/
-
-// importing from other files
 const commando = require('discord.js-commando');
-
-// import the dbhandler functions, accessible by using db.whateverFunction
-// technically we can use anything as a variable name as it's simply an alias
-const db = require('../../../dbhandler');
-const { deleteMessage } = require('../../globals.js');
+const db = require('../../utilities/dbhandler');
+const { deleteMessage } = require('../../utilities/globals');
 
 class DB extends commando.Command {
   //constructor for the class

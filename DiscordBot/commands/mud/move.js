@@ -1,6 +1,6 @@
-const {deleteMessage, bigCheck, commandPrefix} = require('../../globals.js');
+const {deleteMessage, bigCheck, commandPrefix} = require('../../utilities/globals');
 const commando = require('discord.js-commando');
-const db = require('../../../dbhandler');
+const db = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class MoveCommand extends commando.Command {
