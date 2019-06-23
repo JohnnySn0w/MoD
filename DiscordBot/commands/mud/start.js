@@ -1,11 +1,13 @@
-const {deleteMessage} = require('../../globals.js');
+const { deleteMessage, commandPrefix} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 const { PLAYER_CONSTANT } = require('../../Constants/playerConstant');
 
 class StartCommand extends commando.Command {
   static commandInfo() {
-    return('Creates your character, and lets you play the game.\n`?start`');
+    return(
+      `Creates your character, and lets you play the game.
+      \`${commandPrefix}start\``);
   }
   constructor(client) {
     super(client, {

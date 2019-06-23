@@ -1,10 +1,12 @@
-const {deleteMessage} = require('../../globals.js');
+const { deleteMessage, commandPrefix} = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class InventoryCommand extends commando.Command {
   static commandInfo() {
-    return('Shows inventory in a PM.\n`?inventory`');
+    return(
+      `Shows inventory in a PM.
+      \`${commandPrefix}inventory\``);
   }
   constructor(client) {
     super(client, {

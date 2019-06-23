@@ -1,10 +1,13 @@
-const { deleteMessage, emojiCheck } = require('../../globals.js');
+const { deleteMessage, emojiCheck, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
 
 class Describe extends commando.Command {
   static commandInfo() {
-    return('Set your description or name.\nUsage: `?describe <"self" or "name" or "emoji"> <what you are setting it to>`.\nA valid example would be `?describe name Atreyu` to set your player name to Atreyu');
+    return(
+      `Set your description or name.
+      Usage: \`${commandPrefix}describe <"self" or "name" or "emoji"> <what you are setting it to>\`.
+      A valid example would be \`${commandPrefix}describe name Atreyu\` to set your player name to Atreyu`);
   }
   constructor(client) {
     super(client, {

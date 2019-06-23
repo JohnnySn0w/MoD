@@ -1,9 +1,11 @@
-const {deleteMessage, bigCheck, respawn} = require('../../globals.js');
+const { deleteMessage, bigCheck, respawn, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 
 class Sudoku extends commando.Command {
   static commandInfo() {
-    return('`respawn`');
+    return(
+      `Respawn player character:
+      \`${commandPrefix}sudoku\``);
   }
   constructor(client) {
     super(client, {
