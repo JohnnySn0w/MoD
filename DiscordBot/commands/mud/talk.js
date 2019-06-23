@@ -1,6 +1,7 @@
 const { deleteMessage, bigCheck, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
+const { ITEM_CONSTANT } = require('../../Constants/itemConstant');
 
 class TalkCommand extends commando.Command {
   static commandInfo() {
@@ -91,7 +92,6 @@ class TalkCommand extends commando.Command {
   // and generate prompts for continued convo
   assembleMessage(sendState, terminal = false) {
     const { player, message, npc } = this.state;
-    console.log(sendState);
     let responded = false;
     const filter = m => m.author.id === message.author.id;
     const collector = message.channel.createMessageCollector(filter, {time: 10000});
@@ -202,23 +202,10 @@ class TalkCommand extends commando.Command {
         player.inventory.items[item.id].amount += 1;
       } else if (item.type === 'weapon' || item.type === 'armor') {
         // if not, add the item to the player's inventory
-        player.inventory.items[item.id] = {
-          'name': item.name,
-          'type': item.type,
-          'equipped': false,
-          'stats': item.stats,
-          'amount': 1,
-          'id': item.id
-        };
+        player.inventory.items[item.id] = ITEM_CONSTANT(item);
       //item is a consumable and therefore not equippable
       } else {
-        player.inventory.items[item.id] = {
-          'name': item.name,
-          'type': item.type,
-          'stats': item.stats,
-          'amount': 1,
-          'id': item.id
-        };
+        player.inventory.items[item.id] = ITEM_CONSTANT(item, true);
       }
     }
     db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => this.assembleMessage(npc.shopping.success));

@@ -1,6 +1,7 @@
 const { deleteMessage, bigCheck, respawn, commandPrefix } = require('../../globals.js');
 const commando = require('discord.js-commando');
 const db = require('../../../dbhandler');
+const { ITEM_CONSTANT } = require('../../Constants/playerConstant');
 
 
 class AttackCommand extends commando.Command {
@@ -275,8 +276,6 @@ class AttackCommand extends commando.Command {
     if (possibleLoot.length != 0) {
       // pick a possible loot item randomly
       let loot = possibleLoot[Math.floor(Math.random() * (possibleLoot.length-1))];
-      //console.log(`Got loot! - ${JSON.stringify(loot)}`);
-
       // if it's gold, add it to the player's inventory direction
       if (loot.type === 'gold') {
         player.inventory.gold += loot.amount;
@@ -295,7 +294,6 @@ class AttackCommand extends commando.Command {
 
   addItem(player, data, message, enemy) {
     let item = JSON.parse(data.body).Item;
-    
     // if the item is a key item, add it to the player's list of keys
     if (item.type === 'key') {
       player.inventory.keys[item.id] = {
@@ -310,24 +308,13 @@ class AttackCommand extends commando.Command {
         player.inventory.items[item.id].amount = player.inventory.items[item.id].amount + 1;
       } else {
         // if not, add the item to the player's inventory
-        player.inventory.items[item.id] = {
-          'name': item.name,
-          'type': item.type,
-          'equipped': false,
-          'stats': item.stats,
-          'amount': 1,
-          'id': item.id
-        };
+        player.inventory.items[item.id] = ITEM_CONSTANT(item);
       }
     } else {
       console.log('Item is not a grabbable.');
-      return;
+      return null;
     }
-
-    console.log(JSON.stringify(player.inventory));
-
     message.member.send(`After defeating ${enemy.name} you picked up a ${item.name}.`);
-
     // update db item with changes from above
     db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
   }
