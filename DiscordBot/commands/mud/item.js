@@ -81,30 +81,37 @@ class ItemCommand extends commando.Command {
     }
     player.inventory.items[item.id].equipped = true;
     player.equipment[item.type] = item.id;
+    // update the player object and message the player
+    db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
+    message.author.send(`${item.name} equipped successfully!`);
   }
 
   unequipItem() {
-    const { player, item } = this.state;
+    const { player, message, item } = this.state;
     player.inventory.items[item.id].equipped = false;
     player.equipment[item.type] = undefined;
+    // update the player object and message the player
+    db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
+    message.author.send(`${item.name} un-equipped successfully!`);
   }
 
   discardItem() {
-    const { player, item } = this.state;
+    const { player, message, item } = this.state;
     if (item.amount > 1) {
       player.inventory.items[item.id].amount -= 1;
     } else {
       delete player.inventory.items[item.id];
     }
+    // update the player object and message the player
+    db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
+    message.author.send(`${item.name} discarded!`);
   }
 
   doThing() {
-    const { message, player, type, item } = this.state;
-    switch(type) {
+    const { message, type, item } = this.state;
+    switch (type) {
     case 'equip':
-      // make sure the player is equipping a weapon or armor
       if (item.type === 'weapon' || item.type === 'armor') {
-        // equip the item
         this.equipItem();
       } else {
         message.author.send(`Although you have the ${item.name}, you can't equip it.`);
@@ -127,9 +134,6 @@ class ItemCommand extends commando.Command {
     default:
       return null;
     }
-    // update the player object and message the player
-    db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
-    message.author.send(`${item.name} equipped successfully!`);
   }
 }
 

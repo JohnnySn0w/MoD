@@ -5,9 +5,10 @@ const inventory = require('../mud/inventory.js');
 
 class LookCommand extends commando.Command {
   static commandInfo() {
-    return(`Gives a description of an entity, place, or thing
-    \`${commandPrefix}look <something>\`
-    example somethings: \`here\`, \`around\`, \`room\`, \`old man\``);
+    return(
+      `Gives a description of an entity, place, or thing
+      \`${commandPrefix}look <something>\`
+      example somethings: \`here\`, \`around\`, \`room\`, \`old man\``);
   }
   constructor(client) {
     super(client, {

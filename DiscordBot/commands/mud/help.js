@@ -7,8 +7,9 @@ const c = require('../../commands.js');
 
 class Help extends commando.Command {
   static commandInfo() {
-    return(`Displays this message
-    \`${commandPrefix}help\``);
+    return(
+      `Displays this message
+      \`${commandPrefix}help\``);
   }
   constructor(client) {
     super(client, {

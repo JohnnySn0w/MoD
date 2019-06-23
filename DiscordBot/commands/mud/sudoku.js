@@ -3,8 +3,9 @@ const commando = require('discord.js-commando');
 
 class Sudoku extends commando.Command {
   static commandInfo() {
-    return(`Respawn player character:
-    \`${commandPrefix}sudoku\``);
+    return(
+      `Respawn player character:
+      \`${commandPrefix}sudoku\``);
   }
   constructor(client) {
     super(client, {
