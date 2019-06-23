@@ -5,7 +5,9 @@ const db = require('../../../dbhandler');
 
 class AttackCommand extends commando.Command {
   static commandInfo() {
-    return(`Attack a target\n\`${commandPrefix}attack <target>\` and then afterwards, supply a type of attack within 10 seconds.\nValid keywords after successful initiation: \`weapon\`, \`magic\`, \`run\`, \`throw\` (throw requires an item name)`);
+    return(`Attack a target
+    \`${commandPrefix}attack <target>\` and then afterwards, supply a type of attack within 10 seconds.
+    Valid keywords after successful initiation: \`weapon\`, \`magic\`, \`run\`, \`throw\` (throw requires an item name)`);
   }
   constructor(client) {
     super(client, {

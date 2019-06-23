@@ -21,7 +21,12 @@ class ItemCommand extends commando.Command {
   }
 
   async run(message, args) {
-    this.state = { message: message, itemName: args.toLowerCase() };
+    const arguements = /\w+\s/.exec(args);
+    this.state = {
+      message: message,
+      itemName: arguements.input.replace(arguements[0],'').toLowerCase(),
+      type: arguements[0].replace(/\s/, ''),
+    };
     db.getItem(message.author.id, 'players', this.playerCheck.bind(this));
     deleteMessage(message);
   }
@@ -43,7 +48,7 @@ class ItemCommand extends commando.Command {
     let item = this.getItem('keys');
     // check to make sure the item isn't a key
     if (item) {
-      message.author.send(`${item.name} is a key item. You can't equip it.`);
+      message.author.send(`${item.name} is a key item. You can't do that to it.`);
       return null;
     }
     item = this.getItem('items');
@@ -51,13 +56,8 @@ class ItemCommand extends commando.Command {
       message.author.send(`It doesn't seem that you have the ${itemName} in your inventory.`);
       return null;
     }
-    // make sure the player is equipping a weapon or armor
-    if (item.type === 'weapon' || item.type === 'armor') {
-      // equip the item
-      this.equipItem(item);
-    } else {
-      message.author.send(`Although you have the ${item.name}, you can't equip it.`);
-    }
+    this.state.item = item;
+    this.doThing();
     return null;
   }
 
@@ -73,22 +73,64 @@ class ItemCommand extends commando.Command {
     return thing;
   }
 
-  equipItem(item) {
-    const { message, player } = this.state;
+  equipItem() {
+    const { message, player, item } = this.state;
     if (item.equipped) {
       message.author.send(`The ${item.name} is already equipped.`);
       return null;
     }
-    // set the item as equipped, and make sure the equipment slot is referencing the item
     player.inventory.items[item.id].equipped = true;
     player.equipment[item.type] = item.id;
+  }
+
+  unequipItem() {
+    const { player, item } = this.state;
+    player.inventory.items[item.id].equipped = false;
+    player.equipment[item.type] = undefined;
+  }
+
+  discardItem() {
+    const { player, item } = this.state;
+    if (item.amount > 1) {
+      player.inventory.items[item.id].amount -= 1;
+    } else {
+      delete player.inventory.items[item.id];
+    }
+  }
+
+  doThing() {
+    const { message, player, type, item } = this.state;
+    switch(type) {
+    case 'equip':
+      // make sure the player is equipping a weapon or armor
+      if (item.type === 'weapon' || item.type === 'armor') {
+        // equip the item
+        this.equipItem();
+      } else {
+        message.author.send(`Although you have the ${item.name}, you can't equip it.`);
+      }
+      break;
+    case 'unequip':
+      if (!item.equipped) {
+        message.author.send(`${item.name} not currently equipped.`);
+        break;
+      }
+      this.unequipItem();
+      break;
+    case 'discard':
+      if (item.equipped && item.amount === 1) {
+        message.author.send(`The ${item.name} is equipped, and it's your last item of its kind. Equip something else to discard it.`);
+        break;
+      }
+      this.discardItem();
+      break;
+    default:
+      return null;
+    }
     // update the player object and message the player
     db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
     message.author.send(`${item.name} equipped successfully!`);
   }
 }
-        
-
-    
 
 module.exports = ItemCommand;

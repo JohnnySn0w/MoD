@@ -5,7 +5,8 @@ const { PLAYER_CONSTANT } = require('../../Constants/playerConstant');
 
 class StartCommand extends commando.Command {
   static commandInfo() {
-    return(`Creates your character, and lets you play the game.\n\`${commandPrefix}start\``);
+    return(`Creates your character, and lets you play the game.
+    \`${commandPrefix}start\``);
   }
   constructor(client) {
     super(client, {

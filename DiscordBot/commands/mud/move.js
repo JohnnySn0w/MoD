@@ -4,7 +4,8 @@ const db = require('../../../dbhandler');
 
 class MoveCommand extends commando.Command {
   static commandInfo() {
-    return(`Move to a different room (i.e. text channel).\n\`${commandPrefix}move <direction>\``);
+    return(`Move to a different room (i.e. text channel).
+    \`${commandPrefix}move <direction>\``);
   }
   constructor(client) {
     super(client, {

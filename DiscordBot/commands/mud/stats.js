@@ -4,7 +4,8 @@ const db = require('../../../dbhandler');
 
 class StatsCommand extends commando.Command {
   static commandInfo() {
-    return(`PMs your stats\n\`${commandPrefix}stats\``);
+    return(`PMs your stats
+    \`${commandPrefix}stats\``);
   }
   constructor(client) {
     super(client, {

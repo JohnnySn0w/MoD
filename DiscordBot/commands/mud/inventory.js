@@ -4,7 +4,8 @@ const db = require('../../../dbhandler');
 
 class InventoryCommand extends commando.Command {
   static commandInfo() {
-    return(`Shows inventory in a PM.\n\`${commandPrefix}inventory\``);
+    return(`Shows inventory in a PM.
+    \`${commandPrefix}inventory\``);
   }
   constructor(client) {
     super(client, {

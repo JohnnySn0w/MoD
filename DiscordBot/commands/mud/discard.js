@@ -4,7 +4,8 @@ const db = require('../../../dbhandler');
 
 class DiscardCommand extends commando.Command {
   static commandInfo() {
-    return(`Remove an item from inventory.\n\`${commandPrefix}discard <item>\``);
+    return(`Remove an item from inventory.
+    \`${commandPrefix}discard <item>\``);
   }
   constructor(client) {
     super(client, {

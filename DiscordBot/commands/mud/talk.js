@@ -4,7 +4,8 @@ const db = require('../../../dbhandler');
 
 class TalkCommand extends commando.Command {
   static commandInfo() {
-    return(`Gab it up with the denizens of the world!\n\`${commandPrefix}talk <npc>\``);
+    return(`Gab it up with the denizens of the world!
+    \`${commandPrefix}talk <npc>\``);
   }
   constructor(client) {
     super(client, {
