@@ -24,7 +24,6 @@ class Help extends commando.Command {
   commandDescripts() {
     let descripts = '';
     Object.keys(c).forEach((key) => {
-      console.log(key);
       if (key !== 'help') {
         descripts = descripts.concat(`\n**${key}**: ${c[key].commandInfo()}`) ;
       } else {

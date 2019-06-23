@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const commando = require('discord.js-commando');
 const { key, owner } = require('./config');
 const { commandPrefix } = require('./globals');

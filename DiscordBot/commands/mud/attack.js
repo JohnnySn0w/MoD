@@ -87,7 +87,7 @@ class AttackCommand extends commando.Command {
       }
       if (!responded) {
         message.channel.send(`${player.characterName} sauntered away from ${enemy.name}, as if in a daze`);
-        db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
+        db.updateItem(player.id, ['health'], [player.health], 'players', () => {});
         this.leveling(xp, player, message);
         this.postCombat(enemy, message, player, room);
       } else {
@@ -111,7 +111,7 @@ class AttackCommand extends commando.Command {
         } else if (m.content.includes('run')){
           deleteMessage(m);
           message.channel.send(`${player.characterName} ran away from ${enemy.name}`);
-          db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
+          db.updateItem(player.id, ['health'], [player.health], 'players', () => {});
           this.leveling(xp, player, message);
           this.postCombat(enemy, message, player, room);
           return null;
@@ -149,7 +149,7 @@ class AttackCommand extends commando.Command {
     }
     if (damage > 0) {
       player.health = player.health - damage;
-      db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
+      db.updateItem(player.id, ['health'], [player.health], 'players', () => {});
       message.channel.send(`${player.characterName} was hit by the ${enemy.name} for ${damage} damage.`);
     } else {
       message.channel.send(`${enemy.name} swung at the ${player.characterName} and missed.`);
@@ -180,7 +180,7 @@ class AttackCommand extends commando.Command {
         message.channel.send(`${player.characterName} defeated the ${enemy.name}.`);
       }, 100);
       // updating player health
-      db.updateItem(player.id, ['health'], [player.health], 'players', () => console.log('Player health updated'));
+      db.updateItem(player.id, ['health'], [player.health], 'players', () => {});
 
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
       if (enemy.respawn != null) {

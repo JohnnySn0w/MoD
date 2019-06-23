@@ -52,7 +52,7 @@ function roomCheck(player, message, data, callback, args) {
 
 function respawn(message, player) {
   // respawn player
-  db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => console.log('Player health restored'));
+  db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => {});
   message.member.setRoles([message.guild.roles.find(role => role.name === 'dead-end')]).catch(console.error);
   let channel = this.client.channels.find(channel => channel.name === 'death-notes');
   channel.send(`${player.characterName} totally died lmao`);

@@ -37,7 +37,6 @@ class Describe extends commando.Command {
         break;
       }
       message.member.setNickname(description)
-        .then(console.log)
         .catch(console.error);
       db.updateItem(message.member.id, ['characterName'], [description], 'players', ()=>{});
       break;
