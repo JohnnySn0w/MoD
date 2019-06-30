@@ -7,7 +7,7 @@
 */
 const commando = require('discord.js-commando');
 const rooms = require('../../schemas/rooms.json');
-const { deleteMessage, gameWorldName } = require('../../globals.js');
+const { deleteMessage, gameWorldName } = require('../../utilities/globals');
 
 class Gen extends commando.Command {
   //constructor for the class

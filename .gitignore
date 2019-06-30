@@ -8,6 +8,8 @@
 # excluding dynamo folder
 **/.dynamodb
 # exclude bot key
-DiscordBot/rooms.js
-shared-local-instance.db
 DiscordBot/config.js
+# exclude database
+**/dbData
+# exclude extraneous vscode configs
+**/.vscode

@@ -1,15 +1,16 @@
-const db = require('../dbhandler');
+const db = require('./dbhandler');
+const { ITEM_CONSTANT } = require('../Constants/itemConstant');
+
 const DEBUG = false;
 const emojiOn = true;
 const gameWorldName = 'game channels';
 const commandPrefix = '.';
 
+
 function deleteMessage(message) {
 // delete the user's command if not debugging
-  if (message.channel.type !== 'dm') {
-    if (!DEBUG) {
-      message.delete().catch(console.error);
-    }
+  if (!DEBUG && message.channel.type !== 'dm') {
+    message.delete().catch(console.error);
   }
 }
 
@@ -34,6 +35,8 @@ function playerCheck(data, callback, message, args) {
   
   if (player === undefined) {
     message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in #start-here to get started!');
+  } else if (player.busy) {
+    message.channel.send(`${player.characterName} is trying to multitask, and failing.`);
   } else {
     db.getItem(message.channel.name, 'rooms', (moreData) => roomCheck(player, message, moreData, callback, args));
   }
@@ -70,24 +73,65 @@ function checkKeys(player, itemName) {
 
 function checkItems(player, itemName) {
   // iterate through the player's list of items and check each one's name
-  for (var item in player.inventory.items) {
-    if (itemName === player.inventory.items[item].name.toLowerCase()) {
+  for (let item in player.inventory.items) {
+    if (itemName.toLowerCase() === player.inventory.items[item].name.toLowerCase()) {
       return player.inventory.items[item].id;
     }
   }
-
   return undefined;
 }
 
-module.exports = { 
+function discardItem(player, item) {
+  if (item.amount > 1) {
+    player.inventory.items[item.id].amount -= 1;
+  } else {
+    delete player.inventory.items[item.id];
+  }
+  // update the player object and message the player
+  db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
+}
+
+function inventoryAddItem(itemData, player, callback) {
+  const item = JSON.parse(itemData.body).Item;
+  // if the item is a key item, add it to the player's list of keys
+  if (item.type === 'key') {
+    player.inventory.keys[item.id] = {
+      'name': item.name,
+      'used': false
+    };
+  // if the item is not key...
+  } else {
+    // check to see if the player already has that item
+    if (player.inventory.items[item.id]) {
+      // if so, bump the item's amount
+      player.inventory.items[item.id].amount += 1;
+    } else if (item.type === 'weapon' || item.type === 'armor') {
+      // if not, add the item to the player's inventory
+      player.inventory.items[item.id] = ITEM_CONSTANT(item, true);
+    //item is a consumable and therefore not equippable
+    } else {
+      player.inventory.items[item.id] = ITEM_CONSTANT(item);
+    }
+  }
+  db.updateItem(
+    player.id,
+    ['inventory'],
+    [player.inventory],
+    'players', () => callback(item)
+  );
+}
+
+module.exports = {
   bigCheck,
   checkItems,
   checkKeys,
   commandPrefix,
   DEBUG,
   deleteMessage,
+  discardItem,
   emojiCheck,
   emojiOn,
   gameWorldName,
+  inventoryAddItem,
   respawn
 };

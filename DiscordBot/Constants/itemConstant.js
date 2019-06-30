@@ -1,5 +1,5 @@
 module.exports.ITEM_CONSTANT = (item, equippable = false) => { 
-  equippable ?
+  return equippable ?
     {
       'name': item.name,
       'type': item.type,

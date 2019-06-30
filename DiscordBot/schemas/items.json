@@ -28,13 +28,6 @@
         "stats": null
     },
 	{
-		"name": "ALEVE",
-		"id": "6",
-		"description": "A small blue pill that might help with back pain",
-        "type": "key",
-        "stats": null
-	},
-	{
 		"name": "Garbage Sword",
 		"id": "4",
 		"description": "An old sword made out of actual garbage. It might be worse than nothing",
@@ -49,9 +42,16 @@
         "stats": 1
     },
     {
+		"name": "ALEVE",
+		"id": "6",
+		"description": "A small blue pill that might help with back pain",
+        "type": "key",
+        "stats": null
+	},
+    {
 		"name": "Short Sword",
 		"id": "7",
-		"description": "A small sword, somewhere between a shank and a dagger.",
+		"description": "A small sword, about a hand and a half",
         "type": "weapon",
         "stats": 4
     },

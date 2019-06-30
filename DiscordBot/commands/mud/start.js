@@ -1,6 +1,6 @@
-const { deleteMessage, commandPrefix} = require('../../globals.js');
+const { deleteMessage, commandPrefix} = require('../../utilities/globals');
 const commando = require('discord.js-commando');
-const db = require('../../../dbhandler');
+const db = require('../../utilities/dbhandler');
 const { PLAYER_CONSTANT } = require('../../Constants/playerConstant');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 

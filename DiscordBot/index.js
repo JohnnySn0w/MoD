@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const commando = require('discord.js-commando');
 const { key, owner } = require('./config');
-const { commandPrefix } = require('./globals');
+const { commandPrefix } = require('./utilities/globals');
 const client = new commando.Client({
   commandPrefix: commandPrefix,
   owner: owner,

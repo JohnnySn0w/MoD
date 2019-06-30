@@ -1,6 +1,6 @@
-const { deleteMessage, emojiCheck, commandPrefix } = require('../../globals.js');
+const { deleteMessage, emojiCheck, commandPrefix } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
-const db = require('../../../dbhandler');
+const db = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class Describe extends commando.Command {
