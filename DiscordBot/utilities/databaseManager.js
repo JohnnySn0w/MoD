@@ -77,6 +77,7 @@ function setAttribValues(paramsValues) {
   for (let i = 0; i < paramsValues.length; i++) {
     attribs[`:${i}`] = paramsValues[i];
   }
+  console.log('ATTRIBS: ',attribs);
   return attribs;
 }
 

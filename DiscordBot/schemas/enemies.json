@@ -47,7 +47,7 @@
         "health": 50,
         "strength": 10,
         "defense": 6,
-        "description": "An large, green humanoid that has been in quite a few scraps already. She wields a large axe.",
+        "description": "A large, green humanoid that has been in quite a few scraps already. She wields a large axe.",
         "loot": [
             {   
                 "type": "gold",
