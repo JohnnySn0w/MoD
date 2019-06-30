@@ -51,7 +51,7 @@
     {
 		"name": "Short Sword",
 		"id": "7",
-		"description": "A small sword, somewhere between a shank and a dagger.",
+		"description": "A small sword, about a hand and a half",
         "type": "weapon",
         "stats": 4
     },
