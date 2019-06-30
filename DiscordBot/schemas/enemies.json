@@ -74,7 +74,8 @@
                 "rarity": 15               
             }             
         ],
-        "respawn": 10
+        "respawn": 10,
+        "despawned": false
     },
     {
         "name": "That One Rabbit",
@@ -93,7 +94,8 @@
                 "rarity": 100                      
             }             
         ],
-        "respawn": 5
+        "respawn": 5,
+        "despawned": false
     },
     {
         "name": "Rabbit",

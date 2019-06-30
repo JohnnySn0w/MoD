@@ -1,4 +1,4 @@
-const { deleteMessage, commandPrefix } = require('../../utilities/globals');
+const { deleteMessage, commandPrefix, discardItem } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const db = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
@@ -91,20 +91,8 @@ class ItemCommand extends commando.Command {
     message.author.send(`${item.name} un-equipped successfully!`);
   }
 
-  discardItem() {
-    const { player, message, item } = this.state;
-    if (item.amount > 1) {
-      player.inventory.items[item.id].amount -= 1;
-    } else {
-      delete player.inventory.items[item.id];
-    }
-    // update the player object and message the player
-    db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
-    message.author.send(`${item.name} discarded!`);
-  }
-
   doThing() {
-    const { message, type, item } = this.state;
+    const { message, player, type, item } = this.state;
     switch (type) {
     case 'equip':
       if (item.type === 'weapon' || item.type === 'armor') {
@@ -125,7 +113,8 @@ class ItemCommand extends commando.Command {
         message.author.send(`The ${item.name} is equipped, and it's your last item of its kind. Equip something else to discard it.`);
         break;
       }
-      this.discardItem();
+      discardItem(player, item);
+      message.author.send(`${item.name} discarded!`);
       break;
     default:
       return null;

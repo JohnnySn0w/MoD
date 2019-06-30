@@ -3,6 +3,7 @@ const {
   checkItems,
   commandPrefix,
   deleteMessage,
+  discardItem,
   inventoryAddItem,
   respawn,
 } = require('../../utilities/globals');
@@ -41,16 +42,12 @@ class AttackCommand extends commando.Command {
 
   getEnemy(message, player, room, entity) {
     this.state = { message, player, room, entity };
-    if (!player.busy) {
-      if (room.enemies[entity]) {
-        getItem(room.enemies[entity], 'enemies', this.checkHostile);
-      } else if (room.npcs[entity]) {
-        message.channel.send(`${player.characterName} glares with murderous intent towards ${entity}.`);
-      } else {
-        message.channel.send(`${player.characterName} is feeling stabby.`);
-      }
+    if (room.enemies[entity]) {
+      getItem(room.enemies[entity], 'enemies', this.checkHostile);
+    } else if (room.npcs[entity]) {
+      message.channel.send(`${player.characterName} glares with murderous intent towards ${entity}.`);
     } else {
-      message.channel.send(`${player.characterName} is too busy for battle!`);
+      message.channel.send(`${player.characterName} is feeling stabby.`);
     }
   }
 
@@ -60,7 +57,7 @@ class AttackCommand extends commando.Command {
     this.state.enemy = enemy;
 
     // this is a fancy way of making sure enemy is defined
-    if (enemy) {
+    if (enemy && !enemy.despawned) {
       // make the player too busy to do anything else
       message.channel.send(`${player.characterName} has engaged ${enemy.name} in combat!`);
       updateItem(player.id, ['busy'], [true], 'players', this.combatLoop);
@@ -135,18 +132,21 @@ class AttackCommand extends commando.Command {
 
   throwSomething(thing) {
     const { enemy, message, player } = this.state;
-    thing = thing.replace('throw', '');
+    thing = thing.replace('throw ', '');
     if (thing) {
-      let item = checkItems(player, thing.toLowerCase());
+      let item = checkItems(player, thing);
+      console.log(item);
       let damage;
       if (item) {
-        // damage = this.calculateDamage(player, enemy, 1);
-        damage = 1;
+        damage = player.inventory.items[item].type === 'weapon' ? 
+          player.inventory.items[item].stats : 1;
         enemy.health -= damage;
-        message.channel.send(`${player.characterName} throws ${item.name} at ${enemy.name}, and hits them for ${damage} damage.`);
+        discardItem(player, player.inventory.items[item]);
+        message.channel.send(`${player.characterName} throws ${player.inventory.items[item].name} at ${enemy.name}, and hits them for ${damage} damage.`);
       }
+    } else {
+      message.channel.send(`${player.characterName} throws nothing at all at ${enemy.name}.`);
     }
-    message.channel.send(`${player.characterName} throws nothing at all at ${enemy.name}.`);
   }
 
   playerAttack() {
@@ -226,7 +226,7 @@ class AttackCommand extends commando.Command {
 
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
       if (enemy.respawn != null) {
-        delete room.enemies[enemy.name.toLowerCase()];
+        room.enemies[enemy.name.toLowerCase()].despawned = true;
         updateItem(room.id, ['enemies'], [room.enemies], 'rooms', () => {
           setTimeout(function() {
             respawnEnemy().bind(this);
@@ -249,6 +249,7 @@ class AttackCommand extends commando.Command {
     }
     if (player.experience >= player.nextLevelExperience) {
       player.maxhealth += 5;
+      player.health = player.maxhealth;
       player.currentLevel += 1;
       updateItem(
         player.id,
@@ -262,7 +263,7 @@ class AttackCommand extends commando.Command {
           'defense'
         ],
         [
-          player.maxhealth,
+          player.health,
           player.maxhealth,
           player.experience,
           player.currentLevel,
@@ -274,7 +275,7 @@ class AttackCommand extends commando.Command {
         ()=>{}
       ).catch(console.error);
       message.channel.send(`${player.characterName} leveled up!`);
-      message.member.send(`Level up!\nYou're now at level ${player.currentLevel}.\nExperience: ${player.experience}`);
+      message.member.send(`Level up!\nYou're now at level ${player.currentLevel}.`);
     } else {
       // adding experience without leveling
       updateItem(player.id, ['experience'], [player.experience], 'players', ()=>{}); 
@@ -324,7 +325,7 @@ class AttackCommand extends commando.Command {
 
 function respawnEnemy() {
   const { enemy, room } = this.state;
-  room.enemies[enemy.name.toLowerCase()] = enemy.id;
+  room.enemies[enemy.name.toLowerCase()].despawned = false;
   updateItem(room.id, ['enemies'], [room.enemies], 'rooms', ()=>{
     console.log(`${enemy.name} has respawned`);
   });

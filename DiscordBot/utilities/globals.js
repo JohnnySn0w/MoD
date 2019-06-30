@@ -73,12 +73,22 @@ function checkKeys(player, itemName) {
 
 function checkItems(player, itemName) {
   // iterate through the player's list of items and check each one's name
-  for (var item in player.inventory.items) {
-    if (itemName === player.inventory.items[item].name.toLowerCase()) {
+  for (let item in player.inventory.items) {
+    if (itemName.toLowerCase() === player.inventory.items[item].name.toLowerCase()) {
       return player.inventory.items[item].id;
     }
   }
   return undefined;
+}
+
+function discardItem(player, item) {
+  if (item.amount > 1) {
+    player.inventory.items[item.id].amount -= 1;
+  } else {
+    delete player.inventory.items[item.id];
+  }
+  // update the player object and message the player
+  db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
 }
 
 function inventoryAddItem(itemData, player, callback) {
@@ -118,6 +128,7 @@ module.exports = {
   commandPrefix,
   DEBUG,
   deleteMessage,
+  discardItem,
   emojiCheck,
   emojiOn,
   gameWorldName,
