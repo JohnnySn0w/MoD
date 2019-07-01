@@ -9,13 +9,14 @@ class MoveCommand extends commando.Command {
       `Move to a different room (i.e. text channel).
       \`${commandPrefix}move <direction>\``);
   }
+
   constructor(client) {
     super(client, COMMAND_CONSTANT('move', MoveCommand.commandInfo(), true));
   }
 
-  async run(message, {direction}) {
+  async run(message, { object }) {
     //db.getItem(message.member.id, 'players', (data) => this.getPlayer(message, data, direction));
-    bigCheck(message, this.setRetrieval.bind(this), direction);
+    bigCheck(message, this.setRetrieval.bind(this), object);
     deleteMessage(message);
   }
 
