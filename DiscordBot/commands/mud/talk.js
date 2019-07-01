@@ -17,8 +17,8 @@ class TalkCommand extends commando.Command {
     this.buyItem = this.buyItem.bind(this);
   }
 
-  async run(message, {npc}) {
-    bigCheck(message, this.checkNPC.bind(this), npc);
+  async run(message, { object }) {
+    bigCheck(message, this.checkNPC.bind(this), object);
     deleteMessage(message);
   }
 
