@@ -1,7 +1,7 @@
 // importing from other files
 const commando = require('discord.js-commando');
-const db = require('../../../dbhandler');
-const { deleteMessage } = require('../../globals.js');
+const db = require('../../utilities/dbhandler');
+const { deleteMessage } = require('../../utilities/globals.js');
 
 class NotBusy extends commando.Command {
   //constructor for the class

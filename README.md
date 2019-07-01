@@ -29,7 +29,7 @@ ___
 - Attack – specify a target, and get whackin'
 - Stats – get a pm of current player stats
 - Talk – chat it up with an npc
-- Discard/Equip - discard or equip an item, respectively
+- Item - equip, uneqip, or discard an item
 - Help - display available commands and syntax
 - Inventory - get a pm of your inventory
 - Describe - set character description and name

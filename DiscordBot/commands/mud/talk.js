@@ -1,7 +1,6 @@
-const { deleteMessage, bigCheck, commandPrefix } = require('../../globals.js');
+const { deleteMessage, bigCheck, commandPrefix, inventoryAddItem } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
-const db = require('../../../dbhandler');
-const { ITEM_CONSTANT } = require('../../Constants/itemConstant');
+const db = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class TalkCommand extends commando.Command {
@@ -14,11 +13,10 @@ class TalkCommand extends commando.Command {
     super(client, COMMAND_CONSTANT('talk', TalkCommand.commandInfo(), true));
     this.assembleMessage = this.assembleMessage.bind(this);
     this.startConvo = this.startConvo.bind(this);
-    this.buyItem = this.buyItem.bind(this);
   }
 
-  async run(message, { object }) {
-    bigCheck(message, this.checkNPC.bind(this), object);
+  async run(message, args) {
+    bigCheck(message, this.checkNPC.bind(this), args.object);
     deleteMessage(message);
   }
 
@@ -163,41 +161,18 @@ class TalkCommand extends commando.Command {
     this.determineStartOrEndState(npc.intros);
   }
 
-  //{ id: '6', cost: 10, item: 'ALEVE' }
   tryBuy(item) {
     const { player, npc } = this.state;
-    if (player.inventory.gold >= item.cost) {
-      player.inventory.gold -= item.cost;
-      db.getItem(item.id, 'items', this.buyItem);
+    if (item) {
+      if (player.inventory.gold >= item.cost) {
+        player.inventory.gold -= item.cost;
+        db.getItem(item.id, 'items', data => 
+          inventoryAddItem(data, player, () => this.assembleMessage(npc.shopping.success))
+        );
+      }
     } else {
       this.assembleMessage(npc.shopping.failure);
     }
-  }
-
-  buyItem(itemData) {
-    const item = JSON.parse(itemData.body).Item;
-    const { player, npc } = this.state;
-    // if the item is a key item, add it to the player's list of keys
-    if (item.type === 'key') {
-      player.inventory.keys[item.id] = {
-        'name': item.name,
-        'used': false
-      };
-    // if the item is not key...
-    } else {
-      // check to see if the player already has that item
-      if (player.inventory.items[item.id]) {
-        // if so, bump the item's amount
-        player.inventory.items[item.id].amount += 1;
-      } else if (item.type === 'weapon' || item.type === 'armor') {
-        // if not, add the item to the player's inventory
-        player.inventory.items[item.id] = ITEM_CONSTANT(item);
-      //item is a consumable and therefore not equippable
-      } else {
-        player.inventory.items[item.id] = ITEM_CONSTANT(item, true);
-      }
-    }
-    db.updateItem(player.id, ['inventory'], [player.inventory], 'players', () => this.assembleMessage(npc.shopping.success));
   }
 
   determineNextState(selection) {
