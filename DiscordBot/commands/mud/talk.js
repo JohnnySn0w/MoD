@@ -163,11 +163,13 @@ class TalkCommand extends commando.Command {
 
   tryBuy(item) {
     const { player, npc } = this.state;
-    if (player.inventory.gold >= item.cost) {
-      player.inventory.gold -= item.cost;
-      db.getItem(item.id, 'items', data => 
-        inventoryAddItem(data, player, () => this.assembleMessage(npc.shopping.success))
-      );
+    if (item) {
+      if (player.inventory.gold >= item.cost) {
+        player.inventory.gold -= item.cost;
+        db.getItem(item.id, 'items', data => 
+          inventoryAddItem(data, player, () => this.assembleMessage(npc.shopping.success))
+        );
+      }
     } else {
       this.assembleMessage(npc.shopping.failure);
     }
