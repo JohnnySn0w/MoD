@@ -221,15 +221,13 @@ class AttackCommand extends commando.Command {
       setTimeout(() => {
         message.channel.send(`${player.characterName} defeated the ${enemy.name}.`);
       }, 100);
-      // updating player health
-      updateItem(player.id, ['health'], [player.health], 'players', () => {});
 
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
       if (enemy.respawn != null) {
-        room.enemies[enemy.name.toLowerCase()].despawned = true;
+        // room.enemies[enemy.name.toLowerCase()].despawned = true;
         updateItem(room.id, ['enemies'], [room.enemies], 'rooms', () => {
           setTimeout(function() {
-            respawnEnemy().bind(this);
+            respawnEnemy(enemy, room);
           }, (enemy.respawn * 1000));
         });
       }
@@ -323,8 +321,7 @@ class AttackCommand extends commando.Command {
   }
 }
 
-function respawnEnemy() {
-  const { enemy, room } = this.state;
+function respawnEnemy(enemy, room) {
   room.enemies[enemy.name.toLowerCase()].despawned = false;
   updateItem(room.id, ['enemies'], [room.enemies], 'rooms', ()=>{
     console.log(`${enemy.name} has respawned`);
