@@ -8,6 +8,6 @@ module.exports = {
   move: require('../commands/mud/move'),
   start: require('../commands/mud/start'),
   stats: require('../commands/mud/stats'),
-  sudoku: require('../commands/mud/sudoku'),
+  home: require('../commands/mud/home'),
   talk: require('../commands/mud/talk')
 };

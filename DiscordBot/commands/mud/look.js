@@ -11,8 +11,14 @@ class LookCommand extends commando.Command {
       \`${commandPrefix}look <something>\`
       example somethings: \`here\`, \`around\`, \`room\`, \`old man\``);
   }
+  static aliases() { return ['view', 'observe', 'here', 'where'];}
   constructor(client) {
-    super(client, COMMAND_CONSTANT('look', LookCommand.commandInfo()));
+    super(client, COMMAND_CONSTANT(
+      'look',
+      LookCommand.commandInfo(),
+      false,
+      LookCommand.aliases(),
+    ));
   }
 
   async run(message, args) {

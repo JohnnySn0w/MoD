@@ -10,8 +10,16 @@ class Describe extends commando.Command {
       Usage: \`${commandPrefix}describe <"self" or "name" or "emoji"> <what you are setting it to>\`.
       A valid example would be \`${commandPrefix}describe name Atreyu\` to set your player name to Atreyu`);
   }
+
+  static aliases() { return ['set']; }
+
   constructor(client) {
-    super(client, COMMAND_CONSTANT('describe', Describe.commandInfo()));
+    super(client, COMMAND_CONSTANT(
+      'describe',
+      Describe.commandInfo(),
+      false,
+      Describe.aliases(),
+    ));
   }
   
   async run(message, args) {

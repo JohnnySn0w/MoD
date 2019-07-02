@@ -1,10 +1,11 @@
-module.exports.COMMAND_CONSTANT = (name, info, prompt = false) => { 
+module.exports.COMMAND_CONSTANT = (name, info, prompt = false, aliases = []) => { 
   return (prompt ?
     {
       name: name,
       group: 'mud',
       memberName: name,
       description: info,
+      aliases: aliases,
       args: [
         {
           key: 'object',
@@ -16,6 +17,7 @@ module.exports.COMMAND_CONSTANT = (name, info, prompt = false) => {
     {
       name: name,
       group: 'mud',
+      aliases: aliases,
       memberName: name,
       description: info,
     });

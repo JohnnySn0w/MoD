@@ -10,8 +10,14 @@ class Help extends commando.Command {
       `Displays this message
       \`${commandPrefix}help\``);
   }
+  static aliases() { return ['commands', 'list', 'h']; }
   constructor(client) {
-    super(client, COMMAND_CONSTANT('help', Help.commandInfo()));
+    super(client, COMMAND_CONSTANT(
+      'help',
+      Help.commandInfo(),
+      false,
+      Help.aliases(),
+    ));
   }
   
   async run(message) {
@@ -21,13 +27,14 @@ class Help extends commando.Command {
     );
     deleteMessage(message);
   }
+
   commandDescripts() {
     let descripts = '';
     Object.keys(c).forEach((key) => {
       if (key !== 'help') {
-        descripts = descripts.concat(`\n**${key}**: ${c[key].commandInfo()}`) ;
+        descripts = descripts.concat(`__${key}__ – synonyms: *${c[key].aliases()}*\n\t${c[key].commandInfo()}\n\n`) ;
       } else {
-        descripts = descripts.concat(`\n**${key}**: ${Help.commandInfo()}`);
+        descripts = descripts.concat(`__${key}__ – synonyms: *${Help.aliases()}*\n\t${Help.commandInfo()}\n\n`);
       }
     });
     return descripts;

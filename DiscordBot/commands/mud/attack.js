@@ -20,8 +20,14 @@ class AttackCommand extends commando.Command {
       Valid keywords after successful initiation:
       \`weapon\`, \`magic\`, \`run\`, \`throw\` (throw requires an item name)`);
   }
+  static aliases() { return ['engage', 'accost', 'kill', 'spar', 'murder', 'maim', 'fight']; }
   constructor(client) {
-    super(client, COMMAND_CONSTANT('attack',  AttackCommand.commandInfo(), true));
+    super(client, COMMAND_CONSTANT(
+      'attack', 
+      AttackCommand.commandInfo(),
+      true,
+      AttackCommand.aliases(),
+    ));
     this.addedItem = this.addedItem.bind(this);
     this.checkHostile = this.checkHostile.bind(this);
     this.combatLoop = this.combatLoop.bind(this);

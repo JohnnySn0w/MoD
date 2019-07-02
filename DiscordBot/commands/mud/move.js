@@ -9,9 +9,14 @@ class MoveCommand extends commando.Command {
       `Move to a different room (i.e. text channel).
       \`${commandPrefix}move <direction>\``);
   }
-
+  static aliases() { return ['go', 'travel', 'climb']; }
   constructor(client) {
-    super(client, COMMAND_CONSTANT('move', MoveCommand.commandInfo(), true));
+    super(client, COMMAND_CONSTANT(
+      'move',
+      MoveCommand.commandInfo(),
+      true,
+      MoveCommand.aliases(),
+    ));
   }
 
   async run(message, { object }) {
