@@ -34,7 +34,7 @@ function playerCheck(data, callback, message, args) {
   let player = JSON.parse(data.body).Item;
   
   if (player === undefined) {
-    message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in #start-here to get started!');
+    message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `${commandPrefix}start` in #start-here to get started!');
   } else if (player.busy) {
     message.channel.send(`${player.characterName} is trying to multitask, and failing.`);
   } else {
