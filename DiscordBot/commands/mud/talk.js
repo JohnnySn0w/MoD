@@ -9,8 +9,14 @@ class TalkCommand extends commando.Command {
       `Gab it up with the denizens of the world!
       \`${commandPrefix}talk <npc>\``);
   }
+  static aliases() { return ['chat', 'gab', 'converse with']; }
   constructor(client) {
-    super(client, COMMAND_CONSTANT('talk', TalkCommand.commandInfo(), true));
+    super(client, COMMAND_CONSTANT(
+      'talk',
+      TalkCommand.commandInfo(),
+      true,
+      TalkCommand.aliases(),
+    ));
     this.assembleMessage = this.assembleMessage.bind(this);
     this.startConvo = this.startConvo.bind(this);
   }
@@ -65,7 +71,6 @@ class TalkCommand extends commando.Command {
   evaluateRequirements(reqs) {
     return reqs.every((req) => {
       try {
-        console.log(req);
         eval(req);
       } catch(error) {
         console.error(error);

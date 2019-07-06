@@ -12,14 +12,20 @@ class ItemCommand extends commando.Command {
       Unequip a weapon or armor: \`${commandPrefix}item unequip <item>\``
     );
   }
+  static aliases() { return ['items']; }
   constructor(client) {
-    super(client, COMMAND_CONSTANT('item', ItemCommand.commandInfo()));
+    super(client, COMMAND_CONSTANT(
+      'item',
+      ItemCommand.commandInfo(),
+      false,
+      ItemCommand.aliases(),
+    ));
   }
 
   async run(message, args) {
     const arguements = /\w+\s/.exec(args);
     this.state = {
-      message: message,
+      message,
       itemName: arguements.input.replace(arguements[0],'').toLowerCase(),
       type: arguements[0].replace(/\s/, ''),
     };

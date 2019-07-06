@@ -2,14 +2,15 @@ const { deleteMessage, bigCheck, respawn, commandPrefix } = require('../../utili
 const commando = require('discord.js-commando');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
-class Sudoku extends commando.Command {
+class Home extends commando.Command {
   static commandInfo() {
     return(
-      `Respawn player character:
-      \`${commandPrefix}sudoku\``);
+      `Teleport player character to set home:
+      \`${commandPrefix}home\``);
   }
+  static aliases() { return ['hearth']; }
   constructor(client) {
-    super(client, COMMAND_CONSTANT('sudoku', Sudoku.commandInfo()));
+    super(client, COMMAND_CONSTANT('home', Home.commandInfo(), false, Home.aliases()));
   }
   
   async run(message) {
@@ -18,4 +19,4 @@ class Sudoku extends commando.Command {
   }
 }
 
-module.exports = Sudoku;
+module.exports = Home;

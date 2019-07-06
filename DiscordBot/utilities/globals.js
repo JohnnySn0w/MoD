@@ -34,7 +34,7 @@ function playerCheck(data, callback, message, args) {
   let player = JSON.parse(data.body).Item;
   
   if (player === undefined) {
-    message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in #start-here to get started!');
+    message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `${commandPrefix}start` in #start-here to get started!');
   } else if (player.busy) {
     message.channel.send(`${player.characterName} is trying to multitask, and failing.`);
   } else {
@@ -56,9 +56,7 @@ function roomCheck(player, message, data, callback, args) {
 function respawn(message, player) {
   // respawn player
   db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => {});
-  message.member.setRoles([message.guild.roles.find(role => role.name === 'dead-end')]).catch(console.error);
-  let channel = this.client.channels.find(channel => channel.name === 'death-notes');
-  channel.send(`${player.characterName} totally died lmao`);
+  message.member.setRoles([message.guild.roles.find(role => role.name === 'village-square')]).catch(console.error);
 }
 
 function checkKeys(player, itemName) {

@@ -11,8 +11,14 @@ class LookCommand extends commando.Command {
       \`${commandPrefix}look <something>\`
       example somethings: \`here\`, \`around\`, \`room\`, \`old man\``);
   }
+  static aliases() { return ['view', 'observe', 'here', 'where'];}
   constructor(client) {
-    super(client, COMMAND_CONSTANT('look', LookCommand.commandInfo(), true));
+    super(client, COMMAND_CONSTANT(
+      'look',
+      LookCommand.commandInfo(),
+      false,
+      LookCommand.aliases(),
+    ));
   }
 
   async run(message, args) {
@@ -22,7 +28,7 @@ class LookCommand extends commando.Command {
 
   getRoom(message, player, room, args) {
     var object;
-    if (args === undefined || args === 'room' || args === 'here'|| args === 'around' || args === 'area') {
+    if (args === '' || args === 'room' || args === 'here'|| args === 'around' || args === 'area') {
       this.replyToPlayer(message, player, true, room);
     }
     else if (args === 'inventory' || args === 'items' || args === 'equipped' || args === 'equipment') {

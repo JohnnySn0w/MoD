@@ -7,10 +7,17 @@ class StatsCommand extends commando.Command {
   static commandInfo() {
     return(
       `PMs your stats
-      \`${commandPrefix}stats\``);
+      \`${commandPrefix}stats\``
+    );
   }
+  static aliases() { return ['status', 'me']; }
   constructor(client) {
-    super(client, COMMAND_CONSTANT('stats', StatsCommand.commandInfo()));
+    super(client, COMMAND_CONSTANT(
+      'stats',
+      StatsCommand.commandInfo(),
+      false,
+      StatsCommand.aliases(),
+    ));
   }
 
   async run(message) {

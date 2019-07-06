@@ -10,8 +10,9 @@ class StartCommand extends commando.Command {
       `Creates your character, and lets you play the game.
       \`${commandPrefix}start\``);
   }
+  static aliases() { return ['begin']; }
   constructor(client) {
-    super(client, COMMAND_CONSTANT('start', StartCommand.commandInfo()));
+    super(client, COMMAND_CONSTANT('start', StartCommand.commandInfo(), false, StartCommand.aliases()));
   }
 
   async run(message) {
