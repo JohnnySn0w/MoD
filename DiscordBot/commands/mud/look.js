@@ -16,13 +16,13 @@ class LookCommand extends commando.Command {
     super(client, COMMAND_CONSTANT(
       'look',
       LookCommand.commandInfo(),
-      true,
+      false,
       LookCommand.aliases(),
     ));
   }
 
   async run(message, args) {
-    bigCheck(message, this.getRoom.bind(this), args.object);
+    bigCheck(message, this.getRoom.bind(this), args.object ? args.object : '');
     deleteMessage(message);
   }
 

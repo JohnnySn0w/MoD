@@ -94,7 +94,7 @@
                 "rarity": 100                      
             }             
         ],
-        "respawn": 5,
+        "respawn": 20,
         "despawned": false
     },
     {
