@@ -53,7 +53,8 @@ class AttackCommand extends commando.Command {
     } else if (room.npcs[entity]) {
       message.channel.send(`${player.characterName} glares with murderous intent towards ${entity}.`);
     } else {
-      message.channel.send(`${player.characterName} is feeling stabby.`);
+      // message.channel.send(`${player.characterName} is feeling stabby.`);
+      message.channel.send(`${player.characterName} tries to attack the air.`);
     }
   }
 
@@ -67,10 +68,10 @@ class AttackCommand extends commando.Command {
       // make the player too busy to do anything else
       message.channel.send(`${player.characterName} has engaged ${enemy.name} in combat!`);
       updateItem(player.id, ['busy'], [true], 'players', this.combatLoop);
+    } else if (enemy && enemy.despawned) {
+      message.channel.send(`${player.characterName} tries to attack the air.`);
     } else if (enemy) {
       message.channel.send(`${player.characterName} glares with murderous intent towards ${enemy.name}.`);
-    } else {
-      message.channel.send(`${player.characterName} tries to attack the air.`);
     }
   }
 
@@ -147,8 +148,8 @@ class AttackCommand extends commando.Command {
         damage = player.inventory.items[item].type === 'weapon' ? 
           player.inventory.items[item].stats : 1;
         enemy.health -= damage;
-        discardItem(player, player.inventory.items[item]);
         message.channel.send(`${player.characterName} throws ${player.inventory.items[item].name} at ${enemy.name}, and hits them for ${damage} damage.`);
+        discardItem(player, player.inventory.items[item]);
       }
     } else {
       message.channel.send(`${player.characterName} throws nothing at all at ${enemy.name}.`);
@@ -218,7 +219,7 @@ class AttackCommand extends commando.Command {
   }
 
   postCombat() {
-    const { enemy, message, player, room } = this.state;
+    const { enemy, message, player } = this.state;
     updateItem(player.id, ['health', 'busy'], [player.health, false], 'players', () => {});
     this.leveling();
     // Player no longer busy
@@ -230,10 +231,9 @@ class AttackCommand extends commando.Command {
 
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
       if (enemy.respawn != null) {
-        // room.enemies[enemy.name.toLowerCase()].despawned = true;
-        updateItem(room.id, ['enemies'], [room.enemies], 'rooms', () => {
+        updateItem(enemy.id, ['despawned'], [true], 'enemies', () => {
           setTimeout(function() {
-            respawnEnemy(enemy, room);
+            respawnEnemy(enemy);
           }, (enemy.respawn * 1000));
         });
       }
@@ -327,9 +327,8 @@ class AttackCommand extends commando.Command {
   }
 }
 
-function respawnEnemy(enemy, room) {
-  room.enemies[enemy.name.toLowerCase()].despawned = false;
-  updateItem(room.id, ['enemies'], [room.enemies], 'rooms', ()=>{
+function respawnEnemy(enemy) {
+  updateItem(enemy.id, ['despawned'], [false], 'enemies', ()=>{
     console.log(`${enemy.name} has respawned`);
   });
 }
