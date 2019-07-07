@@ -17,7 +17,7 @@ class Describe extends commando.Command {
     super(client, COMMAND_CONSTANT(
       'describe',
       Describe.commandInfo(),
-      false,
+      true,
       Describe.aliases(),
     ));
   }

@@ -16,7 +16,7 @@ class LookCommand extends commando.Command {
     super(client, COMMAND_CONSTANT(
       'look',
       LookCommand.commandInfo(),
-      false,
+      true,
       LookCommand.aliases(),
     ));
   }
