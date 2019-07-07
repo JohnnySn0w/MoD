@@ -17,7 +17,7 @@ class ItemCommand extends commando.Command {
     super(client, COMMAND_CONSTANT(
       'item',
       ItemCommand.commandInfo(),
-      false,
+      true,
       ItemCommand.aliases(),
     ));
   }
