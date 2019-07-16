@@ -23,10 +23,10 @@ class Describe extends commando.Command {
   }
   
   async run(message, args) {
-    const arguements = /\w+\s/.exec(args);
+    const arguements = /\w+\s/g.exec(args.object);
     const type = arguements[0].replace(/\s/, '');
     const description = arguements.input.replace(arguements[0],'');
-
+    console.log('descripTION', args);
     this.determineDescribeType(message, type, description);
     deleteMessage(message);
   }
