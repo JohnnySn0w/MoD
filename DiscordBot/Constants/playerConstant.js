@@ -1,8 +1,8 @@
-module.exports.PLAYER_CONSTANT = (message) => { 
+module.exports.PLAYER_CONSTANT = (message) => {
   return {
-    characterName: `${message.member.nickname ? message.member.nickname : message.member.user.username}`,
+    characterName: `${message.author && message.author.nickname ? message.author.nickname : message.author.username}`,
     description: 'just another person',
-    id: `${message.member.id}`,
+    id: `${message.author.id}`,
     emoji: 'bust_in_silhouette',
     health: 100,
     maxhealth: 100,
