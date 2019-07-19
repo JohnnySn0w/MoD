@@ -1,6 +1,6 @@
-const { deleteMessage, emojiCheck, commandPrefix } = require('../../utilities/globals');
+const { deleteMessage, emojiCheck, commandPrefix, sendMessagePrivate } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
-const db = require('../../utilities/dbhandler');
+const { updateItem } = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class Describe extends commando.Command {
@@ -35,10 +35,10 @@ class Describe extends commando.Command {
     switch (type) {
     case 'emoji':
       emojiCheck(description, message.channel.guild.emojis);
-      db.updateItem(message.member.id, ['emoji'], [description], 'players', () => {});
+      (message.member.id, ['emoji'], [description], 'players', () => {});
       break;
     case 'self':
-      db.updateItem(message.member.id, ['description'], [description], 'players', () => {});
+      updateItem(message.member.id, ['description'], [description], 'players', () => {});
       break;
     case 'name':
       if (description.length > 32) {
@@ -46,10 +46,10 @@ class Describe extends commando.Command {
       }
       message.member.setNickname(description)
         .catch(console.error);
-      db.updateItem(message.member.id, ['characterName'], [description], 'players', ()=>{});
+      updateItem(message.member.id, ['characterName'], [description], 'players', ()=>{});
       break;
     default:
-      message.author.send('You fail to describe that thing');
+      sendMessagePrivate(message, 'You fail to describe that thing');
     }
   }
 }

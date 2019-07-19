@@ -1,4 +1,11 @@
-const { deleteMessage, bigCheck, commandPrefix, inventoryAddItem } = require('../../utilities/globals');
+const {
+  deleteMessage,
+  bigCheck,
+  commandPrefix,
+  inventoryAddItem,
+  sendMessagePrivate,
+  sendMessageRoom,
+} = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const db = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
@@ -29,13 +36,13 @@ class TalkCommand extends commando.Command {
   checkNPC(message, player, room, npc) {
     let npcID;
     if (player.busy === true) {
-      message.channel.send(`${player.characterName} is trying to multitask.`);
+      sendMessageRoom(message, `${player.characterName} is trying to multitask.`);
       return null;
     }
     if (room.npcs[npc]) {
       npcID = room.npcs[npc];
     } else {
-      message.channel.send(`${player.characterName} is trying to communicate with unseen forces.`);
+      sendMessageRoom(message, `${player.characterName} is trying to communicate with unseen forces.`);
       return null;
     }
     this.state = { message, player, room };
@@ -92,7 +99,7 @@ class TalkCommand extends commando.Command {
       this.createPrompt(sendState.prompts) : '';
 
     sendState.flags ? this.activateFlags(sendState.flags) : '';
-    message.channel.send(`${messageToSend}${prompts}`).catch(console.error);
+    sendMessagePrivate(message, `${messageToSend}${prompts}`).catch(console.error);
     // if a non-terminal state logic
     if(!terminal){
       collector.on('collect', () => {
@@ -106,7 +113,7 @@ class TalkCommand extends commando.Command {
           deleteMessage(m);
         } else {
           db.updateItem(player.id, ['busy'], [false], 'players', () => {});
-          message.channel.send(`${npc.name} walked away from ${player.characterName}.`);
+          sendMessageRoom(message, `${npc.name} walked away from ${player.characterName}.`);
           this.determineStartOrEndState(npc.terminals, true);
         }
       });
@@ -161,7 +168,7 @@ class TalkCommand extends commando.Command {
     const npc = JSON.parse(body).Item;
     const { player, message } = this.state;
     db.updateItem(player.id, ['busy'], [true], 'players', () =>{});
-    message.channel.send(`${player.characterName} is talking to ${npc.name}.`);
+    sendMessageRoom(message, `${player.characterName} is talking to ${npc.name}.`);
     this.state.npc = npc;
     this.determineStartOrEndState(npc.intros);
   }
@@ -191,7 +198,7 @@ class TalkCommand extends commando.Command {
         Object.keys(tempPrompts[selection]['progression'])[0] : '';
     }
     if (selection.includes('leave') || type === 'terminals') {
-      message.channel.send(`${player.characterName} walked away from ${npc.name}.`);
+      sendMessageRoom(message, `${player.characterName} walked away from ${npc.name}.`);
       this.determineStartOrEndState(npc.terminals, true);
     } else if (type === 'shopping') {
       this.state.shopping = true;

@@ -1,6 +1,6 @@
-const { deleteMessage, commandPrefix} = require('../../utilities/globals');
+const { deleteMessage, commandPrefix, sendMessagePrivate} = require('../../utilities/globals');
 const commando = require('discord.js-commando');
-const db = require('../../utilities/dbhandler');
+const { getItem } = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class InventoryCommand extends commando.Command {
@@ -20,7 +20,7 @@ class InventoryCommand extends commando.Command {
   }
 
   async run(message) {
-    db.getItem(message.author.id, 'players', (data) => this.getPlayer(data, message));
+    getItem(message.author.id, 'players', (data) => this.getPlayer(data, message));
     deleteMessage(message);
   }
 
@@ -31,7 +31,7 @@ class InventoryCommand extends commando.Command {
 
     if (player === undefined) {
       // if the player isn't in the database already, send them a notice that they need to "?start" the game
-      message.author.send('You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.');
+      sendMessagePrivate(message, 'You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.');
     } else {
       // otherwise, direct message the player with their health, strength, and defense
       let weapon = player.equipment.weapon;
@@ -71,7 +71,7 @@ class InventoryCommand extends commando.Command {
       }
 
       // DM the player
-      message.author.send(`\`\`\`javascript\n${player.characterName}ʼs Inventory\nGold: ${player.inventory.gold}\nWeapon: ${weapon}\nArmor: ${armor}\n\nKey Items: ${keyList}\n\nItems: ${itemList}\`\`\``);            
+      sendMessagePrivate(message, `\`\`\`javascript\n${player.characterName}ʼs Inventory\nGold: ${player.inventory.gold}\nWeapon: ${weapon}\nArmor: ${armor}\n\nKey Items: ${keyList}\n\nItems: ${itemList}\`\`\``);            
     }
   }
 }
