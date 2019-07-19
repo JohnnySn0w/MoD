@@ -3,7 +3,7 @@ module.exports.PLAYER_CONSTANT = (message) => {
     characterName: `${message.author && message.author.nickname ? message.author.nickname : message.author.username}`,
     description: 'just another person',
     id: `${message.author.id}`,
-    currentRoomID: 'a-journey-begins',
+    currentRoomId: 'a-journey-begins',
     hearth: 'village-square',
     emoji: 'bust_in_silhouette',
     isOnline: false,
