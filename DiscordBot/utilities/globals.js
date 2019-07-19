@@ -149,16 +149,6 @@ function sendMessageRoom(message, content) {
   //need some wierd lookup to find player room
 }
 
-function onlineCheck({ body }, member, content) {
-  let player = JSON.parse(body).Item;
-  
-  if (player && player.online) {
-    member.send(content);
-  } else {
-    return null;
-  }
-}
-
 //server level messaging
 function sendMessageGlobal(message, content) {
   message.guild.fetchMembers().forEach(member => {
@@ -170,6 +160,16 @@ function sendMessageGlobal(message, content) {
         channel.send(content);
       }
     });
+  }
+}
+
+function onlineCheck({ body }, member, content) {
+  let player = JSON.parse(body).Item;
+  
+  if (player && player.online) {
+    member.send(content);
+  } else {
+    return null;
   }
 }
 
