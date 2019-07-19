@@ -3,7 +3,7 @@ const { ITEM_CONSTANT } = require('../Constants/itemConstant');
 
 const DEBUG = true;
 const emojiOn = true;
-const gameWorldName = 'game channels';
+const gameWorldName = 'Mimirʼs Well';
 const commandPrefix = '.';
 const dmOnly = true;
 
@@ -20,9 +20,11 @@ function emojiCheck(emojiName, emojis) {
 }
 
 function bigCheck(message, callback,  args = '') {
-  if (message.message.channel.type === 'dm') {
-    message.author.send('You are not in a MUD related room.');
-    return null;
+  if (!dmOnly) {
+    if (message.message.channel.type === 'dm') {
+      message.author.send('You are not in a MUD related room.');
+      return null;
+    }
   }
   if(args !== '') {
     args = args.toLowerCase();
@@ -46,8 +48,10 @@ function roomCheck(player, message, data, callback, args) {
   // grab the actual player object
   const room = JSON.parse(data.body).Item;
 
-  if (room === undefined) {
-    message.author.send('You are not in a MUD related room.');
+  if (!dmOnly) {
+    if (room === undefined) {
+      message.author.send('You are not in a MUD related room.');
+    }
   } else {
     callback(message, player, room, args);
   }
@@ -55,7 +59,7 @@ function roomCheck(player, message, data, callback, args) {
 
 function respawn(message, player) {
   // respawn player
-  db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => {});
+  db.updateItem(player.id, ['health', 'busy', 'currentRoomId'], [player.maxhealth, false, player.hearth],'players', () => {});
   message.member.setRoles([message.guild.roles.find(role => role.name === 'village-square')]).catch(console.error);
 }
 
@@ -128,14 +132,47 @@ function sendMessage(message, content) {
   }
 }
 
-//local area messaging
-function sendMessageRoom() {
+/* 
+  player specific messaging that can be triggered anywhere,
+  but should only ever be sent to the player directly.
+  does not use a dmOnly check for this reason
+*/
+function sendMessagePrivate(message, content) {
+  message.author.send(content);
+}
 
+//local area messaging
+function sendMessageRoom(message, content) {
+  message.channel.members.forEach(member => {
+
+    member.send(content);
+  });
+  message.reply();
+  //need some wierd lookup to find player room
+}
+
+function onlineCheck({ body }, member, content) {
+  let player = JSON.parse(body).Item;
+  
+  if (player && player.online) {
+    member.send(content);
+  } else {
+    return null;
+  }
 }
 
 //server level messaging
-function sendMessageGlobal() {
-
+function sendMessageGlobal(message, content) {
+  message.guild.fetchMembers().forEach(member => {
+    db.getItem(member.id, 'players', (data) => onlineCheck(data, member, content) );
+  });
+  if (!dmOnly) {
+    message.guild.channels.forEach(channel => {
+      if (channel.type === 'text') {
+        channel.send(content);
+      }
+    });
+  }
 }
 
 module.exports = {
@@ -152,6 +189,7 @@ module.exports = {
   inventoryAddItem,
   respawn,
   sendMessage,
+  sendMessagePrivate,
   sendMessageRoom,
   sendMessageGlobal
 };
