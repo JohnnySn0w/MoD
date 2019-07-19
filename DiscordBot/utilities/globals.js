@@ -1,11 +1,11 @@
 const db = require('./dbhandler');
 const { ITEM_CONSTANT } = require('../Constants/itemConstant');
 
-const DEBUG = false;
+const DEBUG = true;
 const emojiOn = true;
 const gameWorldName = 'game channels';
 const commandPrefix = '.';
-
+const dmOnly = true;
 
 function deleteMessage(message) {
 // delete the user's command if not debugging
@@ -119,6 +119,25 @@ function inventoryAddItem(itemData, player, callback) {
   );
 }
 
+//player specific messaging
+function sendMessage(message, content) {
+  if (dmOnly) {
+    message.author.send(content);
+  } else {
+    message.reply(content);
+  }
+}
+
+//local area messaging
+function sendMessageRoom() {
+
+}
+
+//server level messaging
+function sendMessageGlobal() {
+
+}
+
 module.exports = {
   bigCheck,
   checkItems,
@@ -131,5 +150,8 @@ module.exports = {
   emojiOn,
   gameWorldName,
   inventoryAddItem,
-  respawn
+  respawn,
+  sendMessage,
+  sendMessageRoom,
+  sendMessageGlobal
 };
