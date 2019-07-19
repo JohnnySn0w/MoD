@@ -12,7 +12,7 @@ class Disconnect extends commando.Command {
   static aliases() { return ['dc', 'quit', 'logoff', 'logout']; }
   constructor(client) {
     super(client, COMMAND_CONSTANT('disconnect', Disconnect.commandInfo(), false, Disconnect.aliases()));
-    this.login = this.logoff.bind(this);
+    this.logoff = this.logoff.bind(this);
   }
   
   async run(message) {
@@ -21,12 +21,13 @@ class Disconnect extends commando.Command {
   }
 
   logoff(message, player) {
-    if (player.isOnline){
+    if (!player.isOnline){
       sendMessagePrivate(message, 'You are already offline.');
       return null;
+    } else {
+      updateItem(player.id, ['isOnline'], [false], 'players');
+      sendMessagePrivate(message, `${player.characterName} is now offline.`);
     }
-    updateItem(player.id, ['isOnline'], [false], 'players');
-    sendMessagePrivate(message, `${player.characterName} is now offline.`);
   }
 }
 
