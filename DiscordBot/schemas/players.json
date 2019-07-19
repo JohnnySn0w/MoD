@@ -3,12 +3,15 @@
         "name": "Default Dan",
         "id": "0",
         "currentLevel": 0,
+        "currentRoomId": "a-journey-begins",
+        "hearth": "village-square",
         "health": 100,
         "maxhealth":100,
         "strength": 7,
         "defense": 5,
         "experience":0,
         "nextLevelExperience":100,
+        "isOnline": false,
         "busy": false,
         "inventory": {
             "keys": {
