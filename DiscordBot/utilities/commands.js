@@ -9,5 +9,7 @@ module.exports = {
   start: require('../commands/mud/start'),
   stats: require('../commands/mud/stats'),
   home: require('../commands/mud/home'),
-  talk: require('../commands/mud/talk')
+  talk: require('../commands/mud/talk'),
+  connect: require('../commands/mud/connect'),
+  disconnect: require('../commands/mud/disconnect'),
 };

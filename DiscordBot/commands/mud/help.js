@@ -1,5 +1,5 @@
 const commando = require('discord.js-commando');
-const { deleteMessage, emojiCheck, commandPrefix } = require('../../utilities/globals');
+const { deleteMessage, emojiCheck, commandPrefix, sendMessagePrivate } = require('../../utilities/globals');
 const c = require('../../utilities/commands');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
@@ -20,9 +20,9 @@ class Help extends commando.Command {
     ));
   }
   
-  async run(message) {
+  async run({message}) {
     const rulebook = emojiCheck('notebook_with_decorative_cover', this.client.emojis);
-    message.message.author.send(
+    sendMessagePrivate(message, 
       `${rulebook}***MoD Commands***${rulebook}\n${this.commandDescripts()}`
     );
     deleteMessage(message);
