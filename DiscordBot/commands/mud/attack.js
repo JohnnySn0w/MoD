@@ -6,6 +6,8 @@ const {
   discardItem,
   inventoryAddItem,
   respawn,
+  sendMessagePrivate,
+  sendMessageRoom,
 } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const { updateItem, getItem } = require('../../utilities/dbhandler');
@@ -51,10 +53,10 @@ class AttackCommand extends commando.Command {
     if (room.enemies[entity]) {
       getItem(room.enemies[entity], 'enemies', this.checkHostile);
     } else if (room.npcs[entity]) {
-      message.channel.send(`${player.characterName} glares with murderous intent towards ${entity}.`);
+      sendMessageRoom(message, `${player.characterName} glares with murderous intent towards ${entity}.`);
     } else {
-      // message.channel.send(`${player.characterName} is feeling stabby.`);
-      message.channel.send(`${player.characterName} tries to attack the air.`);
+      sendMessageRoom(message, `${player.characterName} is feeling stabby.`);
+      // sendMessageRoom(message, `${player.characterName} tries to attack the air.`);
     }
   }
 
@@ -66,12 +68,12 @@ class AttackCommand extends commando.Command {
     // this is a fancy way of making sure enemy is defined
     if (enemy && !enemy.despawned) {
       // make the player too busy to do anything else
-      message.channel.send(`${player.characterName} has engaged ${enemy.name} in combat!`);
+      sendMessageRoom(message, `${player.characterName} has engaged ${enemy.name} in combat!`);
       updateItem(player.id, ['busy'], [true], 'players', this.combatLoop);
     } else if (enemy && enemy.despawned) {
-      message.channel.send(`${player.characterName} tries to attack the air.`);
+      sendMessageRoom(message, `${player.characterName} tries to attack the air.`);
     } else if (enemy) {
-      message.channel.send(`${player.characterName} glares with murderous intent towards ${enemy.name}.`);
+      sendMessageRoom(message, `${player.characterName} glares with murderous intent towards ${enemy.name}.`);
     }
   }
 
@@ -100,7 +102,7 @@ class AttackCommand extends commando.Command {
     collector.on('end', m => {
       m = m.array()[0];
       if (!responded) {
-        message.channel.send(`${player.characterName} sauntered away from ${enemy.name}, as if in a daze.`);
+        sendMessageRoom(message, `${player.characterName} sauntered away from ${enemy.name}, as if in a daze.`);
         this.postCombat();
       } else {
         deleteMessage(m);
@@ -116,8 +118,8 @@ class AttackCommand extends commando.Command {
           this.throwSomething(m.content);
         } else {
           //in the future, we can add a magic system here
-          message.member.send('That ain\'t a valid attack type pardner');
-          message.channel.send(`${player.characterName} is flailing around`);
+          sendMessagePrivate(message, 'That ain\'t a valid attack type pardner');
+          sendMessageRoom(message, `${player.characterName} is flailing around`);
         }
         //prevents enemy attacking if dead
         if(enemy.health > 0) {
@@ -132,7 +134,7 @@ class AttackCommand extends commando.Command {
 
   runAway() {
     const { enemy, message, player } = this.state;
-    message.channel.send(`${player.characterName} ran away from ${enemy.name}`);
+    sendMessageRoom(message, `${player.characterName} ran away from ${enemy.name}`);
     updateItem(player.id, ['health'], [player.health], 'players', () => {});
     this.postCombat();
   }
@@ -148,11 +150,11 @@ class AttackCommand extends commando.Command {
         damage = player.inventory.items[item].type === 'weapon' ? 
           player.inventory.items[item].stats : 1;
         enemy.health -= damage;
-        message.channel.send(`${player.characterName} throws ${player.inventory.items[item].name} at ${enemy.name}, and hits them for ${damage} damage.`);
+        sendMessageRoom(message, `${player.characterName} throws ${player.inventory.items[item].name} at ${enemy.name}, and hits them for ${damage} damage.`);
         discardItem(player, player.inventory.items[item]);
       }
     } else {
-      message.channel.send(`${player.characterName} throws nothing at all at ${enemy.name}.`);
+      sendMessageRoom(message, `${player.characterName} throws nothing at all at ${enemy.name}.`);
     }
   }
 
@@ -168,20 +170,20 @@ class AttackCommand extends commando.Command {
     }
     if (damage > 0) {
       enemy.health = enemy.health - damage;
-      message.channel.send(`${player.characterName} hit ${enemy.name} for ${damage} damage.`);
+      sendMessageRoom(message, `${player.characterName} hit ${enemy.name} for ${damage} damage.`);
       if (this.state.xp === undefined) {
         this.state.xp = Math.floor(damage - (.5 * (player.currentLevel - enemy.level)));
       } else {
         this.state.xp += Math.floor(damage - (.5 * (player.currentLevel - enemy.level)));
       }
     } else {
-      message.channel.send(`${player.characterName} swung at the ${enemy.name} and missed.`);
+      sendMessageRoom(message, `${player.characterName} swung at the ${enemy.name} and missed.`);
     }
   }
 
   magic() {
     const { message, player } = this.state;
-    message.channel.send(`${player.characterName} is shouting nonsense`);
+    sendMessageRoom(message, `${player.characterName} is shouting nonsense`);
   }
 
   enemyAttack() {
@@ -196,9 +198,9 @@ class AttackCommand extends commando.Command {
     if (damage > 0) {
       player.health = player.health - damage;
       updateItem(player.id, ['health'], [player.health], 'players', () => {});
-      message.channel.send(`${player.characterName} was hit by the ${enemy.name} for ${damage} damage.`);
+      sendMessageRoom(message, `${player.characterName} was hit by the ${enemy.name} for ${damage} damage.`);
     } else {
-      message.channel.send(`${enemy.name} swung at the ${player.characterName} and missed.`);
+      sendMessageRoom(message, `${enemy.name} swung at the ${player.characterName} and missed.`);
     }
     
     if (player.health < 1){
@@ -226,7 +228,7 @@ class AttackCommand extends commando.Command {
     if(enemy.health < 1) {
       // update the player health and enemy aggro state and notify the room
       setTimeout(() => {
-        message.channel.send(`${player.characterName} defeated the ${enemy.name}.`);
+        sendMessageRoom(message, `${player.characterName} defeated the ${enemy.name}.`);
       }, 100);
 
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
@@ -239,7 +241,7 @@ class AttackCommand extends commando.Command {
       }
       this.rollLoot();
     } else if (player.health < 1) {
-      message.channel.send(`${player.characterName} was defeated by a ${enemy.name}.`);
+      sendMessageRoom(message, `${player.characterName} was defeated by a ${enemy.name}.`);
       bigCheck(message, respawn.bind(this));
     }
   }
@@ -278,8 +280,8 @@ class AttackCommand extends commando.Command {
         'players',
         ()=>{}
       ).catch(console.error);
-      message.channel.send(`${player.characterName} leveled up!`);
-      message.member.send(`Level up!\nYou're now at level ${player.currentLevel}.`);
+      sendMessageRoom(message, `${player.characterName} leveled up!`);
+      sendMessagePrivate(message, `Level up!\nYou're now at level ${player.currentLevel}.`);
     } else {
       // adding experience without leveling
       updateItem(player.id, ['experience'], [player.experience], 'players', ()=>{}); 
@@ -307,7 +309,7 @@ class AttackCommand extends commando.Command {
       if (loot.type === 'gold') {
         player.inventory.gold += loot.amount;
         updateItem(player.id, ['inventory'], [player.inventory], 'players', () => {});
-        message.member.send(`After defeating ${enemy.name} you picked up ${loot.amount} gold.`);
+        sendMessageRoom(message, `After defeating ${enemy.name} you picked up ${loot.amount} gold.`);
       // else, grab the item from the item table and add it to the player's inventory properly
       } else {
         getItem(loot.id, 'items', data => 
@@ -317,13 +319,13 @@ class AttackCommand extends commando.Command {
     } else {
       //console.log('No loot.');
       // the player won nothing
-      message.member.send(`There was nothing on the ${enemy.name}'s body.`);
+      sendMessageRoom(message, `There was nothing on the ${enemy.name}'s body.`);
     }
   }
 
   addedItem(item) {
     const { enemy, message } = this.state;
-    message.member.send(`After defeating ${enemy.name} you picked up a ${item.name}.`);
+    sendMessageRoom(message, `After defeating ${enemy.name} you picked up a ${item.name}.`);
   }
 }
 

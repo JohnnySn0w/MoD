@@ -1,11 +1,11 @@
-const db = require('./dbhandler');
+const { getItem, updateItem } = require('./dbhandler');
 const { ITEM_CONSTANT } = require('../Constants/itemConstant');
 
-const DEBUG = false;
+const DEBUG = true;
 const emojiOn = true;
-const gameWorldName = 'game channels';
+const gameWorldName = 'Mimirʼs Well';
 const commandPrefix = '.';
-
+const dmOnly = true;
 
 function deleteMessage(message) {
 // delete the user's command if not debugging
@@ -20,34 +20,36 @@ function emojiCheck(emojiName, emojis) {
 }
 
 function bigCheck(message, callback,  args = '') {
-  if (message.message.channel.type === 'dm') {
-    message.author.send('You are not in a MUD related room.');
-    return null;
+  if (!dmOnly) {
+    if (message.message.channel.type === 'dm') {
+      message.author.send('You are not in a MUD related room.');
+      return null;
+    }
   }
   if(args !== '') {
     args = args.toLowerCase();
   }
-  db.getItem(message.author.id, 'players', (data) => playerCheck(data, callback, message, args));
+  getItem(message.author.id, 'players', (data) => playerCheck(data, callback, message, args));
 }
 
 function playerCheck(data, callback, message, args) {
   let player = JSON.parse(data.body).Item;
-  
   if (player === undefined) {
     message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `${commandPrefix}start` in #start-here to get started!');
   } else if (player.busy) {
     message.channel.send(`${player.characterName} is trying to multitask, and failing.`);
   } else {
-    db.getItem(message.channel.name, 'rooms', (moreData) => roomCheck(player, message, moreData, callback, args));
+    getItem(player.currentRoomId, 'rooms', (moreData) => roomCheck(player, message, moreData, callback, args));
   }
 }
 
 function roomCheck(player, message, data, callback, args) {
   // grab the actual player object
   const room = JSON.parse(data.body).Item;
-
-  if (room === undefined) {
-    message.author.send('You are not in a MUD related room.');
+  if (!dmOnly) {
+    if (room === undefined) {
+      message.author.send('You are not in a MUD related room.');
+    }
   } else {
     callback(message, player, room, args);
   }
@@ -55,7 +57,7 @@ function roomCheck(player, message, data, callback, args) {
 
 function respawn(message, player) {
   // respawn player
-  db.updateItem(player.id, ['health', 'busy'], [player.maxhealth, false],'players', () => {});
+  updateItem(player.id, ['health', 'busy', 'currentRoomId'], [player.maxhealth, false, player.hearth],'players', () => {});
   message.member.setRoles([message.guild.roles.find(role => role.name === 'village-square')]).catch(console.error);
 }
 
@@ -86,7 +88,7 @@ function discardItem(player, item) {
     delete player.inventory.items[item.id];
   }
   // update the player object and message the player
-  db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
+  updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
 }
 
 function inventoryAddItem(itemData, player, callback) {
@@ -111,12 +113,64 @@ function inventoryAddItem(itemData, player, callback) {
       player.inventory.items[item.id] = ITEM_CONSTANT(item);
     }
   }
-  db.updateItem(
+  updateItem(
     player.id,
     ['inventory'],
     [player.inventory],
     'players', () => callback(item)
   );
+}
+
+//player specific messaging
+function sendMessage(message, content) {
+  if (dmOnly) {
+    message.author.send(content);
+  } else {
+    message.reply(content);
+  }
+}
+
+/* 
+  player specific messaging that can be triggered anywhere,
+  but should only ever be sent to the player directly.
+  does not use a dmOnly check for this reason
+*/
+function sendMessagePrivate(message, content) {
+  message.author.send(content);
+}
+
+//local area messaging
+function sendMessageRoom(message, content) {
+  message.channel.members.forEach(member => {
+
+    member.send(content);
+  });
+  message.reply();
+  //need some wierd lookup to find player room
+}
+
+//server level messaging
+function sendMessageGlobal(message, content) {
+  message.guild.fetchMembers().forEach(member => {
+    getItem(member.id, 'players', (data) => onlineCheck(data, member, content) );
+  });
+  if (!dmOnly) {
+    message.guild.channels.forEach(channel => {
+      if (channel.type === 'text') {
+        channel.send(content);
+      }
+    });
+  }
+}
+
+function onlineCheck({ body }, member, content) {
+  let player = JSON.parse(body).Item;
+  
+  if (player && player.online) {
+    member.send(content);
+  } else {
+    return null;
+  }
 }
 
 module.exports = {
@@ -131,5 +185,9 @@ module.exports = {
   emojiOn,
   gameWorldName,
   inventoryAddItem,
-  respawn
+  respawn,
+  sendMessage,
+  sendMessagePrivate,
+  sendMessageRoom,
+  sendMessageGlobal
 };

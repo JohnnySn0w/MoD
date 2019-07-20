@@ -69,6 +69,7 @@ function setUpdateExpression(paramsNames) {
   for (let i = 1; i < paramsNames.length; i++) {
     expression = `${expression}, ${paramsNames[i]} = :${i}`;
   }
+  // console.log('expressions: ', expression);
   return expression;
 }
 

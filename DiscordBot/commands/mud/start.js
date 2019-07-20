@@ -1,6 +1,6 @@
-const { deleteMessage, commandPrefix} = require('../../utilities/globals');
+const { deleteMessage, commandPrefix, sendMessagePrivate } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
-const db = require('../../utilities/dbhandler');
+const { getItem, saveItem } = require('../../utilities/dbhandler');
 const { PLAYER_CONSTANT } = require('../../Constants/playerConstant');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
@@ -16,7 +16,7 @@ class StartCommand extends commando.Command {
   }
 
   async run(message) {
-    db.getItem(message.author.id, 'players', (data) => this.getPlayer(message, data));
+    getItem(message.author.id, 'players', (data) => this.getPlayer(message, data));
     deleteMessage(message);
   }
 
@@ -27,11 +27,11 @@ class StartCommand extends commando.Command {
 
     if (player === undefined) {
       // if the player doesn't exist in the database, check which room they're in
-      db.getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, data));
+      getItem(message.channel.name, 'rooms', (data) => this.getRoom(message, data));
     }
     else {
       // otherwise, the player is already a part of the database
-      message.author.send('You\'ve already started the MUD!');
+      sendMessagePrivate(message, 'You\'ve already started the MUD!');
     }
   }
 
@@ -43,11 +43,11 @@ class StartCommand extends commando.Command {
     if (room === undefined) {
       // if the player is not in a MUD room, create a new player object to push to the db
       var newPlayer = PLAYER_CONSTANT(message);
-      db.saveItem(newPlayer, 'players', () => this.setRoles(message));
+      saveItem(newPlayer, 'players', () => this.setRoles(message));
     }
     else {
       // otherwise, direct the user to where they can start the game at
-      message.author.send('Sorry, you can\'t start playing the MUD unless you start in a non-MUD room.');
+      sendMessagePrivate(message, 'Sorry, you can\'t start playing the MUD unless you start in a non-MUD room.');
     }
   }
 

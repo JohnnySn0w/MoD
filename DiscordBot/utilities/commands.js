@@ -1,13 +1,15 @@
 module.exports = {
   attack: require('../commands/mud/attack'),
+  connect: require('../commands/mud/connect'),
   describe: require('../commands/mud/describe'),
-  item: require('../commands/mud/item'),
+  disconnect: require('../commands/mud/disconnect'),
   help: require('../commands/mud/help'),
+  home: require('../commands/mud/home'),
   inventory: require('../commands/mud/inventory'),
+  item: require('../commands/mud/item'),
   look: require('../commands/mud/look'),
   move: require('../commands/mud/move'),
   start: require('../commands/mud/start'),
   stats: require('../commands/mud/stats'),
-  home: require('../commands/mud/home'),
-  talk: require('../commands/mud/talk')
+  talk: require('../commands/mud/talk'),
 };

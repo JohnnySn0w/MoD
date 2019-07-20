@@ -1,4 +1,12 @@
-const {deleteMessage, bigCheck, checkItems, checkKeys, commandPrefix} = require('../../utilities/globals');
+const {
+  deleteMessage,
+  bigCheck,
+  checkItems,
+  checkKeys,
+  commandPrefix,
+  sendMessageRoom,
+  sendMessagePrivate, 
+} = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const db = require('../../utilities/dbhandler');
 const inventory = require('./inventory');
@@ -46,7 +54,7 @@ class LookCommand extends commando.Command {
           object = this.determineEnemy(args, room);
           if (object === undefined) {
             // the player is not looking at anything
-            message.channel.send(`${player.characterName} stares into space.`);
+            sendMessageRoom(message, `${player.characterName} stares into space.`);
           } else {
             db.getItem(object, 'enemies', (data) => this.replyToPlayer(message, player, false, room, data));
           }
@@ -109,15 +117,15 @@ class LookCommand extends commando.Command {
           
       // handle situations where either the room or the object may be undefined
       if (room === undefined) {
-        message.member.send('You are not in a MUD-related room.');
+        sendMessagePrivate(message, 'You are not in a MUD-related room.');
       }
       else {
-        message.channel.send(object.description);
+        sendMessageRoom(message, object.description);
       }
     }
     catch (error) {
       console.error('Looking at an object broke something.\n' + error.message);
-      message.channel.send(`${player.characterName} stares into space.`);
+      sendMessageRoom(message, `${player.characterName} stares into space.`);
     }
   }
 }

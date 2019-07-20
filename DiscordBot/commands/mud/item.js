@@ -1,6 +1,6 @@
-const { deleteMessage, commandPrefix, discardItem } = require('../../utilities/globals');
+const { deleteMessage, commandPrefix, discardItem, sendMessagePrivate } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
-const db = require('../../utilities/dbhandler');
+const { getItem, updateItem } = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class ItemCommand extends commando.Command {
@@ -29,7 +29,7 @@ class ItemCommand extends commando.Command {
       itemName: arguements.input.replace(arguements[0],'').toLowerCase(),
       type: arguements[0].replace(/\s/, ''),
     };
-    db.getItem(message.author.id, 'players', this.playerCheck.bind(this));
+    getItem(message.author.id, 'players', this.playerCheck.bind(this));
     deleteMessage(message);
   }
 
@@ -37,7 +37,7 @@ class ItemCommand extends commando.Command {
     const { message } = this.state;
     let player = JSON.parse(data.body).Item;
     if (player === undefined) {
-      message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `?start` in #start-here to get started!');
+      sendMessagePrivate(message, 'It seems that you\'re not a part of the MUD yet! \nUse `?start` in #start-here to get started!');
     } else {
       this.state.player = player;
       this.checkItemType();
@@ -50,12 +50,12 @@ class ItemCommand extends commando.Command {
     let item = this.getItem('keys');
     // check to make sure the item isn't a key
     if (item) {
-      message.author.send(`${item.name} is a key item. You can't do that to it.`);
+      sendMessagePrivate(message, `${item.name} is a key item. You can't do that to it.`);
       return null;
     }
     item = this.getItem('items');
     if (item === undefined) {
-      message.author.send(`It doesn't seem that you have the ${itemName} in your inventory.`);
+      sendMessagePrivate(message, `It doesn't seem that you have the ${itemName} in your inventory.`);
       return null;
     }
     this.state.item = item;
@@ -78,14 +78,14 @@ class ItemCommand extends commando.Command {
   equipItem() {
     const { message, player, item } = this.state;
     if (item.equipped) {
-      message.author.send(`The ${item.name} is already equipped.`);
+      sendMessagePrivate(message, `The ${item.name} is already equipped.`);
       return null;
     }
     player.inventory.items[item.id].equipped = true;
     player.equipment[item.type] = item.id;
     // update the player object and message the player
-    db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
-    message.author.send(`${item.name} equipped successfully!`);
+    updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
+    sendMessagePrivate(message, `${item.name} equipped successfully!`);
   }
 
   unequipItem() {
@@ -93,8 +93,8 @@ class ItemCommand extends commando.Command {
     player.inventory.items[item.id].equipped = false;
     player.equipment[item.type] = undefined;
     // update the player object and message the player
-    db.updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
-    message.author.send(`${item.name} un-equipped successfully!`);
+    updateItem(player.id, ['inventory', 'equipment'], [player.inventory, player.equipment], 'players', () => {});
+    sendMessagePrivate(message, `${item.name} un-equipped successfully!`);
   }
 
   doThing() {
@@ -104,23 +104,23 @@ class ItemCommand extends commando.Command {
       if (item.type === 'weapon' || item.type === 'armor') {
         this.equipItem();
       } else {
-        message.author.send(`Although you have the ${item.name}, you can't equip it.`);
+        sendMessagePrivate(message, `Although you have the ${item.name}, you can't equip it.`);
       }
       break;
     case 'unequip':
       if (!item.equipped) {
-        message.author.send(`${item.name} not currently equipped.`);
+        sendMessagePrivate(message, `${item.name} not currently equipped.`);
         break;
       }
       this.unequipItem();
       break;
     case 'discard':
       if (item.equipped && item.amount === 1) {
-        message.author.send(`The ${item.name} is equipped, and it's your last item of its kind. Equip something else to discard it.`);
+        sendMessagePrivate(message, `The ${item.name} is equipped, and it's your last item of its kind. Equip something else to discard it.`);
         break;
       }
       discardItem(player, item);
-      message.author.send(`${item.name} discarded!`);
+      sendMessagePrivate(message, `${item.name} discarded!`);
       break;
     default:
       return null;
