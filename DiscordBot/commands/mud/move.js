@@ -40,8 +40,8 @@ class MoveCommand extends commando.Command {
     const { player } = this.state;
     const nextRoom = JSON.parse(body).Item;
     // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
-    getItem(nextRoom, 'rooms', (data) => updateRoomPopulace(data, player, 'add'));
-    updateItem(player.id, ['currentRoomID'], [nextRoom.id], 'rooms');
+    getItem(nextRoom.id, 'rooms', (data) => updateRoomPopulace(data, player, 'add'));
+    updateItem(player.id, ['currentRoomId'], [nextRoom.id], 'players');
     sendMessageRoom(this.client,`${player.characterName} has entered.`, nextRoom);
   }
 

@@ -33,7 +33,7 @@ function playerCheck(data, callback, message, args) {
   if (player === undefined) {
     message.author.send(`It seems that you're not a part of the MUD yet! \nUse \`${commandPrefix}start\` in #start-here to get started!`);
   } else if (player.busy) {
-    sendMessageRoom(message, `${player.characterName} is trying to multitask, and failing.`);
+    sendMessagePrivate(message, `${player.characterName} is trying to multitask, and failing.`);
   } else {
     getItem(player.currentRoomId, 'rooms', (moreData) => roomCheck(player, message, moreData, callback, args));
   }
@@ -186,5 +186,7 @@ module.exports = {
   respawn,
   sendMessagePrivate,
   sendMessageRoom,
+  sendMessageGlobal,
   startingRoom,
+  updateRoomPopulace,
 };

@@ -43,8 +43,8 @@ class Describe extends commando.Command {
       if (description.length > 32) {
         break;
       }
-      message.member.setNickname(description)
-        .catch(console.error);
+      // message.member.setNickname(description)
+      //   .catch(console.error);
       updateItem(message.member.id, ['characterName'], [description], 'players', ()=>{});
       break;
     default:
