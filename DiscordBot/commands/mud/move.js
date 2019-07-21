@@ -1,4 +1,4 @@
-const {deleteMessage, bigCheck, commandPrefix} = require('../../utilities/globals');
+const { deleteMessage, bigCheck, commandPrefix, sendMessageRoom } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const { getItem, updateItem} = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
@@ -39,14 +39,14 @@ class MoveCommand extends commando.Command {
         const actualRoom = JSON.parse(room.body).Item;
         const nextRoom = this.client.channels.find(channel => channel.name === actualRoom.id);
         // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
-        message.channel.send(`${player.characterName} has left`);
+        sendMessageRoom(message, `${player.characterName} has left`);
         const roomRole = message.guild.roles.find(role => role.name === actualRoom.id);
         message.member.setRoles([roomRole]).catch(e => console.error(e));
         updateItem(player.id, ['currentRoomID'], [actualRoom.id], 'rooms');
-        nextRoom.send(`${player.characterName} has entered.`);
+        sendMessageRoom(message,`${player.characterName} has entered.`, nextRoom);
       }
     } else {
-      message.channel.send(`${player.characterName} is too busy to move!`);
+      sendMessageRoom(message, `${player.characterName} is too busy to move!`);
     }
   }
 
@@ -57,7 +57,7 @@ class MoveCommand extends commando.Command {
     }
     else {
       // otherwise, alert the player of the lack of exits
-      message.channel.send(`${player.characterName} has lost their sense of direction`);
+      sendMessageRoom(message, `${player.characterName} has lost their sense of direction`);
     }
   }
 }
