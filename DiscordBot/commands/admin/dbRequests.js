@@ -1,6 +1,6 @@
 const commando = require('discord.js-commando');
 const db = require('../../utilities/dbhandler');
-const { deleteMessage, sendMessage } = require('../../utilities/globals');
+const { deleteMessage, sendMessagePrivate } = require('../../utilities/globals');
 
 class DB extends commando.Command {
   //constructor for the class
@@ -43,13 +43,13 @@ class DB extends commando.Command {
   replies(message, data, type) {
     this.logger(data);
     if (type === 'get') {
-      sendMessage(message, `got: \`\`\`JSON\n${data.body}\`\`\``);
+      sendMessagePrivate(message, `got: \`\`\`JSON\n${data.body}\`\`\``);
     }
     if (type === 'save') {
-      sendMessage(message, 'saved');
+      sendMessagePrivate(message, 'saved');
     }
     if (type === 'delete') {
-      sendMessage(message, 'deleted');
+      sendMessagePrivate(message, 'deleted');
     }
   }
 
