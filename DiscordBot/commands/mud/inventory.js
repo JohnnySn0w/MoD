@@ -1,4 +1,4 @@
-const { deleteMessage, commandPrefix, sendMessagePrivate} = require('../../utilities/globals');
+const { commandPrefix, sendMessagePrivate} = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const { getItem } = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
@@ -21,7 +21,6 @@ class InventoryCommand extends commando.Command {
 
   async run(message) {
     getItem(message.author.id, 'players', (data) => this.getPlayer(data, message));
-    deleteMessage(message);
   }
 
   getPlayer(data, message) {

@@ -1,4 +1,4 @@
-const { deleteMessage, bigCheck, respawn, commandPrefix } = require('../../utilities/globals');
+const { bigCheck, respawn, commandPrefix } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
@@ -15,7 +15,6 @@ class Home extends commando.Command {
   
   async run(message) {
     bigCheck(message, respawn.bind(this));
-    deleteMessage(message);
   }
 }
 

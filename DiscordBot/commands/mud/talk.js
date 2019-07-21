@@ -36,13 +36,13 @@ class TalkCommand extends commando.Command {
   checkNPC(message, player, room, npc) {
     let npcID;
     if (player.busy === true) {
-      sendMessageRoom(message, `${player.characterName} is trying to multitask.`);
+      sendMessageRoom(this.client, `${player.characterName} is trying to multitask.`);
       return null;
     }
     if (room.npcs[npc]) {
       npcID = room.npcs[npc];
     } else {
-      sendMessageRoom(message, `${player.characterName} is trying to communicate with unseen forces.`);
+      sendMessageRoom(this.client, `${player.characterName} is trying to communicate with unseen forces.`);
       return null;
     }
     this.state = { message, player, room };
@@ -113,7 +113,7 @@ class TalkCommand extends commando.Command {
           deleteMessage(m);
         } else {
           db.updateItem(player.id, ['busy'], [false], 'players', () => {});
-          sendMessageRoom(message, `${npc.name} walked away from ${player.characterName}.`);
+          sendMessageRoom(this.client, `${npc.name} walked away from ${player.characterName}.`);
           this.determineStartOrEndState(npc.terminals, true);
         }
       });
@@ -166,9 +166,9 @@ class TalkCommand extends commando.Command {
 
   startConvo({body}) {
     const npc = JSON.parse(body).Item;
-    const { player, message } = this.state;
+    const { player } = this.state;
     db.updateItem(player.id, ['busy'], [true], 'players', () =>{});
-    sendMessageRoom(message, `${player.characterName} is talking to ${npc.name}.`);
+    sendMessageRoom(this.client, `${player.characterName} is talking to ${npc.name}.`);
     this.state.npc = npc;
     this.determineStartOrEndState(npc.intros);
   }
@@ -188,7 +188,7 @@ class TalkCommand extends commando.Command {
   }
 
   determineNextState(selection) {
-    const { player, npc, message, tempPrompts, shopping } = this.state;
+    const { player, npc, tempPrompts, shopping } = this.state;
     let type;
     if (shopping && !selection.includes('leave')) {
       this.tryBuy(tempPrompts[selection]);
@@ -198,7 +198,7 @@ class TalkCommand extends commando.Command {
         Object.keys(tempPrompts[selection]['progression'])[0] : '';
     }
     if (selection.includes('leave') || type === 'terminals') {
-      sendMessageRoom(message, `${player.characterName} walked away from ${npc.name}.`);
+      sendMessageRoom(this.client, `${player.characterName} walked away from ${npc.name}.`);
       this.determineStartOrEndState(npc.terminals, true);
     } else if (type === 'shopping') {
       this.state.shopping = true;

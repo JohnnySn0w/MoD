@@ -1,4 +1,4 @@
-const { deleteMessage, commandPrefix, sendMessagePrivate } = require('../../utilities/globals');
+const { deleteMessage, commandPrefix, sendMessagePrivate, gameWorldName } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const { getItem, saveItem } = require('../../utilities/dbhandler');
 const { PLAYER_CONSTANT } = require('../../Constants/playerConstant');
@@ -31,7 +31,7 @@ class StartCommand extends commando.Command {
     }
     else {
       // otherwise, the player is already a part of the database
-      sendMessagePrivate(message, 'You\'ve already started the MUD!');
+      sendMessagePrivate(message, 'You\'ve already started the game!');
     }
   }
 
@@ -43,19 +43,17 @@ class StartCommand extends commando.Command {
     if (room === undefined) {
       // if the player is not in a MUD room, create a new player object to push to the db
       var newPlayer = PLAYER_CONSTANT(message);
-      saveItem(newPlayer, 'players', () => this.setRoles(message));
+      saveItem(newPlayer, 'players');
     }
     else {
       // otherwise, direct the user to where they can start the game at
-      sendMessagePrivate(message, 'Sorry, you can\'t start playing the MUD unless you start in a non-MUD room.');
+      sendMessagePrivate(message, 'Sorry, you can\'t start playing the game unless you\'re in the server');
     }
   }
 
   setRoles(message) {
     // once the player data is stored on the database, reassign the player's room permissions to the entry room
-    const entryRoomRole = message.guild.roles.find(role => role.name === 'a-journey-begins');
-    message.reply('Welcome to the MUD! Your journey starts in the above text channels. Good luck!');
-    message.member.setRoles([entryRoomRole]).catch(e => console.error(e));
+    sendMessagePrivate(message, `Welcome to ${gameWorldName}! Use \`${commandPrefix}connect\` to login.`);
   }
 }
 

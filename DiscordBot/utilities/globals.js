@@ -141,21 +141,16 @@ function sendMessagePrivate(message, content) {
 
 //local area messaging
 // need to also figure out how to send message to next room
-function sendMessageRoom(message, content, nextRoom='') {
-  nextRoom !== '' ?
-    nextRoom.members.forEach(member => {
-      getItem(member.id, 'players', (data) => onlineCheck(data, member, content) );
-    })
-    :
-    message.channel.members.forEach(member => {
-      getItem(member.id, 'players', (data) => onlineCheck(data, member, content) );
-    });
+function sendMessageRoom(client, content, room) {
+  room.players.forEach(playerId => {
+    client.users.get(playerId).send(content);
+  });
 }
 
 //server level messaging
-function sendMessageGlobal(message, content) {
-  message.guild.fetchMembers().forEach(member => {
-    getItem(member.id, 'players', (data) => onlineCheck(data, member, content) );
+function sendMessageGlobal(client, content) {
+  client.users.forEach(member => {
+    getItem(member.id, 'players', (data) => onlineCheck(data, member, content));
   });
 }
 
