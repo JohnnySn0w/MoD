@@ -5,6 +5,9 @@ const DEBUG = true;
 const emojiOn = true;
 const gameWorldName = 'Mimirʼs Well';
 const commandPrefix = '.';
+const startingRoom = 'a-journey-begins';
+const defaultDescription = 'just another person';
+const defaultHearth = 'village-square';
 
 function deleteMessage(message) {
 // delete the user's command if not debugging
@@ -172,6 +175,8 @@ module.exports = {
   checkKeys,
   commandPrefix,
   DEBUG,
+  defaultDescription,
+  defaultHearth,
   deleteMessage,
   discardItem,
   emojiCheck,
@@ -181,5 +186,5 @@ module.exports = {
   respawn,
   sendMessagePrivate,
   sendMessageRoom,
-  sendMessageGlobal
+  startingRoom,
 };
