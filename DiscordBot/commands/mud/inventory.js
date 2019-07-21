@@ -9,7 +9,7 @@ class InventoryCommand extends commando.Command {
       `Shows inventory in a PM.
       \`${commandPrefix}inventory\``);
   }
-  static aliases() { return ['bag','inv']; }
+  static aliases() { return ['bag','inv', 'i']; }
   constructor(client) {
     super(client, COMMAND_CONSTANT(
       'inventory',
