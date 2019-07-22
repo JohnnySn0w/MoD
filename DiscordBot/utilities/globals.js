@@ -144,11 +144,13 @@ function sendMessagePrivate(message, content) {
   message.author.send(content);
 }
 
-// local area messaging
-// need to give an actual room object
+/* 
+  local area messaging
+  needs an actual room object
+*/
 function sendMessageRoom(client, content, room) {
   room.players.forEach(playerId => {
-    client.users.get(playerId).send(content);
+    getItem(playerId, 'players', data => onlineCheck(data, client.users.get(playerId), content));
   });
 }
 
