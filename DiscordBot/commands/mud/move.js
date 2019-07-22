@@ -57,7 +57,7 @@ class MoveCommand extends commando.Command {
     }
     else {
       // otherwise, alert the player of the lack of exits
-      sendMessageRoom(this.client, `${player.characterName} has lost their sense of direction`);
+      sendMessageRoom(this.client, `${player.characterName} has lost their sense of direction`, room);
     }
   }
 }

@@ -53,10 +53,10 @@ class AttackCommand extends commando.Command {
     if (room.enemies[entity]) {
       getItem(room.enemies[entity], 'enemies', this.checkHostile);
     } else if (room.npcs[entity]) {
-      sendMessageRoom(this.client, `${player.characterName} glares with murderous intent towards ${entity}.`);
+      sendMessageRoom(this.client, `${player.characterName} glares with murderous intent towards ${entity}.`, player.currentRoomId);
     } else {
-      sendMessageRoom(this.client, `${player.characterName} is feeling stabby.`);
-      // sendMessageRoom(this.client, `${player.characterName} tries to attack the air.`);
+      sendMessageRoom(this.client, `${player.characterName} is feeling stabby.`, player.currentRoomId);
+      // sendMessageRoom(this.client, `${player.characterName} tries to attack the air.`, player.currentRoomId);
     }
   }
 
@@ -68,12 +68,12 @@ class AttackCommand extends commando.Command {
     // this is a fancy way of making sure enemy is defined
     if (enemy && !enemy.despawned) {
       // make the player too busy to do anything else
-      sendMessageRoom(this.client, `${player.characterName} has engaged ${enemy.name} in combat!`);
+      sendMessageRoom(this.client, `${player.characterName} has engaged ${enemy.name} in combat!`, player.currentRoomId);
       updateItem(player.id, ['busy'], [true], 'players', this.combatLoop);
     } else if (enemy && enemy.despawned) {
-      sendMessageRoom(this.client, `${player.characterName} tries to attack the air.`);
+      sendMessageRoom(this.client, `${player.characterName} tries to attack the air.`, player.currentRoomId);
     } else if (enemy) {
-      sendMessageRoom(this.client, `${player.characterName} glares with murderous intent towards ${enemy.name}.`);
+      sendMessageRoom(this.client, `${player.characterName} glares with murderous intent towards ${enemy.name}.`, player.currentRoomId);
     }
   }
 
@@ -102,7 +102,7 @@ class AttackCommand extends commando.Command {
     collector.on('end', m => {
       m = m.array()[0];
       if (!responded) {
-        sendMessageRoom(this.client, `${player.characterName} sauntered away from ${enemy.name}, as if in a daze.`);
+        sendMessageRoom(this.client, `${player.characterName} sauntered away from ${enemy.name}, as if in a daze.`, player.currentRoomId);
         this.postCombat();
       } else {
         deleteMessage(m);
@@ -119,7 +119,7 @@ class AttackCommand extends commando.Command {
         } else {
           //in the future, we can add a magic system here
           sendMessagePrivate(message, 'That ain\'t a valid attack type pardner');
-          sendMessageRoom(this.client, `${player.characterName} is flailing around`);
+          sendMessageRoom(this.client, `${player.characterName} is flailing around`, player.currentRoomId);
         }
         //prevents enemy attacking if dead
         if(enemy.health > 0) {
@@ -134,7 +134,7 @@ class AttackCommand extends commando.Command {
 
   runAway() {
     const { enemy, player } = this.state;
-    sendMessageRoom(this.client, `${player.characterName} ran away from ${enemy.name}`);
+    sendMessageRoom(this.client, `${player.characterName} ran away from ${enemy.name}`, player.currentRoomId);
     updateItem(player.id, ['health'], [player.health], 'players', () => {});
     this.postCombat();
   }
@@ -150,11 +150,11 @@ class AttackCommand extends commando.Command {
         damage = player.inventory.items[item].type === 'weapon' ? 
           player.inventory.items[item].stats : 1;
         enemy.health -= damage;
-        sendMessageRoom(this.client, `${player.characterName} throws ${player.inventory.items[item].name} at ${enemy.name}, and hits them for ${damage} damage.`);
+        sendMessageRoom(this.client, `${player.characterName} throws ${player.inventory.items[item].name} at ${enemy.name}, and hits them for ${damage} damage.`, player.currentRoomId);
         discardItem(player, player.inventory.items[item]);
       }
     } else {
-      sendMessageRoom(this.client, `${player.characterName} throws nothing at all at ${enemy.name}.`);
+      sendMessageRoom(this.client, `${player.characterName} throws nothing at all at ${enemy.name}.`, player.currentRoomId);
     }
   }
 
@@ -170,20 +170,20 @@ class AttackCommand extends commando.Command {
     }
     if (damage > 0) {
       enemy.health = enemy.health - damage;
-      sendMessageRoom(this.client, `${player.characterName} hit ${enemy.name} for ${damage} damage.`);
+      sendMessageRoom(this.client, `${player.characterName} hit ${enemy.name} for ${damage} damage.`, player.currentRoomId);
       if (this.state.xp === undefined) {
         this.state.xp = Math.floor(damage - (.5 * (player.currentLevel - enemy.level)));
       } else {
         this.state.xp += Math.floor(damage - (.5 * (player.currentLevel - enemy.level)));
       }
     } else {
-      sendMessageRoom(this.client, `${player.characterName} swung at the ${enemy.name} and missed.`);
+      sendMessageRoom(this.client, `${player.characterName} swung at the ${enemy.name} and missed.`, player.currentRoomId);
     }
   }
 
   magic() {
     const { player } = this.state;
-    sendMessageRoom(this.client, `${player.characterName} is shouting nonsense`);
+    sendMessageRoom(this.client, `${player.characterName} is shouting nonsense`, player.currentRoomId);
   }
 
   enemyAttack() {
@@ -198,9 +198,9 @@ class AttackCommand extends commando.Command {
     if (damage > 0) {
       player.health = player.health - damage;
       updateItem(player.id, ['health'], [player.health], 'players', () => {});
-      sendMessageRoom(this.client, `${player.characterName} was hit by the ${enemy.name} for ${damage} damage.`);
+      sendMessageRoom(this.client, `${player.characterName} was hit by the ${enemy.name} for ${damage} damage.`, player.currentRoomId);
     } else {
-      sendMessageRoom(this.client, `${enemy.name} swung at the ${player.characterName} and missed.`);
+      sendMessageRoom(this.client, `${enemy.name} swung at the ${player.characterName} and missed.`, player.currentRoomId);
     }
     
     if (player.health < 1){
@@ -228,7 +228,7 @@ class AttackCommand extends commando.Command {
     if(enemy.health < 1) {
       // update the player health and enemy aggro state and notify the room
       setTimeout(() => {
-        sendMessageRoom(this.client, `${player.characterName} defeated the ${enemy.name}.`);
+        sendMessageRoom(this.client, `${player.characterName} defeated the ${enemy.name}.`, player.currentRoomId);
       }, 100);
 
       // if the enemy has a respawn timer, remove its link in the room for its respawn time
@@ -241,7 +241,7 @@ class AttackCommand extends commando.Command {
       }
       this.rollLoot();
     } else if (player.health < 1) {
-      sendMessageRoom(this.client, `${player.characterName} was defeated by a ${enemy.name}.`);
+      sendMessageRoom(this.client, `${player.characterName} was defeated by a ${enemy.name}.`, player.currentRoomId);
       bigCheck(message, respawn.bind(this));
     }
   }
@@ -280,7 +280,7 @@ class AttackCommand extends commando.Command {
         'players',
         ()=>{}
       ).catch(console.error);
-      sendMessageRoom(this.client, `${player.characterName} leveled up!`);
+      sendMessageRoom(this.client, `${player.characterName} leveled up!`, player.currentRoomId);
       sendMessagePrivate(message, `Level up!\nYou're now at level ${player.currentLevel}.`);
     } else {
       // adding experience without leveling
