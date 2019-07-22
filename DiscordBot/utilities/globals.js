@@ -144,8 +144,8 @@ function sendMessagePrivate(message, content) {
   message.author.send(content);
 }
 
-//local area messaging
-// need to also figure out how to send message to next room
+// local area messaging
+// need to give an actual room object
 function sendMessageRoom(client, content, room) {
   room.players.forEach(playerId => {
     client.users.get(playerId).send(content);
