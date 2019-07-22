@@ -34,6 +34,8 @@ function playerCheck(data, callback, message, args) {
     message.author.send(`It seems that you're not a part of the MUD yet! \nUse \`${commandPrefix}start\` in #start-here to get started!`);
   } else if (player.busy) {
     sendMessagePrivate(message, `${player.characterName} is trying to multitask, and failing.`);
+  } else if (!player.isOnline) {
+    sendMessagePrivate(message, 'Please connect to play the game.');
   } else {
     getItem(player.currentRoomId, 'rooms', (moreData) => roomCheck(player, message, moreData, callback, args));
   }
