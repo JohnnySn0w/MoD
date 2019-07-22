@@ -57,7 +57,7 @@
                     }
                 ],
                 "reqs": [
-                    "this.state.player.inventory.keys[6].used === true"
+                    "this.state.player.inventory.keys[6] && (this.state.player.inventory.keys[6].used === true)"
                 ]
             }
         },
@@ -77,7 +77,7 @@
                             "intermediates": "2"
                         },
                         "reqs": [
-                            "this.state.player.inventory.keys[6].used === false"
+                            "this.state.player.inventory.keys[6] && (this.state.player.inventory.keys[6].used === false)"
                         ]
                     },
                     {
@@ -103,7 +103,7 @@
                             "intermediates": "2"
                         },
                         "reqs": [
-                            "this.state.player.inventory.keys[6].used === false"
+                            "this.state.player.inventory.keys[6] && (this.state.player.inventory.keys[6].used === false)"
                         ]
                     },
                     {
@@ -155,10 +155,7 @@
                         "prompt": "Say Goodbye", 
                         "progression":{
                             "terminals": "1"
-                        },
-                        "reqs": [
-                            "this.state.player.inventory.keys[6].used"
-                        ]
+                        }
                     }
                 ]
             },
@@ -175,10 +172,7 @@
                         "prompt": "Say Goodbye", 
                         "progression":{
                             "terminals": "1"
-                        },
-                        "reqs": [
-                            "this.state.player.inventory.keys[6].used"
-                        ]
+                        }
                     }
                 ]
             }
@@ -192,7 +186,7 @@
                 "priority": "2",
                 "reply": "\"Goodbye! Thanks again for the ALEVE!\"",
                 "reqs": [
-                    "this.state.player.inventory.keys[6].used"
+                    "this.state.player.inventory.keys[6] && (this.state.player.inventory.keys[6].used === true)"
                 ]
             }
         }

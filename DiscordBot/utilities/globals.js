@@ -5,7 +5,9 @@ const DEBUG = true;
 const emojiOn = true;
 const gameWorldName = 'Mimirʼs Well';
 const commandPrefix = '.';
-const dmOnly = true;
+const startingRoom = 'a-journey-begins';
+const defaultDescription = 'just another person';
+const defaultHearth = 'village-square';
 
 function deleteMessage(message) {
 // delete the user's command if not debugging
@@ -20,12 +22,6 @@ function emojiCheck(emojiName, emojis) {
 }
 
 function bigCheck(message, callback,  args = '') {
-  if (!dmOnly) {
-    if (message.message.channel.type === 'dm') {
-      message.author.send('You are not in a MUD related room.');
-      return null;
-    }
-  }
   if(args !== '') {
     args = args.toLowerCase();
   }
@@ -35,9 +31,11 @@ function bigCheck(message, callback,  args = '') {
 function playerCheck(data, callback, message, args) {
   let player = JSON.parse(data.body).Item;
   if (player === undefined) {
-    message.member.send('It seems that you\'re not a part of the MUD yet! \nUse `${commandPrefix}start` in #start-here to get started!');
+    message.author.send(`It seems that you're not a part of the MUD yet! \nUse \`${commandPrefix}start\` in #start-here to get started!`);
   } else if (player.busy) {
-    message.channel.send(`${player.characterName} is trying to multitask, and failing.`);
+    sendMessagePrivate(message, `${player.characterName} is trying to multitask, and failing.`);
+  } else if (!player.isOnline) {
+    sendMessagePrivate(message, 'Please connect to play the game.');
   } else {
     getItem(player.currentRoomId, 'rooms', (moreData) => roomCheck(player, message, moreData, callback, args));
   }
@@ -46,19 +44,35 @@ function playerCheck(data, callback, message, args) {
 function roomCheck(player, message, data, callback, args) {
   // grab the actual player object
   const room = JSON.parse(data.body).Item;
-  if (!dmOnly) {
-    if (room === undefined) {
-      message.author.send('You are not in a MUD related room.');
-    }
-  } else {
-    callback(message, player, room, args);
-  }
+  callback(message, player, room, args);
 }
 
 function respawn(message, player) {
   // respawn player
-  updateItem(player.id, ['health', 'busy', 'currentRoomId'], [player.maxhealth, false, player.hearth],'players', () => {});
-  message.member.setRoles([message.guild.roles.find(role => role.name === 'village-square')]).catch(console.error);
+  updateItem(player.id, ['health', 'busy', 'currentRoomId'], [player.maxhealth, false, player.hearth],'players');
+  getItem(player.hearth, 'rooms', (data) => updateRoomPopulace(data, player, 'add'));
+  sendMessagePrivate(message, `You've returned to ${player.hearth}.`);
+}
+
+function updateRoomPopulace({body}, player, type) {
+  const room = JSON.parse(body).Item;
+  const index = room.players.indexOf(player.id);
+  switch (type) {
+  case 'add':
+    if (index > -1) {
+      return null;
+    } else {
+      room.players.push(player.id);
+    }
+    break;
+  
+  case 'remove':
+    if (index > -1) {
+      room.players.splice(index, 1);
+    }
+    break;
+  }
+  updateItem(room.id, ['players'], [room.players], 'rooms');
 }
 
 function checkKeys(player, itemName) {
@@ -121,15 +135,6 @@ function inventoryAddItem(itemData, player, callback) {
   );
 }
 
-//player specific messaging
-function sendMessage(message, content) {
-  if (dmOnly) {
-    message.author.send(content);
-  } else {
-    message.reply(content);
-  }
-}
-
 /* 
   player specific messaging that can be triggered anywhere,
   but should only ever be sent to the player directly.
@@ -139,35 +144,28 @@ function sendMessagePrivate(message, content) {
   message.author.send(content);
 }
 
-//local area messaging
-function sendMessageRoom(message, content) {
-  message.channel.members.forEach(member => {
-
-    member.send(content);
+// local area messaging
+// need to give an actual room object
+function sendMessageRoom(client, content, room) {
+  room.players.forEach(playerId => {
+    client.users.get(playerId).send(content);
   });
-  message.reply();
-  //need some wierd lookup to find player room
 }
 
 //server level messaging
-function sendMessageGlobal(message, content) {
-  message.guild.fetchMembers().forEach(member => {
-    getItem(member.id, 'players', (data) => onlineCheck(data, member, content) );
+function sendMessageGlobal(client, content) {
+  client.users.forEach(member => {
+    getItem(member.id, 'players', (data) => onlineCheck(data, member, content));
   });
-  if (!dmOnly) {
-    message.guild.channels.forEach(channel => {
-      if (channel.type === 'text') {
-        channel.send(content);
-      }
-    });
-  }
 }
 
-function onlineCheck({ body }, member, content) {
+//destination should be a channel or a user
+function onlineCheck({ body }, destination, content) {
   let player = JSON.parse(body).Item;
-  
-  if (player && player.online) {
-    member.send(content);
+
+  if (player && player.isOnline) {
+    destination.send(content);
+    return null;
   } else {
     return null;
   }
@@ -179,6 +177,8 @@ module.exports = {
   checkKeys,
   commandPrefix,
   DEBUG,
+  defaultDescription,
+  defaultHearth,
   deleteMessage,
   discardItem,
   emojiCheck,
@@ -186,8 +186,9 @@ module.exports = {
   gameWorldName,
   inventoryAddItem,
   respawn,
-  sendMessage,
   sendMessagePrivate,
   sendMessageRoom,
-  sendMessageGlobal
+  sendMessageGlobal,
+  startingRoom,
+  updateRoomPopulace,
 };

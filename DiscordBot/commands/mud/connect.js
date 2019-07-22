@@ -1,7 +1,7 @@
-const { deleteMessage, bigCheck, commandPrefix, sendMessagePrivate, gameWorldName } = require('../../utilities/globals');
+const { commandPrefix, sendMessagePrivate, gameWorldName } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
-const { updateItem } = require('../../utilities/dbhandler');
+const { getItem, updateItem } = require('../../utilities/dbhandler');
 
 class Connect extends commando.Command {
   static commandInfo() {
@@ -16,11 +16,11 @@ class Connect extends commando.Command {
   }
   
   async run(message) {
-    bigCheck(message, this.login);
-    deleteMessage(message);
+    getItem(message.author.id, 'players', data => this.login(message, data));
   }
 
-  login(message, player) {
+  login(message, { body }) {
+    const player = JSON.parse(body).Item;
     if (player.isOnline){
       sendMessagePrivate(message, 'You are already connected.');
       return null;
@@ -28,7 +28,8 @@ class Connect extends commando.Command {
     sendMessagePrivate(message, `Connected successfully, loading ${player.characterName}`);
     updateItem(player.id, ['isOnline'], [true], 'players');
     sendMessagePrivate(message, `${player.characterName} loaded`);
-    sendMessagePrivate(message, `Welcome back to ${gameWorldName}, ${player.characterName}`);
+    sendMessagePrivate(message, `Welcome back to ${gameWorldName}, ${player.characterName}\n\n\n`);
+    getItem(player.currentRoomId, 'rooms', data => sendMessagePrivate(message, JSON.parse(data.body).Item.description));
   }
 }
 

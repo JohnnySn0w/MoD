@@ -1,7 +1,7 @@
 // importing from other files
 const commando = require('discord.js-commando');
 const db = require('../../utilities/dbhandler');
-const { deleteMessage, sendMessage } = require('../../utilities/globals.js');
+const { deleteMessage, sendMessagePrivate } = require('../../utilities/globals.js');
 
 class NotBusy extends commando.Command {
   //constructor for the class
@@ -28,7 +28,7 @@ class NotBusy extends commando.Command {
   // the core function for the command, runs asynchronously
   async run(message, {playerID}) {
     db.updateItem(playerID, ['busy'], [false], 'players', ()=>{
-      sendMessage(message, `<@${playerID}> is no longer busy!`);
+      sendMessagePrivate(message, `<@${playerID}> is no longer busy!`);
     });
     deleteMessage(message);
   }

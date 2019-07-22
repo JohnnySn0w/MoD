@@ -32,7 +32,7 @@ class StatsCommand extends commando.Command {
 
     if (player === undefined) {
       // if the player isn't in the database already, send them a notice that they need to "?start" the game
-      sendMessagePrivate(message, 'You need to start your adventure first! Please go to the testing zone and enter the start command to proceed.');
+      sendMessagePrivate(message, 'You need to start your adventure first! Please go join the server and then enter the start command to proceed.');
     } else {
       // calculate the additives from weapon and armor
       var weaponMod;

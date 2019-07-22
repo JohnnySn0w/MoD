@@ -2,6 +2,7 @@
     {
         "id": "a-journey-begins",
         "description": "This room is large and cavernous, with pillars extending to the ceiling. Footsteps echo into the darkness. The journey begins to the north...",
+        "players": [],
         "exits": {
             "north": "momentary-passage"
         },
@@ -16,6 +17,7 @@
     {
         "id": "momentary-passage",
         "description": "Cave walls narrow in and create a hallway of sorts. The hallways comes to a split where the west path leads to light while the east path leads to a pile of rocks. To the south is a large room.",
+        "players": [],
         "exits": {
             "west": "a-certain-exit",
             "east": "dead-end",
@@ -34,6 +36,7 @@
     {
         "id": "dead-end",
         "description": "Here the hallway ends abruptly. The only noticeable landmark is the pile of rocks.",
+        "players": [],
         "exits": {
             "west": "momentary-passage"
         },
@@ -48,6 +51,7 @@
     {
         "id": "a-certain-exit",
         "description": "The room is oddly shaped like a perfect cube. The stone walls are completely smooth. On the far wall, there's ladder leading to sunlight. To the east is a hallway.",
+        "players": [],
         "exits": {
             "up": "the-fields",
             "east": "momentary-passage"
@@ -65,6 +69,7 @@
     {
         "id": "the-fields",
         "description": "It's bright here at the surface. There seems to only be flat grasses and hills for miles, and only the ladder and a dirt path leading north break up the landscape. Every so often, a rabbit dashes by.",
+        "players": [],
         "exits": {
             "down": "a-certain-exit",
             "north": "village-square"
@@ -82,6 +87,7 @@
     {
         "id": "village-square",
         "description": "This seems to be the center of a small village. There's a pop-up shop with a strange shopkeep, as well as an old man and a little boy loitering around. To the east are what look like ruins of a time long since forgotten.",
+        "players": [],
         "exits": {
             "south": "the-fields",
             "east": "ruins-entrance"
@@ -105,6 +111,7 @@
     {
         "id": "ruins-entrance",
         "description": "There's not much to see beyond the vine-entrenched stone that sprawls from here, other than the interruptive stone of the mountain it is on. The occasional goblin can be seen sneaking around. There's a small opening leading into the ruins to the south.",
+        "players": [],
         "exits": {
             "west": "village-square",
             "south": "ruins-atrium"
@@ -120,6 +127,7 @@
     {
         "id": "ruins-atrium",
         "description": "The ruins open up to a large atrium. There's an encampment of goblins and goblin warriors. A hallway leads south.",
+        "players": [],
         "exits": {
             "north": "ruins-entrance",
             "south": "ruins-hallway"
@@ -139,6 +147,7 @@
     {
         "id": "ruins-hallway",
         "description": "The hall breaks away and the passage fades to nothing but sky and trees. There's a small cave to the west, and then the remains of the hall comes to a dead end, cut off by boulders.",
+        "players": [],
         "exits": {
             "north": "ruins-atrium",
             "west": "that-cave"
@@ -155,6 +164,7 @@
     {
         "id": "that-cave",
         "description": "A small white rabbit is hopping around at the cave mouth. A strangely dressed man is sitting, seemingly waiting, behind a boulder nearby.",
+        "players": [],
         "exits": {
             "east": "ruins-hallway"
         },

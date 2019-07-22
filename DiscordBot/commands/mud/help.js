@@ -1,5 +1,5 @@
 const commando = require('discord.js-commando');
-const { deleteMessage, emojiCheck, commandPrefix, sendMessagePrivate } = require('../../utilities/globals');
+const { emojiCheck, commandPrefix, sendMessagePrivate } = require('../../utilities/globals');
 const c = require('../../utilities/commands');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
@@ -25,7 +25,6 @@ class Help extends commando.Command {
     sendMessagePrivate(message, 
       `${rulebook}***MoD Commands***${rulebook}\n${this.commandDescripts()}`
     );
-    deleteMessage(message);
   }
 
   commandDescripts() {

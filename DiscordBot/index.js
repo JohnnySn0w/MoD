@@ -14,7 +14,7 @@ client.registry
     ['admin', 'Admin']
   ])
   .registerDefaultGroups()
-  .registerDefaultCommands({ help: false })
+  .registerDefaultCommands({ help: false, eval: false })
   .registerCommandsIn(__dirname + '/commands');
 
 client.login(key);

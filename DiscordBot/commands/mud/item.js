@@ -1,4 +1,4 @@
-const { deleteMessage, commandPrefix, discardItem, sendMessagePrivate } = require('../../utilities/globals');
+const { commandPrefix, discardItem, sendMessagePrivate } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const { getItem, updateItem } = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
@@ -22,15 +22,14 @@ class ItemCommand extends commando.Command {
     ));
   }
 
-  async run(message, args) {
-    const arguements = /\w+\s/.exec(args);
+  async run(message, { object }) {
+    const arguements = /\w+\s/.exec(object);
     this.state = {
       message,
       itemName: arguements.input.replace(arguements[0],'').toLowerCase(),
       type: arguements[0].replace(/\s/, ''),
     };
     getItem(message.author.id, 'players', this.playerCheck.bind(this));
-    deleteMessage(message);
   }
 
   playerCheck(data) {
@@ -116,7 +115,7 @@ class ItemCommand extends commando.Command {
       break;
     case 'discard':
       if (item.equipped && item.amount === 1) {
-        sendMessagePrivate(message, `The ${item.name} is equipped, and it's your last item of its kind. Equip something else to discard it.`);
+        sendMessagePrivate(message, `The ${item.name} is equipped, and it's your last item of its kind. Equip something else or unequip it to discard it.`);
         break;
       }
       discardItem(player, item);

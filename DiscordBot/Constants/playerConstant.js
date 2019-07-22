@@ -1,10 +1,10 @@
-module.exports.PLAYER_CONSTANT = (message) => {
+module.exports.PLAYER_CONSTANT = (message, startingRoom, defaultHearth, defaultDescription) => {
   return {
     characterName: `${message.author && message.author.nickname ? message.author.nickname : message.author.username}`,
-    description: 'just another person',
+    description: defaultDescription,
     id: `${message.author.id}`,
-    currentRoomId: 'a-journey-begins',
-    hearth: 'village-square',
+    currentRoomId: startingRoom,
+    hearth: defaultHearth,
     emoji: 'bust_in_silhouette',
     isOnline: false,
     health: 100,
