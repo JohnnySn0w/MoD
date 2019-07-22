@@ -21,6 +21,9 @@ class Connect extends commando.Command {
 
   login(message, { body }) {
     const player = JSON.parse(body).Item;
+    if (player === undefined) {
+      sendMessagePrivate(message, 'You need to `start` the game first.');
+    }
     if (player.isOnline){
       sendMessagePrivate(message, 'You are already connected.');
       return null;

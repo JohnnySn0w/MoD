@@ -24,6 +24,10 @@ class Describe extends commando.Command {
   
   async run(message, args) {
     const arguements = /\w+\s/g.exec(args.object);
+    if (arguements === undefined) {
+      sendMessagePrivate(message, 'That\'s not how describe works, check `help`');
+      return null;
+    }
     const type = arguements[0].replace(/\s/, '');
     const description = arguements.input.replace(arguements[0],'');
     this.determineDescribeType(message, type, description);
