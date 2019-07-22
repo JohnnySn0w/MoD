@@ -2,6 +2,7 @@ const {
   deleteMessage,
   bigCheck,
   commandPrefix,
+  sendMessagePrivate,
   sendMessageRoom,
   updateRoomPopulace
 } = require('../../utilities/globals');
@@ -28,20 +29,23 @@ class MoveCommand extends commando.Command {
     this.state = {
       direction: '',
       player: {},
+      message: {},
     };
   }
 
   async run(message, { object }) {
+    this.state.message = message;
     bigCheck(message, this.getRoom, object);
     deleteMessage(message);
   }
 
   movePlayer({body}) {
-    const { player } = this.state;
+    const { player, message } = this.state;
     const nextRoom = JSON.parse(body).Item;
     // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
     getItem(nextRoom.id, 'rooms', (data) => updateRoomPopulace(data, player, 'add'));
     updateItem(player.id, ['currentRoomId'], [nextRoom.id], 'players');
+    sendMessagePrivate(message, nextRoom.description);
     sendMessageRoom(this.client,`${player.characterName} has entered.`, nextRoom);
   }
 
