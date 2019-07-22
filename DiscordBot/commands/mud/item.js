@@ -22,8 +22,8 @@ class ItemCommand extends commando.Command {
     ));
   }
 
-  async run(message, args) {
-    const arguements = /\w+\s/.exec(args);
+  async run(message, { object }) {
+    const arguements = /\w+\s/.exec(object);
     this.state = {
       message,
       itemName: arguements.input.replace(arguements[0],'').toLowerCase(),
