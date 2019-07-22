@@ -17,7 +17,7 @@ class NotACommand extends commando.Command {
     Or you can be reasonable
   */
   static aliases() {
-    return ['weapon', 'magic', 'throw', 'run', '', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'];
+    return ['weapon', 'magic', 'throw', 'run', 'leave', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'];
   }
   constructor(client) {
     super(client, COMMAND_CONSTANT(
