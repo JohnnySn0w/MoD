@@ -33,19 +33,23 @@ class Describe extends commando.Command {
   determineDescribeType(message, type, description) {
     switch (type) {
     case 'emoji':
-      emojiCheck(description, message.channel.guild.emojis);
-      (message.member.id, ['emoji'], [description], 'players', () => {});
+      emojiCheck(description, this.client.emojis);
+      (message.author.id, ['emoji'], [description], 'players');
+      sendMessagePrivate(message, `Your character icon is now ${description}`);
       break;
     case 'self':
-      updateItem(message.member.id, ['description'], [description], 'players', () => {});
+      updateItem(message.author.id, ['description'], [description], 'players');
+      sendMessagePrivate(message, 'Your description is updated');
       break;
     case 'name':
-      if (description.length > 32) {
-        break;
-      }
-      // message.member.setNickname(description)
+      // if (description.length > 32) {
+      //   sendMessagePrivate(message, `That name is too long (max 32)`);
+      //   break;
+      // }
+      // message.author.setNickname(description)
       //   .catch(console.error);
-      updateItem(message.member.id, ['characterName'], [description], 'players', ()=>{});
+      updateItem(message.author.id, ['characterName'], [description], 'players');
+      sendMessagePrivate(message, `Your name is now ${description}`);
       break;
     default:
       sendMessagePrivate(message, 'You fail to describe that thing');
