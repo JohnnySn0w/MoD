@@ -99,7 +99,7 @@ class TalkCommand extends commando.Command {
       this.createPrompt(sendState.prompts) : '';
 
     sendState.flags ? this.activateFlags(sendState.flags) : '';
-    sendMessagePrivate(message, `${messageToSend}${prompts}`).catch(console.error);
+    sendMessagePrivate(message, `${messageToSend}${prompts}`);
     // if a non-terminal state logic
     if(!terminal){
       collector.on('collect', () => {
