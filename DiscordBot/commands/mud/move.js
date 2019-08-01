@@ -2,6 +2,7 @@ const {
   deleteMessage,
   bigCheck,
   commandPrefix,
+  generateRoomDescription,
   sendMessagePrivate,
   sendMessageRoom,
   updateRoomPopulace
@@ -45,7 +46,7 @@ class MoveCommand extends commando.Command {
     // if we're grabbing the room that the player is moving to, assign the player the new room's role ID
     getItem(nextRoom.id, 'rooms', (data) => updateRoomPopulace(data, player, 'add'));
     updateItem(player.id, ['currentRoomId'], [nextRoom.id], 'players');
-    sendMessagePrivate(message, nextRoom.description);
+    sendMessagePrivate(message, generateRoomDescription(nextRoom));
     sendMessageRoom(this.client,`${player.characterName} has entered.`, nextRoom);
   }
 

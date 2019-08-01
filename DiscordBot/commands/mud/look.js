@@ -4,6 +4,7 @@ const {
   checkItems,
   checkKeys,
   commandPrefix,
+  generateRoomDescription,
   sendMessageRoom,
   sendMessagePrivate, 
 } = require('../../utilities/globals');
@@ -107,7 +108,7 @@ class LookCommand extends commando.Command {
       var object;
       if (objectIsRoom === true) {
         object = room;
-        object.description = `${object.description}\nExits are: ${Object.keys(object.exits).toString()}`;
+        object.description = generateRoomDescription(object);
       } else {
         var body = JSON.parse(data.body);
         var item = body.Item;
