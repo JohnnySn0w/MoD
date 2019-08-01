@@ -135,6 +135,10 @@ function inventoryAddItem(itemData, player, callback) {
   );
 }
 
+function generateRoomDescription(roomObject) {
+  return `${roomObject.description}\nExits are: ${Object.keys(roomObject.exits).toString().replace(/,/g, ', ')}`;
+}
+
 /* 
   player specific messaging that can be triggered anywhere,
   but should only ever be sent to the player directly.
@@ -186,6 +190,7 @@ module.exports = {
   emojiCheck,
   emojiOn,
   gameWorldName,
+  generateRoomDescription,
   inventoryAddItem,
   respawn,
   sendMessagePrivate,
