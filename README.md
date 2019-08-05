@@ -13,6 +13,9 @@ A player needs to first join a server where the bot is running, then use the Sta
 ### Ok. How do I run it?
 See the Setup section of the wiki!
 
+## A hosted instance is accessible here:
+https://discord.gg/KqJrvph
+
 ___
 
 ## Features thus far:
