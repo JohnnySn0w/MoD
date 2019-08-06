@@ -1,0 +1,7 @@
+[
+  {
+    "id": "low heal",
+    "effect": "player.health += 50",
+    "description": "A minor healing endeavor, restores a small amount of vitality"
+  }
+]

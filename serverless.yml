@@ -27,6 +27,8 @@ custom:
             sources: [./DiscordBot/schemas/npcs.json]
           - table: enemies
             sources: [./DiscordBot/schemas/enemies.json]
+          - table: statusEffects
+            sources: [./DiscordBot/schemas/statusEffects.json]
           
 
 provider:
@@ -141,6 +143,19 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: enemies
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    statusEffectsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: statusEffects
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
