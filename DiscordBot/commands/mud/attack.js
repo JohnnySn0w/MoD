@@ -18,7 +18,7 @@ class AttackCommand extends commando.Command {
     return(
       `Attack a target
       \`${commandPrefix}attack <target>\` and then afterwards, supply a type of
-      attack within 10 seconds.
+      attack within 20 seconds.
       Valid keywords after successful initiation:
       \`weapon\`, \`magic\`, \`run\`, \`throw\` (throw requires an item name)`);
   }
@@ -93,7 +93,7 @@ class AttackCommand extends commando.Command {
     let responded = false;
     //only accepts responses in key and only from the person who started convo
     const filter = m => m.author.id === message.author.id;
-    const collector = message.channel.createMessageCollector(filter, {time: 10000});
+    const collector = message.channel.createMessageCollector(filter, {time: 20000});
     // calculate player damage on enemy and update value
     collector.on('collect', () => {
       responded = true;
