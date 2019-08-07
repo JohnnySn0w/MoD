@@ -133,11 +133,35 @@
         "stats": null
     },
     {
-        "name": "health potion",
+        "name": "Health Potion",
         "id": "19",
-        "description": "A small phial whereing resides a mostly clear liquid that has a tinge of red to it.",
+        "description": "A small glass phial, wherein resides a mostly clear liquid that has the faintest hint of red to it.",
         "type": "consumable",
         "stats": null,
-        "effect": "low heal"
+        "effects": ["low heal"]
+    },
+    {
+        "name": "hi-potion",
+        "id": "20",
+        "description": "A small glass phial, wherein resides a translucent liquid that is a soft red, rem",
+        "type": "consumable",
+        "stats": null,
+        "effects": ["moderate heal"]
+    },
+    {
+        "name": "full-potion",
+        "id": "21",
+        "description": "A small glass phial, wherein resides a sanguine liquid, deep crimson and practically opaque in nature.",
+        "type": "consumable",
+        "stats": null,
+        "effects": ["high heal"]
+    },
+    {
+        "name": "health unguence",
+        "id": "22",
+        "description": "An aromatic paste whose scent is both mystifying and nostalgic.",
+        "type": "consumable",
+        "stats": null,
+        "effects": ["regen"]
     }
 ]

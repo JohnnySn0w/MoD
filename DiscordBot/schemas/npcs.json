@@ -321,6 +321,11 @@
                 "item": "Holy Hand Grenade",
                 "id": "12",
                 "cost": 50
+            },
+            {
+                "item": "Health Potion",
+                "id": "19",
+                "cost": 1
             }
         ]
     },
