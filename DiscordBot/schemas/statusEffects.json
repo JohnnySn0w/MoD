@@ -1,22 +1,22 @@
 [
   {
     "id": "low heal",
-    "effect": "updateItem(player.id, ['health'], [Math.min(player.health + 50, player.maxhealth)], 'players');",
+    "effect": "player.health = Math.min(player.health + 50, player.maxhealth); updateItem(player.id, ['health'], [player.health], 'players');",
     "description": "A minor healing endeavor, restores a small amount of vitality"
   },
   {
     "id": "moderate heal",
-    "effect": "updateItem(player.id, ['health'], [Math.min(player.health + 100, player.maxhealth)], 'players');",
+    "effect": "player.health = Math.min(player.health + 100, player.maxhealth); updateItem(player.id, ['health'], [player.health], 'players');",
     "description": "A decent healing, restores a moderate amount of vitality"
   },
   {
     "id": "high heal",
-    "effect": "updateItem(player.id, ['health'], [Math.min(player.health + 300, player.maxhealth)], 'players');",
+    "effect": "player.health = Math.min(player.health + 300, player.maxhealth); updateItem(player.id, ['health'], [player.health], 'players');",
     "description": "A great healing, restores a large portion of health"
   },
   {
     "id": "regen",
-    "effect": "let x = 1; let ID = setInterval(() => { updateItem(player.id, ['health'], [Math.min(player.health + 20, player.maxhealth)], 'players'); x += 1; if (x > 4) {clearInterval(ID)} }, 500);",
+    "effect": "let x = 1; let ID = setInterval(() => { player.health=Math.min(player.health+=20, player.maxhealth); updateItem(player.id, ['health'], [player.health], 'players'); x += 1; if (x > 4) {clearInterval(ID)} }, 500);",
     "description": "A continous regeneration of life that heals up to 80 hp over 20 seconds"
   }
 ]
