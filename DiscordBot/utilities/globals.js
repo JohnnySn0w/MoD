@@ -177,7 +177,30 @@ function onlineCheck({ body }, destination, content) {
   }
 }
 
+// needs to have the context of 'this' bound to it wherever its called
+function determineEffects(itemData) {
+  const itemResolved = JSON.parse(itemData.body).Item;
+  return itemResolved.effects.forEach((effect) => {
+    getItem(effect, 'statusEffects', applyEffect.bind(this));
+  });
+}
+
+function applyEffect(effectData) {
+  // Disablement Reason: disabled because having these in context allows 
+  // evals to access them
+  // eslint-disable-next-line no-unused-vars
+  const { player, item} = this.state;
+  const affect = JSON.parse(effectData.body).Item.effect;
+  console.log(player);
+  try {
+    eval(affect);
+  } catch(error) {
+    console.error(error);
+  }
+}
+
 module.exports = {
+  applyEffect,
   bigCheck,
   checkItems,
   checkKeys,
@@ -186,6 +209,7 @@ module.exports = {
   defaultDescription,
   defaultHearth,
   deleteMessage,
+  determineEffects,
   discardItem,
   emojiCheck,
   emojiOn,

@@ -1,4 +1,5 @@
 const { commandPrefix, discardItem, sendMessagePrivate } = require('../../utilities/globals');
+let {  determineEffects } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
 const { getItem, updateItem } = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
@@ -20,8 +21,7 @@ class ItemCommand extends commando.Command {
       true,
       ItemCommand.aliases(),
     ));
-    this.applyEffect = this.applyEffect.bind(this);
-    this.determineEffects = this.determineEffects.bind(this);
+    determineEffects = determineEffects.bind(this);
   }
 
   async run(message, { object }) {
@@ -102,26 +102,6 @@ class ItemCommand extends commando.Command {
     sendMessagePrivate(message, `${item.name} un-equipped successfully!`);
   }
 
-  determineEffects(itemData) {
-    const itemResolved = JSON.parse(itemData.body).Item;
-    return itemResolved.effects.forEach((effect) => {
-      getItem(effect, 'statusEffects', this.applyEffect);
-    });
-  }
-
-  applyEffect(effectData) {
-    // Disablement Reason: disabled because having these in context allows 
-    // evals to access them
-    // eslint-disable-next-line no-unused-vars
-    const { player, item} = this.state;
-    const affect = JSON.parse(effectData.body).Item.effect;
-    try {
-      eval(affect);
-    } catch(error) {
-      console.error(error);
-    }
-  }
-
   doThing() {
     const { message, player, type, item } = this.state;
     switch (type) {
@@ -149,7 +129,7 @@ class ItemCommand extends commando.Command {
       break;
     case 'use':
       if (item.type === 'consumable') {
-        getItem(item.id, 'items', this.determineEffects);
+        getItem(item.id, 'items', determineEffects);
         discardItem(player, item);
       } else if (item.type === 'weapon' || item.type === 'armor') {
         this.state.type = 'equip';
