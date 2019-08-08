@@ -20,16 +20,22 @@ class ItemCommand extends commando.Command {
       true,
       ItemCommand.aliases(),
     ));
+    this.applyEffect = this.applyEffect.bind(this);
+    this.determineEffects = this.determineEffects.bind(this);
   }
 
   async run(message, { object }) {
     const arguements = /\w+\s/.exec(object);
-    this.state = {
-      message,
-      itemName: arguements.input.replace(arguements[0],'').toLowerCase(),
-      type: arguements[0].replace(/\s/, ''),
-    };
-    getItem(message.author.id, 'players', this.playerCheck.bind(this));
+    if (arguements === undefined || arguements === null) {
+      sendMessagePrivate(message,'You need to supply an item name too!');
+    } else {
+      this.state = {
+        message,
+        itemName: arguements.input.replace(arguements[0],'').toLowerCase(),
+        type: arguements[0].replace(/\s/, ''),
+      };
+      getItem(message.author.id, 'players', this.playerCheck.bind(this));
+    }
   }
 
   playerCheck(data) {
@@ -96,9 +102,37 @@ class ItemCommand extends commando.Command {
     sendMessagePrivate(message, `${item.name} un-equipped successfully!`);
   }
 
+  determineEffects(itemData) {
+    const itemResolved = JSON.parse(itemData.body).Item;
+    return itemResolved.effects.forEach((effect) => {
+      getItem(effect, 'statusEffects', this.applyEffect);
+    });
+  }
+
+  applyEffect(effectData) {
+    // Disablement Reason: disabled because having these in context allows 
+    // evals to access them
+    // eslint-disable-next-line no-unused-vars
+    const { player, item} = this.state;
+    const affect = JSON.parse(effectData.body).Item.effect;
+    try {
+      eval(affect);
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
   doThing() {
     const { message, player, type, item } = this.state;
     switch (type) {
+    case 'discard':
+      if (item.equipped && item.amount === 1) {
+        sendMessagePrivate(message, `The ${item.name} is equipped, and it's your last item of its kind. Equip something else or unequip it to discard it.`);
+        break;
+      }
+      discardItem(player, item);
+      sendMessagePrivate(message, `${item.name} discarded!`);
+      break;
     case 'equip':
       if (item.type === 'weapon' || item.type === 'armor') {
         this.equipItem();
@@ -113,13 +147,18 @@ class ItemCommand extends commando.Command {
       }
       this.unequipItem();
       break;
-    case 'discard':
-      if (item.equipped && item.amount === 1) {
-        sendMessagePrivate(message, `The ${item.name} is equipped, and it's your last item of its kind. Equip something else or unequip it to discard it.`);
+    case 'use':
+      if (item.type === 'consumable') {
+        getItem(item.id, 'items', this.determineEffects);
+        discardItem(player, item);
+      } else if (item.type === 'weapon' || item.type === 'armor') {
+        this.state.type = 'equip';
+        this.doThing();
+        break;
+      } else {
+        sendMessagePrivate(message, 'That\'s not a proper way of using that...');
         break;
       }
-      discardItem(player, item);
-      sendMessagePrivate(message, `${item.name} discarded!`);
       break;
     default:
       return null;

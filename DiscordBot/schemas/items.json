@@ -143,7 +143,7 @@
     {
         "name": "hi-potion",
         "id": "20",
-        "description": "A small glass phial, wherein resides a translucent liquid that is a soft red, rem",
+        "description": "A small glass phial, wherein resides a translucent liquid that is a soft red, reminiscent of the pinker hues seen at sunset",
         "type": "consumable",
         "stats": null,
         "effects": ["moderate heal"]

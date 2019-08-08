@@ -1,7 +1,7 @@
 [
   {
     "id": "low heal",
-    "effect": "player.health += 50",
+    "effect": "updateItem(player.id, ['health'], [Math.min(player.health + 50, player.maxhealth)], 'players');",
     "description": "A minor healing endeavor, restores a small amount of vitality"
   }
 ]
