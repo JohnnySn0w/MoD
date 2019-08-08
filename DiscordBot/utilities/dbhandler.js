@@ -30,7 +30,7 @@ module.exports.deleteItem = async (itemId, table, callback=()=>{}) => {
 
 module.exports.updateItem = async (itemId, paramName, paramValue, table, callback=()=>{}) => {
   databaseManager.updateItem(itemId, paramName, paramValue, table).then(response => {
-    // console.log('handler updated: \n', item);
+    // console.log('handler updated: \n', response);
     callback(createResponse(200, response));
   });
 };
