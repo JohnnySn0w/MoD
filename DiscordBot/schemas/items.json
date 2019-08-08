@@ -131,5 +131,37 @@
         "description": "A makeshift pop up shop is here, a hoody lad is attending the small counter",
         "type": null,
         "stats": null
+    },
+    {
+        "name": "Health Potion",
+        "id": "19",
+        "description": "A small glass phial, wherein resides a mostly clear liquid that has the faintest hint of red to it.",
+        "type": "consumable",
+        "stats": null,
+        "effects": ["low heal"]
+    },
+    {
+        "name": "hi-potion",
+        "id": "20",
+        "description": "A small glass phial, wherein resides a translucent liquid that is a soft red, reminiscent of the pinker hues seen at sunset",
+        "type": "consumable",
+        "stats": null,
+        "effects": ["moderate heal"]
+    },
+    {
+        "name": "full-potion",
+        "id": "21",
+        "description": "A small glass phial, wherein resides a sanguine liquid, deep crimson and practically opaque in nature.",
+        "type": "consumable",
+        "stats": null,
+        "effects": ["high heal"]
+    },
+    {
+        "name": "health unguence",
+        "id": "22",
+        "description": "An aromatic paste whose scent is both mystifying and nostalgic.",
+        "type": "consumable",
+        "stats": null,
+        "effects": ["regen"]
     }
 ]

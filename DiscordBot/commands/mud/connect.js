@@ -9,7 +9,7 @@ class Connect extends commando.Command {
       `Connect/login to the game:
       \`${commandPrefix}connect\``);
   }
-  static aliases() { return ['logon', 'login']; }
+  static aliases() { return ['logon', 'login', 'con']; }
   constructor(client) {
     super(client, COMMAND_CONSTANT('connect', Connect.commandInfo(), false, Connect.aliases()));
     this.login = this.login.bind(this);
