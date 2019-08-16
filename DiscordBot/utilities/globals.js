@@ -191,7 +191,6 @@ function applyEffect(effectData) {
   // eslint-disable-next-line no-unused-vars
   const { player, item} = this.state;
   const affect = JSON.parse(effectData.body).Item.effect;
-  console.log(player);
   try {
     eval(affect);
   } catch(error) {

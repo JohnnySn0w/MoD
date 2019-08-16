@@ -13,7 +13,7 @@ class ItemCommand extends commando.Command {
       Unequip a weapon or armor: \`${commandPrefix}item unequip <item>\``
     );
   }
-  static aliases() { return ['items']; }
+  static aliases() { return ['use', 'discard', 'equip', 'unequip']; }
   constructor(client) {
     super(client, COMMAND_CONSTANT(
       'item',
@@ -25,14 +25,14 @@ class ItemCommand extends commando.Command {
   }
 
   async run(message, { object }) {
-    const arguements = /\w+\s/.exec(object);
-    if (arguements === undefined || arguements === null) {
+    const type = /\w+/.exec(message.content);
+    if (type === undefined || type === null) {
       sendMessagePrivate(message,'You need to supply an item name too!');
     } else {
       this.state = {
         message,
-        itemName: arguements.input.replace(arguements[0],'').toLowerCase(),
-        type: arguements[0].replace(/\s/, ''),
+        itemName: object.toLowerCase(),
+        type: type[0],
       };
       getItem(message.author.id, 'players', this.playerCheck.bind(this));
     }
@@ -43,6 +43,8 @@ class ItemCommand extends commando.Command {
     let player = JSON.parse(data.body).Item;
     if (player === undefined) {
       sendMessagePrivate(message, 'It seems that you\'re not a part of the MUD yet! \nUse `?start` in #start-here to get started!');
+    } else if(player.busy) {
+      return null;
     } else {
       this.state.player = player;
       this.checkItemType();
