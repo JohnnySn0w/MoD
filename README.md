@@ -3,10 +3,15 @@
 ___
 
 # MoD: MUD on Discord <a href="https://codeclimate.com/github/JohnnySn0w/MoD/maintainability"><img src="https://api.codeclimate.com/v1/badges/1901d2aed01ef57e9384/maintainability" /></a>
+## A hosted instance is accessible here:
+https://discord.gg/KqJrvph
 ### About
 For the uninitiated, a MUD is a Multi-User Dungeon. Think text-based game, but as an online multiplayer game
 
 The goal of the bot is to take hand-crafted game modules and run a MUD with them. A skeleton on which to drape the flesh of world-building.
+
+### How do I run an instance?
+See the Setup section of the wiki
 
 
 #### Brief Usage Overview
@@ -15,12 +20,6 @@ A player needs to first join a server where the bot is running, then use the Sta
 There are some interesting implications here. People can join the same game instance through different servers(as long as the same bot instance is on those different servers), and this allows disparate user groups to interact in the game world, while also maintaining privacy.
 
 Due to how discord bot DMs work, users must remain part of a server hosting the bot instance to continue playing in the same game world.
-
-### How do I run it?
-See the Setup section of the wiki
-
-## A hosted instance is accessible here:
-https://discord.gg/KqJrvph
 
 ___
 
@@ -45,7 +44,7 @@ ___
 - Help - display available commands and syntax
 - Inventory - get a readout of your inventory
 - Describe - set character description and name
-- Say - interplayer communication at a room level, will relay a message to all other players in a room
+- Say - inter-player communication at a room level, will relay a message to all other players in a room
 
 ### Effects system
 - allows for the creation and implementation of effects for items, spells, and so on.
