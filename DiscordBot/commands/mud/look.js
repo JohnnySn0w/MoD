@@ -36,12 +36,12 @@ class LookCommand extends commando.Command {
   }
 
   getRoom(message, player, room, args) {
-    var object;
+    let object;
     if (args === '' || args === 'room' || args === 'here'|| args === 'around' || args === 'area') {
       this.replyToPlayer(message, player, true, room);
     }
     else if (args === 'inventory' || args === 'items' || args === 'equipped' || args === 'equipment') {
-      var command = new inventory(this.client);
+      let command = new inventory(this.client);
       command.run(message);
     }
     else {
@@ -70,7 +70,7 @@ class LookCommand extends commando.Command {
 
   determineItem(searchName, room, player) {
     // determine what item the player is looking at in the given room
-    var itemObject;
+    let itemObject;
     if (searchName in room.items) {
       itemObject = room.items[searchName];
     } else if (checkKeys(player, searchName) !== undefined) {
@@ -84,7 +84,7 @@ class LookCommand extends commando.Command {
     
   determineNPC(searchName, room) {
     // determine what NPC the player is looking at in the given room
-    var npcObject;
+    let npcObject;
     if (searchName in room.npcs) {
       npcObject = room.npcs[searchName];
     }
@@ -94,7 +94,7 @@ class LookCommand extends commando.Command {
 
   determineEnemy(searchName, room) {
     // determine what enemy the player is looking at in the given room
-    var enemyObject;
+    let enemyObject;
     if (searchName in room.enemies) {
       enemyObject = room.enemies[searchName];
     }
@@ -105,13 +105,13 @@ class LookCommand extends commando.Command {
   replyToPlayer(message, player, objectIsRoom, room, data) {
     try {
       // determine whether the object being looked at is the room itself
-      var object;
+      let object;
       if (objectIsRoom === true) {
         object = room;
         object.description = generateRoomDescription(object);
       } else {
-        var body = JSON.parse(data.body);
-        var item = body.Item;
+        let body = JSON.parse(data.body);
+        let item = body.Item;
 
         object = item;
       }
