@@ -5,7 +5,7 @@ module.exports.PLAYER_CONSTANT = (message, startingRoom, defaultHearth, defaultD
     id: `${message.author.id}`,
     currentRoomId: startingRoom,
     hearth: defaultHearth,
-    emoji: 'bust_in_silhouette',
+    emoji: '👤',
     isOnline: false,
     health: 100,
     maxhealth: 100,

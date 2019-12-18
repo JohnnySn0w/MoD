@@ -23,7 +23,7 @@ class Say extends commando.Command {
   }
 
   sendToRoom(message, player, room, args) {
-    sendMessageRoom(this.client, `${player.characterName} says: "${args}"`, room);
+    sendMessageRoom(this.client, `${player.emoji ? player.emoji : ''}${player.characterName} says: "${args}"`, room);
   }
 }
 module.exports = Say;

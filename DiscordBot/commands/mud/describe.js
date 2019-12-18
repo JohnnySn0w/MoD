@@ -38,7 +38,7 @@ class Describe extends commando.Command {
     switch (type) {
     case 'emoji':
       emojiCheck(description, this.client.emojis);
-      (message.author.id, ['emoji'], [description], 'players');
+      updateItem(message.author.id, ['emoji'], [description], 'players');
       sendMessagePrivate(message, `Your character icon is now ${description}`);
       break;
     case 'self':
