@@ -8,7 +8,7 @@ class Home extends commando.Command {
       `Teleport player character to set home:
       \`${commandPrefix}home\``);
   }
-  static aliases() { return ['hearth']; }
+  static aliases() { return ['hearth', 'f']; }
   constructor(client) {
     super(client, COMMAND_CONSTANT('home', Home.commandInfo(), false, Home.aliases()));
   }
