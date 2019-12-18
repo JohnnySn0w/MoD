@@ -9,7 +9,7 @@ class DB extends commando.Command {
     super(client, {
       name: 'db',
       group: 'admin',
-      ownerOnly: false,
+      ownerOnly: true,
       memberName: 'db',
       description: 'loads/retrieves a given object from the db',
       //user permissions
