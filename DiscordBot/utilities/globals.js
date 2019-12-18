@@ -145,7 +145,7 @@ function generateRoomDescription(roomObject) {
   does not use a dmOnly check for this reason
 */
 function sendMessagePrivate(message, content) {
-  message.author.send(content);
+  message.author.send(content, {split: true});
 }
 
 /* 
