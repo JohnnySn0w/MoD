@@ -107,6 +107,8 @@ class ItemCommand extends commando.Command {
   doThing() {
     const { message, player, type, item } = this.state;
     switch (type) {
+    case 'drop':
+    case 'yeet':
     case 'discard':
       if (item.equipped && item.amount === 1) {
         sendMessagePrivate(message, `The ${item.name} is equipped, and it's your last item of its kind. Equip something else or unequip it to discard it.`);
@@ -115,6 +117,8 @@ class ItemCommand extends commando.Command {
       discardItem(player, item);
       sendMessagePrivate(message, `${item.name} discarded!`);
       break;
+    case 'wield':
+    case 'wear':
     case 'equip':
       if (item.type === 'weapon' || item.type === 'armor') {
         this.equipItem();
@@ -122,7 +126,10 @@ class ItemCommand extends commando.Command {
         sendMessagePrivate(message, `Although you have the ${item.name}, you can't equip it.`);
       }
       break;
+    case 'remove':
     case 'unequip':
+    case 'store':
+    case 'stow':
       if (!item.equipped) {
         sendMessagePrivate(message, `${item.name} not currently equipped.`);
         break;

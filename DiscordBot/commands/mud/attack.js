@@ -116,7 +116,11 @@ class AttackCommand extends commando.Command {
           return null;
         } else if (m.content.includes('magic')){
           this.magic();
-        } else if (m.content.includes('throw')) {
+        } else if (
+          m.content.includes('throw') ||
+          m.content.includes('yeet') ||
+          m.content.includes('kobe')
+        ) {
           this.throwSomething(m.content);
         } else if (m.content.includes('use')) {
           this.useSomething(m.content);
