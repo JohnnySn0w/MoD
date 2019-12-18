@@ -9,7 +9,7 @@ class Disconnect extends commando.Command {
       `logout of the game:
       \`${commandPrefix}disconnect\``);
   }
-  static aliases() { return ['dc', 'quit', 'logoff', 'logout']; }
+  static aliases() { return ['dc', 'quit', 'logoff', 'logout', 'offline']; }
   constructor(client) {
     super(client, COMMAND_CONSTANT('disconnect', Disconnect.commandInfo(), false, Disconnect.aliases()));
     this.logoff = this.logoff.bind(this);
