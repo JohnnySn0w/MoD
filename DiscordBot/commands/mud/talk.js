@@ -94,7 +94,7 @@ class TalkCommand extends commando.Command {
     let responded = false;
     const filter = m => m.author.id === message.author.id;
     const collector = message.channel.createMessageCollector(filter, {time: 10000});
-    const messageToSend = `:${npc.emoji ? npc.emoji : ''}:**${npc.name} says to <@${player.id}>:**\n*${sendState.reply}*\n`;
+    const messageToSend = `:${npc.emoji ? npc.emoji : ''}:**${npc.name} says to ${player.characterName}:**\n*${sendState.reply}*\n`;
     const prompts = sendState.prompts ? 
       this.createPrompt(sendState.prompts) : '';
 
