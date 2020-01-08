@@ -54,15 +54,16 @@ function respawn(message, player) {
   sendMessagePrivate(message, `You've returned to ${player.hearth}.`);
 }
 
-function updateRoomPopulace({body}, player, type) {
+function updateRoomPopulace({body}, player, type, description='') {
   const room = JSON.parse(body).Item;
-  const index = room.players.indexOf(player.id);
+  const playerItem = room.players.find(playerObj => Object.prototype.hasOwnProperty.call(playerObj, player.id));
+  const index = room.players.indexOf(playerItem);
   switch (type) {
   case 'add':
     if (index > -1) {
       return null;
     } else {
-      room.players.push(player.id);
+      room.players.push({ [`${player.id}`]: player.characterName });
     }
     break;
   
@@ -70,6 +71,10 @@ function updateRoomPopulace({body}, player, type) {
     if (index > -1) {
       room.players.splice(index, 1);
     }
+    break;
+
+  case 'name':
+    room.players[index][player.id] = description;
     break;
   }
   updateItem(room.id, ['players'], [room.players], 'rooms');
@@ -153,7 +158,8 @@ function sendMessagePrivate(message, content) {
   needs an actual room object
 */
 function sendMessageRoom(client, content, room) {
-  room.players.forEach(playerId => {
+  room.players.forEach(playerDict => {
+    const playerId = Object.keys(playerDict)[0];
     getItem(playerId, 'players', data => onlineCheck(data, client.users.get(playerId), content));
   });
 }
@@ -189,7 +195,7 @@ function applyEffect(effectData) {
   // Disablement Reason: disabled because having these in context allows 
   // evals to access them
   // eslint-disable-next-line no-unused-vars
-  const { player, item} = this.state;
+  const { player, item } = this.state;
   const affect = JSON.parse(effectData.body).Item.effect;
   try {
     eval(affect);

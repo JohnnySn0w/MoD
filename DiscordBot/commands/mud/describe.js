@@ -1,6 +1,6 @@
-const { deleteMessage, emojiCheck, commandPrefix, sendMessagePrivate } = require('../../utilities/globals');
+const { emojiCheck, commandPrefix, sendMessagePrivate, updateRoomPopulace } = require('../../utilities/globals');
 const commando = require('discord.js-commando');
-const { updateItem } = require('../../utilities/dbhandler');
+const { updateItem, getItem } = require('../../utilities/dbhandler');
 const { COMMAND_CONSTANT } = require('../../Constants/commandConstant');
 
 class Describe extends commando.Command {
@@ -20,6 +20,10 @@ class Describe extends commando.Command {
       true,
       Describe.aliases(),
     ));
+    this.updateNameInRoom = this.updateNameInRoom.bind(this);
+    this.player;
+    this.description;
+    this.type;
   }
   
   async run(message, args) {
@@ -28,36 +32,37 @@ class Describe extends commando.Command {
       sendMessagePrivate(message, 'That\'s not how describe works, check `help`');
       return null;
     }
-    const type = arguements[0].replace(/\s/, '');
-    const description = arguements.input.replace(arguements[0],'');
-    this.determineDescribeType(message, type, description);
-    deleteMessage(message);
+    this.type = arguements[0].replace(/\s/, '');
+    this.description = arguements.input.replace(arguements[0],'');
+    this.determineDescribeType(message);
   }
 
-  determineDescribeType(message, type, description) {
-    switch (type) {
+  determineDescribeType(message) {
+    switch (this.type) {
     case 'emoji':
-      emojiCheck(description, this.client.emojis);
-      updateItem(message.author.id, ['emoji'], [description], 'players');
-      sendMessagePrivate(message, `Your character icon is now ${description}`);
+      emojiCheck(this.description, this.client.emojis);
+      updateItem(message.author.id, ['emoji'], [this.description], 'players');
+      sendMessagePrivate(message, `Your character icon is now ${this.description}`);
       break;
     case 'self':
-      updateItem(message.author.id, ['description'], [description], 'players');
+      updateItem(message.author.id, ['description'], [this.description], 'players');
       sendMessagePrivate(message, 'Your description is updated');
       break;
     case 'name':
-      // if (description.length > 32) {
-      //   sendMessagePrivate(message, `That name is too long (max 32)`);
-      //   break;
-      // }
-      // message.author.setNickname(description)
-      //   .catch(console.error);
-      updateItem(message.author.id, ['characterName'], [description], 'players');
-      sendMessagePrivate(message, `Your name is now ${description}`);
+      updateItem(message.author.id, ['characterName'], [this.description], 'players');
+      sendMessagePrivate(message, `Your name is now ${this.description}`);
+      getItem(message.author.id, 'players', (data) => {
+        this.player = JSON.parse(data.body).Item;
+        getItem(this.player.currentRoomId, 'rooms', this.updateNameInRoom);
+      });
       break;
     default:
       sendMessagePrivate(message, 'You fail to describe that thing');
     }
+  }
+
+  updateNameInRoom(data) {
+    updateRoomPopulace(data, this.player, this.type, this.description);
   }
 }
 
