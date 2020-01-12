@@ -13,7 +13,9 @@ class ItemCommand extends commando.Command {
       Unequip a weapon or armor: \`${commandPrefix}item unequip <item>\``
     );
   }
-  static aliases() { return ['use', 'discard', 'equip', 'unequip']; }
+  static aliases() { return ['drop', 'yeet', 'discard', 'nix', 'weild',
+    'wear', 'equip', 'e', 'remove', 'r', 'unequip', 'store', 'stow',
+    'use']; }
   constructor(client) {
     super(client, COMMAND_CONSTANT(
       'item',
@@ -121,6 +123,7 @@ class ItemCommand extends commando.Command {
     case 'wield':
     case 'wear':
     case 'equip':
+    case 'e':
       if (item.type === 'weapon' || item.type === 'armor') {
         this.equipItem();
       } else {
@@ -128,6 +131,7 @@ class ItemCommand extends commando.Command {
       }
       break;
     case 'remove':
+    case 'r':
     case 'unequip':
     case 'store':
     case 'stow':
