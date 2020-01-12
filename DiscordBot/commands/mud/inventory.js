@@ -23,10 +23,9 @@ class InventoryCommand extends commando.Command {
     getItem(message.author.id, 'players', (data) => this.getPlayer(data, message));
   }
 
-  getPlayer(data, message) {
+  getPlayer({ body }, message) {
     // grab the actual player object
-    var body = JSON.parse(data.body);
-    var player = body.Item;
+    const player = JSON.parse(body).Item;
 
     if (player === undefined) {
       // if the player isn't in the database already, send them a notice that they need to "?start" the game

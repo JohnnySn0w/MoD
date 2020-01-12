@@ -110,6 +110,7 @@ class ItemCommand extends commando.Command {
     case 'drop':
     case 'yeet':
     case 'discard':
+    case 'nix':
       if (item.equipped && item.amount === 1) {
         sendMessagePrivate(message, `The ${item.name} is equipped, and it's your last item of its kind. Equip something else or unequip it to discard it.`);
         break;
