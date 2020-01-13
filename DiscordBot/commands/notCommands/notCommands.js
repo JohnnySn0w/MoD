@@ -14,10 +14,12 @@ class NotACommand extends commando.Command {
   /* 
     if you have more than 13 possible options on an
     npc's dialogue state, you can push a PR to extend this.
-    Or you can be reasonable
+    Or you can be /reasonable/
   */
   static aliases() {
-    return ['weapon', 'magic', 'throw', 'run', 'leave', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'];
+    return ['weapon', 'magic', 'throw', 'run', 'leave',
+      'cancel', 'bye', '0', '1', '2', '3', '4', '5',
+      '6', '7', '8', '9', '10', '11', '12', '13'];
   }
   constructor(client) {
     super(client, COMMAND_CONSTANT(
