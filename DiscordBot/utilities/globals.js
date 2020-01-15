@@ -140,8 +140,26 @@ function inventoryAddItem(itemData, player, callback) {
   );
 }
 
-function generateRoomDescription(roomObject) {
-  return `${roomObject.description}\nExits are: ${Object.keys(roomObject.exits).toString().replace(/,/g, ', ')}`;
+function generatePlayerList(players) {
+  let list = '**Current players are**: ';
+  players.forEach((player) => {
+    list = list + `${player[Object.keys(player)[0]]},`;
+  });
+  list = list.substring(0, list.length-1);
+  return list;
+}
+
+function generateRoomDescription(room) {
+  let playerList;
+  if (room.players.length <= 1) {
+    playerList = 'There are no other players here.';
+  } else 
+  if (room.players.length < 4) {
+    playerList = generatePlayerList(room.players);
+  } else {
+    playerList = 'There\'s a bit of a crowd here';
+  }
+  return `${room.description}\n${playerList}\n**Exits are**: ${Object.keys(room.exits).toString().replace(/,/g, ', ')}`;
 }
 
 /* 
@@ -220,6 +238,7 @@ module.exports = {
   emojiOn,
   gameWorldName,
   generateRoomDescription,
+  generatePlayerList,
   inventoryAddItem,
   respawn,
   sendMessagePrivate,

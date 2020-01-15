@@ -13,4 +13,5 @@ module.exports = {
   stats: require('../commands/mud/stats'),
   talk: require('../commands/mud/talk'),
   say: require('../commands/interplayerComms/say'),
+  playerList: require('../commands/mud/playerList'),
 };
