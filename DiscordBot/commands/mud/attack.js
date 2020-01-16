@@ -1,4 +1,5 @@
 const {
+  addedItem,
   bigCheck,
   checkItems,
   commandPrefix,
@@ -6,6 +7,7 @@ const {
   discardItem,
   inventoryAddItem,
   respawn,
+  respawnEnemy,
   sendMessagePrivate,
   sendMessageRoom,
 } = require('../../utilities/globals');
@@ -32,7 +34,6 @@ class AttackCommand extends commando.Command {
       AttackCommand.aliases(),
     ));
     determineEffects = determineEffects.bind(this);
-    this.addedItem = this.addedItem.bind(this);
     this.checkHostile = this.checkHostile.bind(this);
     this.combatLoop = this.combatLoop.bind(this);
     this.getEnemy = this.getEnemy.bind(this);
@@ -333,26 +334,14 @@ class AttackCommand extends commando.Command {
       // else, grab the item from the item table and add it to the player's inventory properly
       } else {
         getItem(loot.id, 'items', data => 
-          inventoryAddItem(data, player, this.addedItem)
+          inventoryAddItem(data, player, addedItem.bind(this))
         );
       }
     } else {
-      //console.log('No loot.');
       // the player won nothing
       sendMessagePrivate(message, `There was nothing on the ${enemy.name}'s body.`);
     }
   }
-
-  addedItem(item) {
-    const { message, enemy } = this.state;
-    sendMessagePrivate(message, `After defeating ${enemy.name} you picked up a ${item.name}.`);
-  }
-}
-
-function respawnEnemy(enemy) {
-  updateItem(enemy.id, ['despawned'], [false], 'enemies', ()=>{
-    console.log(`${enemy.name} has respawned`);
-  });
 }
 
 module.exports = AttackCommand;

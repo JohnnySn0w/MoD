@@ -212,6 +212,7 @@ function determineEffects(itemData) {
 function applyEffect(effectData) {
   // Disablement Reason: disabled because having these in context allows 
   // evals to access them
+  // I'm sorry, if you have a better solution, by all means
   // eslint-disable-next-line no-unused-vars
   const { player, item } = this.state;
   const affect = JSON.parse(effectData.body).Item.effect;
@@ -222,7 +223,19 @@ function applyEffect(effectData) {
   }
 }
 
+function respawnEnemy(enemy) {
+  updateItem(enemy.id, ['despawned'], [false], 'enemies', ()=>{
+    console.log(`${enemy.name} has respawned`);
+  });
+}
+
+function addedItem(item) {
+  const { message, enemy } = this.state;
+  sendMessagePrivate(message, `After defeating ${enemy.name} you picked up a ${item.name}.`);
+}
+
 module.exports = {
+  addedItem,
   applyEffect,
   bigCheck,
   checkItems,
@@ -241,6 +254,7 @@ module.exports = {
   generatePlayerList,
   inventoryAddItem,
   respawn,
+  respawnEnemy,
   sendMessagePrivate,
   sendMessageRoom,
   sendMessageGlobal,
