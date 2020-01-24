@@ -2,7 +2,6 @@ module.exports = {
   attack: require('../commands/mud/attack'),
   connect: require('../commands/mud/connect'),
   describe: require('../commands/mud/describe'),
-  disconnect: require('../commands/mud/disconnect'),
   help: require('../commands/mud/help'),
   home: require('../commands/mud/home'),
   inventory: require('../commands/mud/inventory'),
