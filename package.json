@@ -20,7 +20,7 @@
   "scripts": {
     "start": "nodemon --max-old-space-size=2048 ./DiscordBot/index.js",
     "seed": "./node_modules/serverless/bin/serverless dynamodb seed",
-    "startDb": "./node_modules/serverless/bin/serverless dynamodb start --migrate --seed",
+    "startDb": "./node_modules/serverless/bin/serverless dynamodb start",
     "createDb": "./node_modules/serverless/bin/serverless dynamodb install; ./node_modules/serverless/bin/serverless dynamodb start --migrate --seed",
     "test": "nodemon  --prof --max-old-space-size=2048 ./DiscordBot/index.js",
     "eslint": "./node_modules/.bin/eslint --ext ./DiscordBot/*.js ./DiscordBot/commands/**/*.js"
