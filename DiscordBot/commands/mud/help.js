@@ -21,7 +21,7 @@ class Help extends commando.Command {
   }
   
   async run({message}) {
-    const rulebook = emojiCheck('notebook_with_decorative_cover', this.client.emojis);
+    const rulebook = emojiCheck('notebook_with_decorative_cover', this.client.emojis.cache);
     sendMessagePrivate(message, 
       `${rulebook}***MoD Commands***${rulebook}\n${this.commandDescripts()}`
     );
