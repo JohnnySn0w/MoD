@@ -4,7 +4,7 @@
   "description": "mud on discord",
   "main": "./DiscordBot/index.js",
   "engines": {
-    "node": " >=10.6.0"
+    "node": " >=12"
   },
   "dependencies": {
     "discord.js": "^12.0.2",

@@ -66,15 +66,15 @@ class DB extends commando.Command {
     // clean and parse the args passed
     args = this.cleanArguments(args);
     switch(args[0]) {
-    case 'save':
-      // convert the third arg to a JSON object string
-      args[1] = JSON.stringify(args[1]);
-      // call the saveItem function from dbHandler.js,
-      // sending it the dumbDynamoRoom JSON object, and an anonymous function 
-      // which is later exectued as a callback
-      db.saveItem(dumbDynamoRoom, 'rooms', (data) => this.replies(message, data, 'save'));
-      deleteMessage(message);
-      break;
+    // case 'save':
+    //   // convert the third arg to a JSON object string
+    //   args[1] = JSON.stringify(args[1]);
+    //   // call the saveItem function from dbHandler.js,
+    //   // sending it the dumbDynamoRoom JSON object, and an anonymous function 
+    //   // which is later exectued as a callback
+    //   db.saveItem(dumbDynamoRoom, 'rooms', (data) => this.replies(message, data, 'save'));
+    //   deleteMessage(message);
+    //   break;
     case'get':
       // call the getItem function from dbHandler.js,
       // sending it the ID of the item we want to get
@@ -90,54 +90,14 @@ class DB extends commando.Command {
       db.deleteItem(args[1], args[2], (data) => this.replies(message, data, 'delete'));
       deleteMessage(message);
       break;
-    case 'respawn':
-      db.saveItem(gobbie, 'enemies', (data) => this.replies(message, data, 'save'));
-      deleteMessage(message);
-      break;
+    // case 'respawn':
+    //   db.saveItem(gobbie, 'enemies', (data) => this.replies(message, data, 'save'));
+    //   deleteMessage(message);
+    //   break;
     }
   }
 }
 
-//placeholder dummy data from eric's scheme
-// is in the format of a JSON object, which is slightly different from a regular
-// js object
-const dumbDynamoRoom = {
-  'id': 'entry-room',
-  'discordID': '520340145342513155',
-  'roleid': '568218853902123029',
-  'description': 'bluh bluh huge room',
-  'exits': {
-    'north': 'room-after-entry'
-  },
-  'items': {
-    'pillars': '3'
-  },
-  'npcs': {
-    'old-man': '1',
-    'little-boy': '2',
-    'shopkeep': '3'
-  },
-  'enemies': {
-    'goblin': '0',
-    'goblin-warrior': '1'
-  }
-};
-
-
-const gobbie = {
-  'strength':3,
-  'level':0,
-  'defense':2,
-  'hostile':true,
-  'name':'Goblin',
-  'options':{},
-  'health':20,
-  'description':'A green, humanoid monster stands before you with a small club in his hand.',
-  'responses':{},
-  'aggro':'nobody',
-  'loot':[],
-  'id':'0'
-};
 
 // export the class to any 'require' calls in other files
 module.exports = DB;

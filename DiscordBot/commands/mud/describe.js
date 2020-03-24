@@ -40,7 +40,7 @@ class Describe extends commando.Command {
   determineDescribeType(message) {
     switch (this.type) {
     case 'emoji':
-      emojiCheck(this.description, this.client.emojis);
+      emojiCheck(this.description, this.client.emojis.cache);
       updateItem(message.author.id, ['emoji'], [this.description], 'players');
       sendMessagePrivate(message, `Your character icon is now ${this.description}`);
       break;
