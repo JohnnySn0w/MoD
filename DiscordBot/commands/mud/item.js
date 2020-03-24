@@ -144,6 +144,7 @@ class ItemCommand extends commando.Command {
     case 'use':
       if (item.type === 'consumable') {
         getItem(item.id, 'items', determineEffects);
+        sendMessagePrivate(message, `You succesfully use the ${item.name}.`);
         discardItem(player, item);
       } else if (item.type === 'weapon' || item.type === 'armor') {
         this.state.type = 'equip';

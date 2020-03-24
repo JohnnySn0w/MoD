@@ -178,13 +178,13 @@ function sendMessagePrivate(message, content) {
 function sendMessageRoom(client, content, room) {
   room.players.forEach(playerDict => {
     const playerId = Object.keys(playerDict)[0];
-    getItem(playerId, 'players', data => onlineCheck(data, client.users.get(playerId), content));
+    getItem(playerId, 'players', data => onlineCheck(data, client.users.cache.get(playerId), content));
   });
 }
 
 //server level messaging
 function sendMessageGlobal(client, content) {
-  client.users.forEach(member => {
+  client.users.cache.forEach(member => {
     getItem(member.id, 'players', (data) => onlineCheck(data, member, content));
   });
 }

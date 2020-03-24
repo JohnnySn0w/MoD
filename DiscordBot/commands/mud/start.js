@@ -25,7 +25,7 @@ class StartCommand extends commando.Command {
   }
 
   async run(message) {
-    if (this.client.users.get(message.author.id)) {
+    if (this.client.users.cache.get(message.author.id)) {
       getItem(message.author.id, 'players', (data) => this.getPlayer(message, data));
     } else {
       sendMessagePrivate(message, 'Sorry, you can\'t start playing the game unless you\'re in the game server');

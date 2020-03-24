@@ -141,7 +141,7 @@ class AttackCommand extends commando.Command {
 
   runAway() {
     const { enemy, message, player } = this.state;
-    sendMessageRoom(message, `You successfully run away from ${enemy.name}`);
+    sendMessagePrivate(message, `You successfully run away from ${enemy.name}`);
     updateItem(player.id, ['health'], [player.health], 'players');
     this.postCombat();
   }
@@ -156,11 +156,11 @@ class AttackCommand extends commando.Command {
         damage = player.inventory.items[item].type === 'weapon' ? 
           player.inventory.items[item].stats : 1;
         enemy.health -= damage;
-        sendMessagePrivate(message, `${player.characterName} throws ${player.inventory.items[item].name} at ${enemy.name}, and hits them for ${damage} damage.`);
+        sendMessagePrivate(message, `You throw ${player.inventory.items[item].name} at ${enemy.name}, and it hits them for ${damage} damage.`);
         discardItem(player, player.inventory.items[item]);
       }
     } else {
-      sendMessagePrivate(message, `${player.characterName} throws nothing at all at ${enemy.name}.`);
+      sendMessagePrivate(message, `You throw nothing at all at ${enemy.name}.`);
     }
   }
 
