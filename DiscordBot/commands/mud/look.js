@@ -37,7 +37,6 @@ class LookCommand extends commando.Command {
 
   //generates list of arrays of  [ table/type, id, special?, ?specialtype ]
   async run(message, args) {
-    console.log(args);
     this.searchName = args.object;
     bigCheck(message, this.generateLookList.bind(this));
   }
