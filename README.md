@@ -1,4 +1,4 @@
-<img src="http://www.mahan.io/static/media/DMspritev3.png" height="64"/>
+<img src="https://www.mahan.io/hosted/dmSprite.png" height="64"/>
 
 ___
 
