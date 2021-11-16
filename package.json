@@ -12,7 +12,7 @@
     "eslint": "^6.7.2"
   },
   "devDependencies": {
-    "aws-sdk": "^2.373.0",
+    "aws-sdk": "^2.814.0",
     "nodemon": "^2.0.2",
     "serverless": "^1.59.3",
     "serverless-dynamodb-local": "^0.2.35"
