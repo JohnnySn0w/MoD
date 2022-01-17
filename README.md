@@ -4,7 +4,8 @@ ___
 
 # MoD: MUD on Discord <a href="https://codeclimate.com/github/JohnnySn0w/MoD/maintainability"><img src="https://api.codeclimate.com/v1/badges/1901d2aed01ef57e9384/maintainability" /></a>
 ## A hosted instance is accessible here:
-https://discord.gg/KqJrvph
+~~https://discord.gg/KqJrvph~~
+the server still exists, however the bot is in a state of disrepair, and I have moved on to other projects.
 ### About
 For the uninitiated, a MUD is a Multi-User Dungeon. Think text-based game, but as an online multiplayer game
 
