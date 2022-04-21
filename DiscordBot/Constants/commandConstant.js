@@ -1,4 +1,4 @@
-module.exports.COMMAND_CONSTANT = (name, info, prompt = false, aliases = [], userPermissions = []) => { 
+module.exports.COMMAND_CONSTANT = (name, info, prompt = false, aliases = [], userPermissions = [], args = []) => { 
   return (prompt ?
     {
       name: name,
@@ -6,14 +6,8 @@ module.exports.COMMAND_CONSTANT = (name, info, prompt = false, aliases = [], use
       memberName: name,
       description: info,
       aliases: aliases,
-      args: [
-        {
-          key: 'object',
-          prompt: `What are you trying to ${name}?`,
-          type: 'string'
-        }
-      ],
       userPermissions: userPermissions,
+      args: args,
     } :
     {
       name: name,

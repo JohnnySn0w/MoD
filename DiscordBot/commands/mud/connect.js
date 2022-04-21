@@ -10,7 +10,7 @@ class Connect extends commando.Command {
       \`${commandPrefix}connect\` or similar to login
       \`${commandPrefix}disconnect\` or similar to logout`);
   }
-  static aliases() { return ['logon', 'login', 'con', 'online', 'dc', 'quit', 'logoff', 'logout', 'offline']; }
+  static aliases() { return ['logon', 'login', 'con', 'connect', 'online', 'dc', 'quit', 'logoff', 'logout', 'offline']; }
   constructor(client) {
     super(client, COMMAND_CONSTANT('connect', Connect.commandInfo(), false, Connect.aliases()));
     this.determineType = this.determineType.bind(this);
@@ -26,6 +26,7 @@ class Connect extends commando.Command {
     this.player = JSON.parse(body).Item;
     switch(this.type) {
     case 'con':
+    case 'connect':
     case 'login':
     case 'logon':
     case 'online':
