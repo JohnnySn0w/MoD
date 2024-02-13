@@ -1,5 +1,7 @@
-<img src="https://www.mahan.io/hosted/dmSprite.png" height="64"/>
 
+<p align="center">
+  <img height=auto width=25% src="https://github.com/JohnnySn0w/MoD/blob/master/sprites/dm.png" alt="Dungeon Master"/>
+</p>
 ___
 
 # MoD: MUD on Discord <a href="https://codeclimate.com/github/JohnnySn0w/MoD/maintainability"><img src="https://api.codeclimate.com/v1/badges/1901d2aed01ef57e9384/maintainability" /></a>
