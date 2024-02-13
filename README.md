@@ -2,22 +2,26 @@
 <p align="center">
   <img height=auto width=25% src="https://github.com/JohnnySn0w/MoD/blob/master/sprites/dm.png" alt="Dungeon Master"/>
 </p>
-___
 
-# MoD: MUD on Discord <a href="https://codeclimate.com/github/JohnnySn0w/MoD/maintainability"><img src="https://api.codeclimate.com/v1/badges/1901d2aed01ef57e9384/maintainability" /></a>
-## A hosted instance is accessible here:
+
+<div height=auto width=2em>
+  <h1 align="center">MoD: MUD on Discord<p></p></h1>
+</div>
+<a href="https://codeclimate.com/github/JohnnySn0w/MoD/maintainability"><img src="https://api.codeclimate.com/v1/badges/1901d2aed01ef57e9384/maintainability" /></a>
+
+### A hosted instance is accessible here:
 ~~https://discord.gg/KqJrvph~~
 the server still exists, however the bot is in a state of disrepair, and I have moved on to other projects.
-### About
+## About
 For the uninitiated, a MUD is a Multi-User Dungeon. Think text-based game, but as an online multiplayer game
 
 The goal of the bot is to take hand-crafted game modules and run a MUD with them. A skeleton on which to drape the flesh of world-building.
 
-### How do I run an instance?
+## How do I run an instance?
 See the Setup section of the wiki
 
 
-#### Brief Usage Overview
+## Brief Usage Overview
 A player needs to first join a server where the bot is running, then use the Start command. At that point, the bot will make an entry in the database for that user, and from then on, the user can DM the bot directly, which allows for the simulation of a terminal style environment inside of Discord. 
 
 There are some interesting implications here. People can join the same game instance through different servers(as long as the same bot instance is on those different servers), and this allows disparate user groups to interact in the game world, while also maintaining privacy.
